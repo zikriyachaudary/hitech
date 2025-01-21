@@ -120,6 +120,12 @@ export const AppImages = {
   Home: {
     tick: require("../UI/assets/Images/Profile/tick.png"),
   },
+  bottomBar: {
+    home: require("../UI/assets/Images/BottomBar/Home.png"),
+    profile: require("../UI/assets/Images/BottomBar/profile.png"),
+    notification: require("../UI/assets/Images/BottomBar/notification.png"),
+    orders: require("../UI/assets/Images/BottomBar/orders.png"),
+  },
 };
 
 export const imagePickerConstants = [
@@ -132,5 +138,24 @@ export const imagePickerConstants = [
     id: 1,
     image: AppImages.Modal.Camera,
     text: "Take a photo from Camera",
+  },
+];
+
+export const BottomBarList = [
+  {
+    icon: AppImages.bottomBar.home,
+    title: "Home",
+  },
+  {
+    icon: AppImages.bottomBar.orders,
+    title: "Orders",
+  },
+  {
+    icon: AppImages.bottomBar.notification,
+    title: "Notifications",
+  },
+  {
+    icon: AppImages.bottomBar.profile,
+    title: "Profile",
   },
 ];

@@ -157,10 +157,13 @@ const Login = ({ navigation }: any) => {
 
   const socialAuthReq = async (type: string) => {
     dispatch(setIsLoader(true));
+    console.log("type ----   ", type);
+
     let socialParams: any =
       type === SocialTypeStrings.google
         ? await gmailLoginRequest()
         : await appleAuthReq();
+    console.log("socialParams ------   ", socialParams);
 
     if (socialParams?.token) {
       let paramsObj = {
