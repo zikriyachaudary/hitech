@@ -1,12 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
+import AuthStack from "./Navigation/AuthStack";
 
 const AppContainer = () => {
-  return (
-    <View>
-      <Text>AppContainer</Text>
-    </View>
-  );
+  return <AuthStack />;
 };
 
 export default AppContainer;

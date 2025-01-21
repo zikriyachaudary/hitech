@@ -66,6 +66,14 @@ export const AppColors = {
     greyLevel10: "#F9F9F9",
     light: "#F7F6F4",
   },
+  red: {
+    dark: "#FF2B15",
+    pink: "#fbe3e3",
+  },
+  themeColor: {
+    dark: "#C85D06",
+    light: "#FEB851",
+  },
 };
 
 export const AppFonts = {
@@ -93,16 +101,36 @@ export const AppFonts = {
 };
 
 export const AppImages = {
-  logo: require("../Ui/assets/images/logo.png"),
+  logo: require("../UI/assets/Images/logo.png"),
   Auth: {
-    eye: require("../Ui/assets/images/Auth/Eye.png"),
-    hideEye: require("../Ui/assets/images/Auth/hideEye.png"),
-    message: require("../Ui/assets/images/Auth/Message.png"),
-    google: require("../Ui/assets/images/Auth/Google.png"),
-    dropdown: require("../Ui/assets/images/Auth/dropdown.png"),
-    backArrow: require("../Ui/assets/images/Auth/BackArrow.png"),
-    camera: require("../Ui/assets/images/Auth/camera.png"),
-    apple: require("../Ui/assets/images/Auth/apple.png"),
-    pin: require("../Ui/assets/images/Auth/pin.png"),
+    eye: require("../UI/assets/Images/Auth/Eye.png"),
+    hideEye: require("../UI/assets/Images/Auth/hideEye.png"),
+    message: require("../UI/assets/Images/Auth/Message.png"),
+    google: require("../UI/assets/Images/Auth/Google.png"),
+    dropdown: require("../UI/assets/Images/Auth/dropdown.png"),
+    backArrow: require("../UI/assets/Images/Auth/BackArrow.png"),
+    camera: require("../UI/assets/Images/Auth/camera.png"),
+    apple: require("../UI/assets/Images/Auth/apple.png"),
+    pin: require("../UI/assets/Images/Auth/pin.png"),
+  },
+  Modal: {
+    Camera: require("../UI/assets/Images/Home/CameraPicker.png"),
+    Gallery: require("../UI/assets/Images/Home/GalleryPicker.png"),
+  },
+  Home: {
+    tick: require("../UI/assets/Images/Profile/tick.png"),
   },
 };
+
+export const imagePickerConstants = [
+  {
+    id: 0,
+    image: AppImages.Modal.Gallery,
+    text: "Upload from Gallery",
+  },
+  {
+    id: 1,
+    image: AppImages.Modal.Camera,
+    text: "Take a photo from Camera",
+  },
+];

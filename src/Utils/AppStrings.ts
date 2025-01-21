@@ -60,3 +60,8 @@ export const AppStrings = {
       "The selected image size exceeds the maximum limit of 10MB.",
   },
 };
+
+export const SocialTypeStrings = {
+  google: "Google",
+  apple: "Apple",
+};
