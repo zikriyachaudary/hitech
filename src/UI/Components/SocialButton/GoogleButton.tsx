@@ -1,15 +1,29 @@
-import React from 'react';
-import {Image, TouchableOpacity, StyleSheet, Text} from 'react-native';
-import {AppColors, AppFonts, hv, normalized} from '../../../Utils/AppConstants';
+import React from "react";
+import { Image, TouchableOpacity, StyleSheet, Text } from "react-native";
+import {
+  AppColors,
+  AppFonts,
+  hv,
+  normalized,
+} from "../../../Utils/AppConstants";
 
 const SocialBtnComp = (props: any) => {
   return (
     <TouchableOpacity
       onPress={props?.atPress}
       activeOpacity={1}
-      style={styles.mainCont}>
+      style={styles.mainCont}
+    >
       <Image style={styles.googleImage} source={props?.image} />
-      <Text style={styles.googleText}>{props?.title}</Text>
+      <Text
+        style={{
+          ...styles.googleText,
+          fontSize: props?.fontSize ? props?.fontSize : normalized(12),
+          marginTop: props?.isRtl ? normalized(-5) : normalized(0),
+        }}
+      >
+        {props?.title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -18,13 +32,13 @@ const styles = StyleSheet.create({
   mainCont: {
     height: hv(45),
     borderWidth: 0.7,
-    borderColor: '#E4E7EB',
+    borderColor: "#E4E7EB",
     borderRadius: normalized(20),
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
     width: normalized(160),
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   googleImage: {
     width: normalized(15),
@@ -33,7 +47,6 @@ const styles = StyleSheet.create({
   },
   googleText: {
     color: AppColors.black.Level7,
-    fontSize: normalized(12),
     fontFamily: AppFonts.PoppinsMedium,
   },
 });

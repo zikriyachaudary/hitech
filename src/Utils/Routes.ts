@@ -13,5 +13,7 @@ export const Routes = {
     OrderScreen: "OrderScreen",
     NotificationScreen: "NotificationScreen",
     ProfileScreen: "ProfileScreen",
+    productDetail: "ProductDetail",
+    cartScreen: "cartScreen",
   },
 };

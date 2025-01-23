@@ -1,6 +1,10 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { AppColors, BottomBarList } from "../../../../Utils/AppConstants";
+import {
+  AppColors,
+  AppImages,
+  BottomBarList,
+} from "../../../../Utils/AppConstants";
 import BottomBar from "../../../Components/BottomBar/BottomBar";
 import { useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
@@ -8,6 +12,26 @@ import { setContainerStack } from "../State";
 
 const Container = ({ navigation }: any) => {
   const selector = useSelector((state: AppRootStore) => state.SliceReducer);
+
+  const BottomBarList = [
+    {
+      icon: AppImages.bottomBar.home,
+      title: selector?.isRtl ? "ہوم" : "Home",
+    },
+    {
+      icon: AppImages.bottomBar.orders,
+      title: selector?.isRtl ? "آرڈرز" : "Orders",
+    },
+    {
+      icon: AppImages.bottomBar.notification,
+      title: selector?.isRtl ? "نوٹیفیکیشن" : "Notifications",
+    },
+    {
+      icon: AppImages.bottomBar.profile,
+      title: selector?.isRtl ? "پروفائل" : "Profile",
+    },
+  ];
+
   return (
     <View style={styles.Container}>
       {setContainerStack(selector?.currentTab)}

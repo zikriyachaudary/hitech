@@ -1,0 +1,499 @@
+import {
+  FlatList,
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { useState } from "react";
+import { AppStyles } from "../../../../Utils/AppStyles";
+import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
+import {
+  AppColors,
+  AppFonts,
+  AppHorizontalMargin,
+  AppImages,
+  hv,
+  normalized,
+  ScreenProps,
+} from "../../../../Utils/AppConstants";
+import CartManager from "../../../../Hooks/CartManager";
+import { useDispatch, useSelector } from "react-redux";
+import FastImage from "react-native-fast-image";
+import ProductCounterComp from "../../Home/Components/ProductCounterComp";
+import FilledButton from "../../../Components/CustomButton/FilledButton";
+import EmptyCartListComp from "../Components/EmptyCartListComp";
+import { Routes } from "../../../../Utils/Routes";
+import { setTab } from "../../../../Redux/Reducers/AppReducers";
+
+const CartScreen = (props: ScreenProps) => {
+  const { updateProductList, removeProductFromCart, getProductsTotalPrice } =
+    CartManager();
+  const dispatch = useDispatch();
+  const selector = useSelector((state: any) => state.SliceReducer);
+  const [locationError, setLocationError] = useState("");
+  const address = {
+    general: "House 00 Stree 00 Mohallah Lahore Pakistan",
+    street: "00",
+    house: "00",
+    Area: "Some Area here",
+    City: "Pakistan",
+  };
+  let productList = useSelector((state: any) => state.SliceReducer.cartDetail);
+
+  return (
+    <View style={AppStyles.MainStyle}>
+      <SafeAreaView />
+      <CustomHeader onPress={() => props?.navigation?.goBack()} Text={"Cart"} />
+      {selector?.cartDetail?.length > 0 ? (
+        <>
+          <FlatList
+            style={{ flex: 1, paddingHorizontal: AppHorizontalMargin }}
+            data={[1, 2, 3]}
+            keyExtractor={(item, index) => `${index}`}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item, index }) => {
+              return index == 1 ? (
+                <>
+                  <View
+                    style={{
+                      ...styles.deliveryCont,
+                      backgroundColor: !locationError
+                        ? AppColors.grey.light
+                        : AppColors.red.pink,
+                    }}
+                  >
+                    <View
+                      style={{
+                        flex: 1,
+                      }}
+                    >
+                      <Text style={styles.title}>Delivery Address</Text>
+                      <Text numberOfLines={2} style={styles.addressTxt}>
+                        {address?.general || "Select Delivery Address"}
+                      </Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.editIcon}
+                      activeOpacity={0.7}
+                      onPress={() => {
+                        // Addres management screen navigation
+                      }}
+                    >
+                      <Image source={AppImages.Products.editIcon} />
+                    </TouchableOpacity>
+                  </View>
+                  {locationError && (
+                    <Text
+                      style={{
+                        fontSize: normalized(14),
+                        color: AppColors.red.dark,
+                      }}
+                    >
+                      {locationError}
+                    </Text>
+                  )}
+                </>
+              ) : index === 2 ? (
+                <>
+                  <FlatList
+                    data={selector?.cartDetail}
+                    keyExtractor={(item, index) => `${index}`}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({ item, index }) => {
+                      return (
+                        <>
+                          <View style={styles.singleItemCont}>
+                            <View style={styles.productImageCont}>
+                              <TouchableOpacity
+                                style={styles.removeProCont}
+                                onPress={() => {
+                                  removeProductFromCart(item?.productId);
+                                }}
+                              >
+                                <Image source={AppImages.Products.delete} />
+                              </TouchableOpacity>
+                              <FastImage
+                                source={{
+                                  uri: item?.productImage || item?.images[0],
+                                }}
+                                style={styles.proImage}
+                              />
+                            </View>
+                            <View
+                              style={{
+                                justifyContent: "space-evenly",
+                                alignItems: "flex-start",
+                              }}
+                            >
+                              <Text style={styles.nameTxt}>
+                                {item?.productName}
+                              </Text>
+                              <View style={styles.priceCont}>
+                                <Text style={styles.priceTxt}>{`$ ${Number(
+                                  item?.price * item?.count
+                                ).toFixed(2)}`}</Text>
+                                <ProductCounterComp
+                                  count={item?.count}
+                                  atIncreaseCount={() => {
+                                    updateProductList({
+                                      ...item,
+                                      count: item?.count + 1,
+                                    });
+                                  }}
+                                  atDecreaseCount={() => {
+                                    updateProductList({
+                                      ...item,
+                                      count: item?.count - 1,
+                                    });
+                                  }}
+                                />
+                              </View>
+                            </View>
+                          </View>
+                          <View style={styles.bottomLine} />
+                        </>
+                      );
+                    }}
+                    ListHeaderComponent={() => {
+                      return (
+                        <Text style={styles.headerTxt}>Order Details</Text>
+                      );
+                    }}
+                  />
+                </>
+              ) : null;
+            }}
+          />
+          <View style={styles.bottomSheet}>
+            {/* {selectedCard ? (
+              <View
+                style={{
+                  ...styles.cardCont,
+                }}
+              >
+                <View
+                  style={{
+                    maxWidth: "85%",
+                  }}
+                >
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      ...styles.addressTxt,
+                      fontSize: normalized(18),
+                      fontWeight: "600",
+                    }}
+                  >
+                    {selectedCard["holderName"]}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      ...styles.addressTxt,
+                      fontSize: normalized(16),
+                    }}
+                  >
+                    {maskCardNumber(selectedCard["cardNumber"])}
+                  </Text>
+                </View>
+                <Text
+                  style={styles.addPaymentBtn}
+                  onPress={() => {
+                    props?.navigation?.navigate(
+                      Routes.AddToCart.AddCardScreen,
+                      {
+                        atBack: (selectedCard: any) => {
+                          setSelectedCard(selectedCard);
+                        },
+                      }
+                    );
+                  }}
+                >
+                  Change
+                </Text>
+              </View>
+            ) : (
+              <Text
+                style={{
+                  ...styles.addPaymentBtn,
+                  textDecorationLine: cardError ? "underline" : "none",
+                  marginVertical: hv(5),
+                }}
+                onPress={() => {
+                  props?.navigation?.navigate(Routes.AddToCart.AddCardScreen, {
+                    location: location,
+                    atBack: (selectedCard: any) => {
+                      setSelectedCard(selectedCard);
+                    },
+                  });
+                }}
+              >
+                Add Payment Method
+              </Text>
+            )} */}
+
+            <View style={styles.bottomCont}>
+              <Text style={styles.leftTxt}>Price</Text>
+              <Text style={styles.rightTxt}>
+                {`Rs. ${getProductsTotalPrice(false)}`}
+              </Text>
+            </View>
+            <View style={styles.bottomCont}>
+              <Text style={styles.leftTxt}>Delivery Fee</Text>
+              <Text style={styles.rightTxt}>Rs. 200</Text>
+            </View>
+
+            <View style={styles.bottomCont}>
+              <Text style={styles.leftTxt}>Total (incl. DC)</Text>
+              <Text style={styles.rightTxt}>
+                {`$ ${getProductsTotalPrice(true)}`}
+              </Text>
+            </View>
+            <FilledButton
+              label={"Proceed"}
+              onPress={() => {
+                if (!address) {
+                  setLocationError("Please select delivery address");
+                  return;
+                }
+              }}
+            />
+          </View>
+        </>
+      ) : (
+        <FlatList
+          style={styles.emptyCont}
+          data={productList?.length == 0 ? [1] : [1, 2]}
+          keyExtractor={(item, index) => `${index}`}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item, index }: any) => {
+            return index == 0 ? (
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Image source={AppImages.Products.emptyCart} />
+                <Text style={styles.title}>Your cart is empty!</Text>
+                <Text style={styles.des}>Discover our products</Text>
+                <FilledButton
+                  label={"Explore Products"}
+                  onPress={() => {
+                    dispatch(setTab(0));
+                  }}
+                  mainContainer={{ width: normalized(270) }}
+                />
+              </View>
+            ) : index == 1 ? (
+              <View style={{ flex: 1, marginTop: hv(30) }}>
+                <View style={styles.recomdCont}>
+                  <Text style={styles.recomdTxt}>Recommendations</Text>
+                  <Text
+                    style={styles.seeAll}
+                    onPress={() => {
+                      dispatch(setTab(0));
+                    }}
+                  >
+                    See All
+                  </Text>
+                </View>
+                <FlatList
+                  horizontal
+                  data={productList}
+                  keyExtractor={(item, index) => `${index}`}
+                  showsHorizontalScrollIndicator={false}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <EmptyCartListComp
+                        item={item}
+                        atPress={() => {
+                          props?.navigation?.navigate(
+                            Routes.Home.productDetail,
+                            {
+                              productDetail: item,
+                            }
+                          );
+                        }}
+                      />
+                    );
+                  }}
+                />
+              </View>
+            ) : null;
+          }}
+        />
+      )}
+    </View>
+  );
+};
+
+export default CartScreen;
+
+const styles = StyleSheet.create({
+  deliveryCont: {
+    backgroundColor: AppColors.grey.light,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: normalized(10),
+    borderRadius: normalized(8),
+    marginTop: 10,
+    maxHeight: 150,
+  },
+  title: {
+    fontSize: normalized(16),
+    fontWeight: "600",
+    color: AppColors.black.black,
+    fontFamily: AppFonts.PoppinsRegular,
+    marginTop: 10,
+  },
+  des: {
+    fontSize: normalized(14),
+    fontWeight: "400",
+    color: AppColors.black.black,
+    fontFamily: AppFonts.PoppinsMedium,
+  },
+  addressTxt: {
+    fontSize: normalized(12),
+    fontWeight: "400",
+    color: AppColors.black.black,
+    marginVertical: 4,
+  },
+  editIcon: {
+    height: normalized(40),
+    width: normalized(40),
+    borderRadius: normalized(40 / 2),
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: AppColors.themeColor.dark,
+  },
+  emptyCont: {
+    flex: 1,
+    paddingHorizontal: AppHorizontalMargin,
+  },
+  singleItemCont: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: hv(10),
+  },
+  productImageCont: {
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    height: normalized(110),
+    width: normalized(115),
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: normalized(3),
+    borderColor: AppColors.white.white,
+    borderRadius: normalized(10),
+    backgroundColor: AppColors.grey.light,
+  },
+  removeProCont: {
+    position: "absolute",
+    height: normalized(30),
+    width: normalized(30),
+    borderRadius: normalized(30 / 2),
+    backgroundColor: AppColors.white.white,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 100,
+    bottom: 10,
+    left: 10,
+  },
+  proImage: {
+    height: normalized(60),
+    width: normalized(60),
+    borderRadius: normalized(5),
+  },
+  nameTxt: {
+    fontSize: normalized(14),
+    color: AppColors.black.black,
+    fontWeight: "600",
+    maxWidth: normalized(230),
+  },
+  priceCont: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: normalized(210),
+  },
+  priceTxt: {
+    fontSize: normalized(15),
+    color: AppColors.black.black,
+    fontWeight: "600",
+  },
+  headerTxt: {
+    color: AppColors.black.black,
+    fontSize: normalized(12),
+    fontWeight: "700",
+    marginVertical: hv(10),
+  },
+  bottomLine: {
+    height: 1,
+    width: "100%",
+    backgroundColor: AppColors.grey.greyLevel1,
+    marginVertical: hv(10),
+  },
+  addPaymentBtn: {
+    textDecorationLine: "underline",
+    color: AppColors.red.dark,
+    fontSize: normalized(15),
+    fontWeight: "500",
+    marginVertical: 5,
+  },
+  bottomCont: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 4,
+  },
+  leftTxt: {
+    fontSize: normalized(13),
+    fontWeight: "400",
+    color: AppColors.black.black,
+  },
+  rightTxt: {
+    fontSize: normalized(13),
+    fontWeight: "600",
+    color: AppColors.black.black,
+  },
+  cardCont: {
+    backgroundColor: AppColors.white.white,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    maxHeight: hv(80),
+    padding: normalized(10),
+    borderRadius: normalized(8),
+  },
+  bottomSheet: {
+    paddingHorizontal: AppHorizontalMargin,
+    borderWidth: 1,
+    borderColor: AppColors.grey.light,
+    borderTopLeftRadius: normalized(20),
+    borderTopRightRadius: normalized(20),
+  },
+  recomdCont: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  recomdTxt: {
+    fontSize: normalized(16),
+    fontWeight: "700",
+    color: AppColors.black.black,
+    fontFamily: AppFonts.PoppinsRegular,
+  },
+  seeAll: {
+    fontSize: normalized(14),
+    fontWeight: "500",
+    color: AppColors.red.dark,
+    fontFamily: AppFonts.PoppinsRegular,
+  },
+});

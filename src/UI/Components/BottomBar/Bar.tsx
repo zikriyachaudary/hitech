@@ -55,8 +55,9 @@ const Bar = ({ obj, onPress, index, tab }: any) => {
 const styles = StyleSheet.create({
   selectedTab: {
     tintColor: AppColors.grey.greyLevel9,
-    width: 20,
-    height: 20,
+    width: normalized(22),
+    height: normalized(22),
+    paddingVertical: normalized(5),
   },
 });
 export default Bar;

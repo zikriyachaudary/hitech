@@ -61,7 +61,6 @@ const App = () => {
       dispatch(setNetState(state.isConnected));
     });
   };
-
   const checkNotch = async () => {
     const notch = await DeviceInfo.hasNotch();
     dispatch(setIsNotchBar(notch));

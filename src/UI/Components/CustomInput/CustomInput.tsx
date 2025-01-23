@@ -14,8 +14,17 @@ import {
   AppImages,
   normalized,
 } from "../../../Utils/AppConstants";
+import { useSelector } from "react-redux";
+import { AppRootStore } from "../../../Redux/store/AppStore";
+
 const CustomInput = React.forwardRef((props: any, ref: any) => {
   const [secureEntry, setSecureEntry] = useState(props?.secureEntry);
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+
+  const isRtl = selector?.isRtl;
+
   return (
     <View>
       <View
@@ -29,6 +38,7 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
           backgroundColor: !props?.errorMsg
             ? AppColors.white.white
             : AppColors.red.pink,
+          flexDirection: isRtl ? "row-reverse" : "row",
         }}
       >
         {props?.leftIcon ? (
@@ -36,7 +46,11 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
             <Image
               source={props.leftIcon}
               resizeMode="contain"
-              style={styles.leftIconStyle}
+              style={{
+                ...styles.leftIconStyle,
+                marginStart: isRtl ? 0 : normalized(10),
+                marginEnd: isRtl ? normalized(10) : 0,
+              }}
             />
           </Pressable>
         ) : null}
@@ -52,10 +66,13 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
           style={{
             ...styles.txtInput,
             ...props.textInputStyle,
+            textAlign: isRtl ? "right" : "left",
             color:
               typeof props?.isEditable == "boolean" && !props?.isEditable
                 ? AppColors.grey.greyLevel9
                 : AppColors.black.black,
+            paddingLeft: isRtl ? normalized(5) : normalized(12),
+            paddingRight: isRtl ? normalized(12) : normalized(5),
           }}
           secureTextEntry={secureEntry}
           onChangeText={(txt: any) => {
@@ -93,18 +110,24 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
         ) : null}
       </View>
       {props?.errorMsg?.length > 0 ? (
-        <Text style={{ ...styles.errorMsg, ...props.errorStyle }}>
+        <Text
+          style={{
+            ...styles.errorMsg,
+            ...props.errorStyle,
+            textAlign: isRtl ? "right" : "left",
+          }}
+        >
           {props?.errorMsg}
         </Text>
       ) : null}
     </View>
   );
 });
+
 const styles = StyleSheet.create({
   inputContainer: {
     height: normalized(45),
     width: "100%",
-    flexDirection: "row",
     alignSelf: "center",
     borderColor: AppColors.grey.greyLevel3,
     borderRadius: normalized(7),
@@ -113,7 +136,6 @@ const styles = StyleSheet.create({
   txtInput: {
     includeFontPadding: false,
     flex: 1,
-    paddingLeft: normalized(12),
     fontFamily: AppFonts.PoppinsRegular,
     justifyContent: "center",
   },
@@ -126,8 +148,8 @@ const styles = StyleSheet.create({
   leftIconStyle: {
     height: normalized(22),
     width: normalized(22),
-    marginStart: normalized(10),
     tintColor: AppColors.themeColor.dark,
   },
 });
+
 export default CustomInput;

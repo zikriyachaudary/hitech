@@ -1,5 +1,7 @@
 import { Dimensions, PixelRatio } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useSelector } from "react-redux";
+import { AppRootStore } from "../Redux/store/AppStore";
 
 export const ScreenSize = Dimensions.get("screen");
 const templateWidth = 375;
@@ -73,6 +75,22 @@ export const AppColors = {
   themeColor: {
     dark: "#C85D06",
     light: "#FEB851",
+    medium: "#fab57d",
+  },
+  orange: {
+    light: "#FDF1DB",
+    dark: "#FE9311",
+  },
+  green: {
+    dark: "#00BE13",
+    light: "#cbf5dd",
+  },
+  randomColor: {
+    purpleDark: "rgba(43, 42, 105, 1)",
+    purple: "#6E397D",
+    black: "#000000",
+    blue: "rgba(15, 69, 144, 1)",
+    navy: "#135099",
   },
 };
 
@@ -119,12 +137,30 @@ export const AppImages = {
   },
   Home: {
     tick: require("../UI/assets/Images/Profile/tick.png"),
+    filter: require("../UI/assets/Images/Home/filter.png"),
+    close: require("../UI/assets/Images/Home/CloseIcon.png"),
+    cart: require("../UI/assets/Images/Home/cart.png"),
+    star: require("../UI/assets/Images/Home/star.png"),
+  },
+  Products: {
+    editIcon: require("../UI/assets/Images/products/editIcon.png"),
+    delete: require("../UI/assets/Images/products/Delete.png"),
+    emptyCart: require("../UI/assets/Images/products/emptyCart.png"),
   },
   bottomBar: {
     home: require("../UI/assets/Images/BottomBar/Home.png"),
     profile: require("../UI/assets/Images/BottomBar/profile.png"),
     notification: require("../UI/assets/Images/BottomBar/notification.png"),
     orders: require("../UI/assets/Images/BottomBar/orders.png"),
+  },
+  Profile: {
+    ForwardArrow: require("../UI/assets/Images/Profile/forwardArrow.png"),
+    ProfileIcon: require("../UI/assets/Images/Profile/profileIcon.png"),
+    LocationIcon: require("../UI/assets/Images/Profile/location.png"),
+    privacyIcon: require("../UI/assets/Images/Profile/privacyIcon.png"),
+    SettingIcon: require("../UI/assets/Images/Profile/settingIcon.png"),
+    LogoutIcon: require("../UI/assets/Images/Profile/logoutIcon.png"),
+    deleteUser: require("../UI/assets/Images/Profile/deleteUser.png"),
   },
 };
 
@@ -141,21 +177,33 @@ export const imagePickerConstants = [
   },
 ];
 
-export const BottomBarList = [
+export const profileBarList = [
   {
-    icon: AppImages.bottomBar.home,
-    title: "Home",
+    id: 1,
+    text: "Edit Your Profile",
+    leftIcon: AppImages.Profile.ProfileIcon,
+  },
+  // {
+  //   id: 6,
+  //   text: 'Privacy & Policy',
+  //   leftIcon: AppImages.Profile.privacyIcon,
+  // },
+  {
+    id: 7,
+    text: "Settings",
+    leftIcon: AppImages.Profile.SettingIcon,
   },
   {
-    icon: AppImages.bottomBar.orders,
-    title: "Orders",
+    id: 8,
+    text: "Delete Account",
+    leftIcon: AppImages.Profile.deleteUser,
   },
   {
-    icon: AppImages.bottomBar.notification,
-    title: "Notifications",
-  },
-  {
-    icon: AppImages.bottomBar.profile,
-    title: "Profile",
+    id: 9,
+    text: "Log out",
+    leftIcon: AppImages.Profile.LogoutIcon,
   },
 ];
+
+export const dummyProfile =
+  "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/KPXaHR9D96ED07-63BE-4F4D-846B-7895376E50C3.jpg?alt=media&token=32340295-3a0d-41a7-abc5-9a744cdf9802";

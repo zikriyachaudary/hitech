@@ -5,6 +5,8 @@ import {
 } from "@react-navigation/stack";
 import { Routes } from "../Utils/Routes";
 import Container from "../UI/Sections/Container/Screens/Container";
+import ProductDetailScreen from "../UI/Sections/Home/Screens/ProductDetailScreen";
+import CartScreen from "../UI/Sections/Cart/Screens/CartScreen";
 
 const MainStack = createStackNavigator();
 
@@ -19,6 +21,11 @@ const MainNavigation = () => {
       }}
     >
       <MainStack.Screen name={Routes.Main.container} component={Container} />
+      <MainStack.Screen
+        name={Routes.Home.productDetail}
+        component={ProductDetailScreen}
+      />
+      <MainStack.Screen name={Routes.Home.cartScreen} component={CartScreen} />
     </MainStack.Navigator>
   );
 };

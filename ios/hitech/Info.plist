@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>hitech</string>
+	<string>HiTech</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -46,8 +46,10 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<key>NSCameraUsageDescription</key>
+	<string>HiTech app uses your camera to capture photos for profile pictures or to upload content. We do not use these photos for any other purposes</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+	<string>HiTech app uses your gallery to capture photos for profile pictures or to upload content. We do not use these photos for any other purposes</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>OpenSans-Bold.ttf</string>

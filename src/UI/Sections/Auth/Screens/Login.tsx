@@ -157,13 +157,11 @@ const Login = ({ navigation }: any) => {
 
   const socialAuthReq = async (type: string) => {
     dispatch(setIsLoader(true));
-    console.log("type ----   ", type);
 
     let socialParams: any =
       type === SocialTypeStrings.google
         ? await gmailLoginRequest()
         : await appleAuthReq();
-    console.log("socialParams ------   ", socialParams);
 
     if (socialParams?.token) {
       let paramsObj = {
@@ -227,15 +225,39 @@ const Login = ({ navigation }: any) => {
             showsVerticalScrollIndicator={false}
             style={styles.Container}
           >
-            <Text style={styles.topText}>{"Login"}</Text>
-            <Text style={styles.topTextDesc}>
-              {"Login to Continue your journey."}
+            <Text
+              style={{
+                ...styles.topText,
+                textAlign: selector?.isRtl ? "right" : "left",
+              }}
+            >
+              {selector?.isRtl ? "لاگ ان" : "Login"}
             </Text>
-            <Text style={styles.phoneText}>{"Email Address"}</Text>
+            <Text
+              style={{
+                ...styles.topTextDesc,
+                textAlign: selector?.isRtl ? "right" : "left",
+              }}
+            >
+              {selector?.isRtl
+                ? "اپنے سفر کو جاری رکھنے کے لئے لاگ ان کریں۔"
+                : "Login to Continue your journey."}
+            </Text>
+
+            <Text
+              style={{
+                ...styles.phoneText,
+                textAlign: selector?.isRtl ? "right" : "left",
+              }}
+            >
+              {selector?.isRtl ? "ای میل " : "Email Address"}
+            </Text>
             <CustomInput
               ref={emailRef}
               onSubmitEditing={() => focusNextField(passwordRef)}
-              placeHold={"Enter Email Address"}
+              placeHold={
+                selector?.isRtl ? "ای میل درج کریں" : "Enter Email Address"
+              }
               showLastIcon={true}
               rightIcon={AppImages.Auth.message}
               keyboardType={"email-address"}
@@ -246,7 +268,14 @@ const Login = ({ navigation }: any) => {
               value={email}
               errorMsg={emailError}
             />
-            <Text style={styles.phoneText}>{"Password"}</Text>
+            <Text
+              style={{
+                ...styles.phoneText,
+                textAlign: selector?.isRtl ? "right" : "left",
+              }}
+            >
+              {selector?.isRtl ? "خفیہ کوڈ" : "Password"}
+            </Text>
             <CustomInput
               ref={passwordRef}
               placeHold={"**********"}
@@ -261,15 +290,29 @@ const Login = ({ navigation }: any) => {
               errorMsg={passwordError}
             />
             <Text
-              style={styles.forgetText}
+              style={{
+                ...styles.forgetText,
+
+                alignSelf: selector?.isRtl ? "flex-start" : "flex-end",
+              }}
               onPress={() => navigation.navigate(Routes.Auth.forgerPassword)}
             >
-              {"Forgot Password?"}
+              {selector?.isRtl ? "پاس ورڈ بھول گئے؟" : "Forgot Password?"}
             </Text>
-            <FilledButton label={"Login"} onPress={LogIn} />
+            <FilledButton
+              label={selector?.isRtl ? "لاگ ان" : "Login"}
+              onPress={LogIn}
+            />
             <View style={styles.midCont}>
               <View style={styles.line}></View>
-              <Text style={styles.signinText}>{"Sign In With"}</Text>
+              <Text
+                style={{
+                  ...styles.signinText,
+                  textAlign: selector?.isRtl ? "right" : "left",
+                }}
+              >
+                {selector?.isRtl ? " سائن ان کریں" : "Sign In With"}
+              </Text>
               <View style={styles.line}></View>
             </View>
 
@@ -284,19 +327,30 @@ const Login = ({ navigation }: any) => {
               }}
             >
               <SocialBtnComp
-                title={"Sign in with Google"}
+                title={
+                  selector?.isRtl
+                    ? "گوگل کے ساتھ سائن ان کریں"
+                    : "Sign in with Google"
+                }
                 image={AppImages.Auth.google}
                 atPress={() => {
                   socialAuthReq(SocialTypeStrings.google);
                 }}
+                fontSize={selector?.isRtl ? normalized(10) : normalized(12)}
+                isRtl={selector?.isRtl}
               />
               {appleAuth.isSupported && Platform.OS === "ios" ? (
                 <SocialBtnComp
-                  title={"Sign in with Apple"}
+                  title={
+                    selector?.isRtl
+                      ? "ایپل کے ساتھ سائن ان کریں"
+                      : "Sign in with Apple"
+                  }
                   image={AppImages.Auth.apple}
                   atPress={() => {
                     socialAuthReq(SocialTypeStrings.apple);
                   }}
+                  fontSize={selector?.isRtl ? normalized(10) : normalized(12)}
                 />
               ) : null}
             </View>
@@ -304,12 +358,14 @@ const Login = ({ navigation }: any) => {
         </KeyboardAvoidingView>
         <View style={styles.lastCont}>
           <Text style={styles.firstText}>
-            Don't have an account?{" "}
+            {selector?.isRtl
+              ? "کیا آپ کا اکاؤنٹ نہیں ہے؟ "
+              : "Don't have an account? "}
             <Text
               onPress={() => navigation.navigate(Routes.Auth.signup)}
               style={styles.signupText}
             >
-              Sign Up
+              {selector?.isRtl ? "سائن اپ کریں" : "Sign Up"}
             </Text>
           </Text>
         </View>
@@ -345,7 +401,6 @@ const styles = StyleSheet.create({
     fontFamily: AppFonts.PoppinsSemiBold,
   },
   forgetText: {
-    alignSelf: "flex-end",
     marginVertical: normalized(10),
     fontSize: normalized(13),
     color: AppColors.themeColor.dark,

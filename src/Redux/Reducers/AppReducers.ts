@@ -10,6 +10,8 @@ const initialState: IReduxState = {
   updateToken: null,
   showToast: { type: "", message: "" },
   isNotchBar: false,
+  isRtl: false,
+  cartDetail: [],
 };
 
 export const Reducer = createSlice({
@@ -44,6 +46,12 @@ export const Reducer = createSlice({
     setIsNotchBar: (state, action) => {
       state.isNotchBar = action.payload;
     },
+    setIsRtl: (state, action) => {
+      state.isRtl = action.payload;
+    },
+    updateCartDetail: (state, action) => {
+      state.cartDetail = action.payload;
+    },
   },
 });
 
@@ -57,6 +65,8 @@ export const {
   logOut,
   setShowToast,
   setIsNotchBar,
+  setIsRtl,
+  updateCartDetail,
 } = Reducer.actions;
 
 export default Reducer.reducer;

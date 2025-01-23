@@ -33,7 +33,7 @@ const BottomBar = ({ bottomBarList, navigation, tab }: any) => {
       <View
         style={{
           width: "100%",
-          height: normalized(75),
+          height: normalized(100),
           flexDirection: "row",
           justifyContent: "space-around",
           backgroundColor: AppColors.white.white,
@@ -41,7 +41,7 @@ const BottomBar = ({ bottomBarList, navigation, tab }: any) => {
           borderTopLeftRadius: normalized(25),
           borderTopRightRadius: normalized(25),
           zIndex: 20,
-          paddingTop: normalized(5),
+          paddingTop: normalized(10),
           borderColor: AppColors.themeColor.dark,
           borderWidth: 1,
         }}

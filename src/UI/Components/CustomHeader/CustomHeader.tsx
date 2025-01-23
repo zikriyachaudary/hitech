@@ -14,11 +14,7 @@ const CustomHeader = (props: any) => {
     <View style={styles.container}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         {props?.onPress && (
-          <TouchableOpacity
-            onPress={props?.onPress}
-            style={styles.imageCont}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity onPress={props?.onPress} activeOpacity={0.7}>
             <Image
               style={styles.arrowImage}
               source={AppImages.Auth.backArrow}
@@ -68,8 +64,8 @@ const styles = StyleSheet.create({
     borderColor: AppColors.themeColor.dark,
   },
   arrowImage: {
-    width: normalized(10),
-    height: normalized(18),
+    width: normalized(45),
+    height: normalized(45),
     resizeMode: "contain",
   },
   forgetText: {

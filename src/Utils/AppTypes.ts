@@ -7,4 +7,6 @@ export interface IReduxState {
   updateToken: any;
   showToast: any;
   isNotchBar: boolean;
+  isRtl: boolean;
+  cartDetail: any;
 }
