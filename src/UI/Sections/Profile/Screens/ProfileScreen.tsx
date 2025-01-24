@@ -6,26 +6,41 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
-import { setUserData } from "../../../../Redux/Reducers/AppReducers";
+import { setTab, setUserData } from "../../../../Redux/Reducers/AppReducers";
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 import { useDispatch, useSelector } from "react-redux";
 import {
   AppColors,
   AppFonts,
+  hv,
+  Modal_Type,
   normalized,
   profileBarList,
+  ScreenProps,
 } from "../../../../Utils/AppConstants";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import AppImageViewer from "../../../Components/AppImageView";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import ProfileBar from "../Components/ProfileBar";
+import LogoutModal from "../Components/LogoutModal";
+import { Routes } from "../../../../Utils/Routes";
 
-const ProfileScreen = () => {
+const ProfileScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const [openLogoutModal, setOpenLogoutModal] = useState({
+    value: false,
+    type: "",
+  });
+
+  const onLogoutPress = () => {
+    dispatch(setUserData(null));
+    dispatch(setTab(0));
+    setUserDataInAsync(null);
+  };
 
   const dispatch = useDispatch();
   return (
@@ -38,8 +53,49 @@ const ProfileScreen = () => {
         style={styles.profileImg}
         resizeMode="cover"
       />
-
-      <ProfileBar List={profileBarList} setValue={(id: any) => {}} />
+      <Text style={styles.username}>Zikriya Chaudary</Text>
+      <ProfileBar
+        List={profileBarList}
+        setValue={(id: any) => {
+          if (id == 1) {
+            // props?.navigation?.navigate(Routes.Profile.editProfile);
+          } else if (id == 2) {
+            // props?.navigation?.navigate(Routes.Profile.delieryAddress);
+          } else if (id == 3) {
+            setOpenLogoutModal({
+              value: true,
+              type: Modal_Type.deleteAccount,
+            });
+          } else if (id == 4) {
+            setOpenLogoutModal({
+              value: true,
+              type: Modal_Type.logout,
+            });
+          }
+        }}
+      />
+      {openLogoutModal?.value && (
+        <LogoutModal
+          type={openLogoutModal?.type}
+          onClose={() => {
+            setOpenLogoutModal({
+              value: false,
+              type: "",
+            });
+          }}
+          onLogout={(password: any) => {
+            if (openLogoutModal?.type === Modal_Type.logout) {
+              onLogoutPress();
+            } else if (openLogoutModal?.type === Modal_Type.deleteAccount) {
+              // _deleteAccount();
+            }
+            setOpenLogoutModal({
+              value: false,
+              type: "",
+            });
+          }}
+        />
+      )}
     </View>
   );
 };
@@ -63,5 +119,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     resizeMode: "contain",
     overflow: "hidden",
+  },
+  username: {
+    marginVertical: hv(5),
+    color: AppColors.black.black,
+    fontSize: normalized(15),
+    fontFamily: AppFonts.PoppinsMedium,
+    alignSelf: "center",
   },
 });

@@ -1,10 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-import {
-  AppColors,
-  AppImages,
-  BottomBarList,
-} from "../../../../Utils/AppConstants";
+import { AppColors, AppImages } from "../../../../Utils/AppConstants";
 import BottomBar from "../../../Components/BottomBar/BottomBar";
 import { useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";

@@ -11,7 +11,7 @@ import {
 const CustomHeader = (props: any) => {
   const icons = props?.icon;
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { ...props?.containerStyle }]}>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         {props?.onPress && (
           <TouchableOpacity onPress={props?.onPress} activeOpacity={0.7}>

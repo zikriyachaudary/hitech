@@ -233,7 +233,10 @@ const NotificationScreen = (props: ScreenProps) => {
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
-      <CustomHeader title={"Notifications"} />
+      <CustomHeader
+        title={"Notifications"}
+        containerStyle={{ height: normalized(25) }}
+      />
       <FlatList
         data={notificationList}
         style={styles.mainList}

@@ -146,6 +146,7 @@ export const AppImages = {
     editIcon: require("../UI/assets/Images/products/editIcon.png"),
     delete: require("../UI/assets/Images/products/Delete.png"),
     emptyCart: require("../UI/assets/Images/products/emptyCart.png"),
+    warning: require("../UI/assets/Images/products/warning.png"),
   },
   bottomBar: {
     home: require("../UI/assets/Images/BottomBar/Home.png"),
@@ -161,6 +162,7 @@ export const AppImages = {
     SettingIcon: require("../UI/assets/Images/Profile/settingIcon.png"),
     LogoutIcon: require("../UI/assets/Images/Profile/logoutIcon.png"),
     deleteUser: require("../UI/assets/Images/Profile/deleteUser.png"),
+    delivery: require("../UI/assets/Images/Profile/homeAddress.png"),
   },
 };
 
@@ -183,27 +185,32 @@ export const profileBarList = [
     text: "Edit Your Profile",
     leftIcon: AppImages.Profile.ProfileIcon,
   },
-  // {
-  //   id: 6,
-  //   text: 'Privacy & Policy',
-  //   leftIcon: AppImages.Profile.privacyIcon,
-  // },
   {
-    id: 7,
-    text: "Settings",
-    leftIcon: AppImages.Profile.SettingIcon,
+    id: 2,
+    text: "Delivery Address",
+    leftIcon: AppImages.Profile.delivery,
   },
   {
-    id: 8,
+    id: 2,
+    text: "My Cart",
+    leftIcon: AppImages.Home.cart,
+  },
+  {
+    id: 3,
     text: "Delete Account",
     leftIcon: AppImages.Profile.deleteUser,
   },
   {
-    id: 9,
+    id: 4,
     text: "Log out",
     leftIcon: AppImages.Profile.LogoutIcon,
   },
 ];
+
+export const Modal_Type = {
+  deleteAccount: "DeleteAccount",
+  logout: "Logout",
+};
 
 export const dummyProfile =
   "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/KPXaHR9D96ED07-63BE-4F4D-846B-7895376E50C3.jpg?alt=media&token=32340295-3a0d-41a7-abc5-9a744cdf9802";

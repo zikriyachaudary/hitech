@@ -17,7 +17,7 @@ const ProfileBar = ({ List, setValue }: any) => {
           onPress={() => setValue(item?.id)}
           key={index}
           style={{
-            backgroundColor: AppColors.grey.greyLevel3,
+            backgroundColor: AppColors.grey.greyLevel0,
             height: normalized(45),
             paddingHorizontal: normalized(20),
             borderRadius: normalized(5),
@@ -29,8 +29,8 @@ const ProfileBar = ({ List, setValue }: any) => {
           <Image
             source={item.leftIcon}
             style={{
-              height: normalized(18),
-              width: normalized(18),
+              height: normalized(23),
+              width: normalized(23),
               resizeMode: "contain",
             }}
           />

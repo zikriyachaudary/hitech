@@ -5,6 +5,7 @@ import HomeScreen from "../UI/Sections/Home/Screens/HomeScreen";
 import OrderScreen from "../UI/Sections/Orders/Screens/OrderScreen";
 import NotificationScreen from "../UI/Sections/Notifications/Screens/NotificationScreen";
 import ProfileScreen from "../UI/Sections/Profile/Screens/ProfileScreen";
+import CartScreen from "../UI/Sections/Cart/Screens/CartScreen";
 const Stack = createNativeStackNavigator();
 
 export const HomeStack = () => {
