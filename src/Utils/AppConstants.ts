@@ -163,6 +163,8 @@ export const AppImages = {
     LogoutIcon: require("../UI/assets/Images/Profile/logoutIcon.png"),
     deleteUser: require("../UI/assets/Images/Profile/deleteUser.png"),
     delivery: require("../UI/assets/Images/Profile/homeAddress.png"),
+    cart: require("../UI/assets/Images/Profile/cart.png"),
+    locationUnfilled: require("../UI/assets/Images/Profile/locationUnfilled.png"),
   },
 };
 
@@ -191,17 +193,17 @@ export const profileBarList = [
     leftIcon: AppImages.Profile.delivery,
   },
   {
-    id: 2,
+    id: 3,
     text: "My Cart",
-    leftIcon: AppImages.Home.cart,
+    leftIcon: AppImages.Profile.cart,
   },
   {
-    id: 3,
+    id: 4,
     text: "Delete Account",
     leftIcon: AppImages.Profile.deleteUser,
   },
   {
-    id: 4,
+    id: 5,
     text: "Log out",
     leftIcon: AppImages.Profile.LogoutIcon,
   },

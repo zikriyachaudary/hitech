@@ -40,6 +40,7 @@ const CartScreen = (props: ScreenProps) => {
     house: "00",
     Area: "Some Area here",
     City: "Pakistan",
+    isDefault: true,
   };
   let productList = useSelector((state: any) => state.SliceReducer.cartDetail);
 
@@ -279,6 +280,7 @@ const CartScreen = (props: ScreenProps) => {
                   label={"Explore Products"}
                   onPress={() => {
                     dispatch(setTab(0));
+                    props?.navigation?.navigate(Routes.Home.HomeScreen);
                   }}
                   mainContainer={{ width: normalized(270) }}
                 />

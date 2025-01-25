@@ -15,5 +15,6 @@ export const Routes = {
     ProfileScreen: "ProfileScreen",
     productDetail: "ProductDetail",
     cartScreen: "cartScreen",
+    DeliveryAddress: "DeliveryAddress",
   },
 };

@@ -60,13 +60,15 @@ const ProfileScreen = (props: ScreenProps) => {
           if (id == 1) {
             // props?.navigation?.navigate(Routes.Profile.editProfile);
           } else if (id == 2) {
-            // props?.navigation?.navigate(Routes.Profile.delieryAddress);
+            props?.navigation?.navigate(Routes.Home.DeliveryAddress);
           } else if (id == 3) {
+            props?.navigation?.navigate(Routes.Home.cartScreen);
+          } else if (id == 4) {
             setOpenLogoutModal({
               value: true,
               type: Modal_Type.deleteAccount,
             });
-          } else if (id == 4) {
+          } else if (id == 5) {
             setOpenLogoutModal({
               value: true,
               type: Modal_Type.logout,

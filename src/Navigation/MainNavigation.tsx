@@ -7,6 +7,7 @@ import { Routes } from "../Utils/Routes";
 import Container from "../UI/Sections/Container/Screens/Container";
 import ProductDetailScreen from "../UI/Sections/Home/Screens/ProductDetailScreen";
 import CartScreen from "../UI/Sections/Cart/Screens/CartScreen";
+import DeliveryAddressScreen from "../UI/Sections/Profile/Screens/DeliveryAddressScreen";
 
 const MainStack = createStackNavigator();
 
@@ -26,6 +27,10 @@ const MainNavigation = () => {
         component={ProductDetailScreen}
       />
       <MainStack.Screen name={Routes.Home.cartScreen} component={CartScreen} />
+      <MainStack.Screen
+        name={Routes.Home.DeliveryAddress}
+        component={DeliveryAddressScreen}
+      />
     </MainStack.Navigator>
   );
 };
