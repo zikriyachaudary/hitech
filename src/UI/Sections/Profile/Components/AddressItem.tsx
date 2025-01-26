@@ -1,4 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  LayoutAnimation,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
 import {
   AppColors,
@@ -8,16 +15,25 @@ import {
   ScreenProps,
   ScreenSize,
 } from "../../../../Utils/AppConstants";
+import { duration } from "moment";
 
 const AddressItem = (props: any) => {
   const item = props?.item;
   return (
-    <View
+    <TouchableOpacity
       style={{
         ...styles.mainCont,
         borderColor: item?.isDefault ? AppColors.green.dark : "transparent",
         borderWidth: 1,
       }}
+      onPress={() => {
+        props?.changeDefaultAddress();
+        LayoutAnimation.configureNext({
+          ...LayoutAnimation.Presets.linear,
+          duration: 200,
+        });
+      }}
+      activeOpacity={0.7}
     >
       <TouchableOpacity activeOpacity={0.7} style={styles.editIconCont}>
         <Image source={AppImages.Products.editIcon} style={styles.editIcon} />
@@ -49,26 +65,26 @@ const AddressItem = (props: any) => {
       </View>
 
       <View style={styles.cont}>
-        <Image source={AppImages.Products.delete} style={styles.icon} />
+        <Image source={AppImages.Profile.street} style={styles.icon} />
         <Text style={styles.addressTxt}>Street No. </Text>
         <View style={styles.divider} />
         <Text style={styles.generalAddress}>{item?.street}</Text>
       </View>
 
       <View style={styles.cont}>
-        <Image source={AppImages.Products.delete} style={styles.icon} />
+        <Image source={AppImages.Profile.area} style={styles.icon} />
         <Text style={styles.addressTxt}>Area </Text>
         <View style={styles.divider} />
         <Text style={styles.generalAddress}>{item?.Area}</Text>
       </View>
 
       <View style={styles.cont}>
-        <Image source={AppImages.Products.delete} style={styles.icon} />
+        <Image source={AppImages.Profile.city} style={styles.icon} />
         <Text style={styles.addressTxt}>City</Text>
         <View style={styles.divider} />
         <Text style={styles.generalAddress}>{item?.City}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

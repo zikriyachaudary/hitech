@@ -250,13 +250,15 @@ const Login = ({ navigation }: any) => {
                 textAlign: selector?.isRtl ? "right" : "left",
               }}
             >
-              {selector?.isRtl ? "ای میل " : "Email Address"}
+              {selector?.isRtl ? "ای میل " : "Email / Phone Number"}
             </Text>
             <CustomInput
               ref={emailRef}
               onSubmitEditing={() => focusNextField(passwordRef)}
               placeHold={
-                selector?.isRtl ? "ای میل درج کریں" : "Enter Email Address"
+                selector?.isRtl
+                  ? "ای میل یا فون نمبر درج کریں"
+                  : "Enter Email Or Phone Number"
               }
               showLastIcon={true}
               rightIcon={AppImages.Auth.message}

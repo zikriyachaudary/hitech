@@ -7,14 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
-import { ScreenProps } from "../../../../Utils/AppConstants";
+import { normalized, ScreenProps } from "../../../../Utils/AppConstants";
 import AddressItem from "../Components/AddressItem";
 
 const DeliveryAddressScreen = (props: ScreenProps) => {
-  const address = [
+  const [addressList, setAddressList] = useState([
     {
       general: "House 00 Stree 00 Mohallah Lahore Pakistan",
       street: "00",
@@ -31,7 +31,22 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
       City: "Lahore",
       isDefault: false,
     },
-  ];
+    {
+      general: "House 01 Stree 01 Mohallah Mian Chunnu Pakistan",
+      street: "01",
+      house: "01",
+      Area: "Some Area here",
+      City: "Lahore",
+      isDefault: false,
+    },
+  ]);
+  const changeDefaultAddress = (index: number) => {
+    const updatedList = addressList.map((item: any, i: any) => ({
+      ...item,
+      isDefault: i === index,
+    }));
+    setAddressList(updatedList);
+  };
 
   return (
     <View style={AppStyles.MainStyle}>
@@ -41,11 +56,19 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
         title={"Delivery Address"}
       />
       <FlatList
-        data={address}
+        data={addressList}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: normalized(40) }}
         keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => {
-          return <AddressItem item={item} />;
+        renderItem={({ item, index }) => {
+          return (
+            <AddressItem
+              item={item}
+              changeDefaultAddress={() => {
+                changeDefaultAddress(index);
+              }}
+            />
+          );
         }}
       />
     </View>

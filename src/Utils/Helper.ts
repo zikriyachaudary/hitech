@@ -24,3 +24,11 @@ export const capitalizeFirstLetter = (txt = "") => {
     return "";
   }
 };
+
+export const formatPhoneNumber = (phoneNumber: any) => {
+  if (phoneNumber.startsWith("0")) {
+    return phoneNumber.replace(/^0/, "+92");
+  } else {
+    return "+92" + phoneNumber;
+  }
+};

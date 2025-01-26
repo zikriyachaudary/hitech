@@ -52,6 +52,24 @@ export const userSignupRequest = async (
   }
 };
 
+export const signinReqWithPhoneNumber = async (
+  phoneNumber: any,
+  getResponse: (userObj: any) => void
+) => {
+  try {
+    console.log("phoneNumber -----  ", phoneNumber);
+
+    await auth()
+      .signInWithPhoneNumber(phoneNumber)
+      .then(async () => {
+        getResponse({ status: true, message: "User Created Success." });
+      });
+  } catch (error) {
+    console.log("Error while singup with phone number --->>  ", error);
+    getResponse({ status: false, message: error });
+  }
+};
+
 export const loginRequest = async (
   userInput: any,
   complete: (userObj: any) => void

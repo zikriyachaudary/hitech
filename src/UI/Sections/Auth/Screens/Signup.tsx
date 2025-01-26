@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   TouchableWithoutFeedback,
   View,
@@ -20,6 +21,9 @@ import {
   AppFonts,
   hv,
   normalized,
+  prefixCodes,
+  countriesList,
+  dummyProfile,
 } from "../../../../Utils/AppConstants";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
@@ -34,6 +38,7 @@ import {
 import {
   checkUserInCollection,
   getSocialAuthReq,
+  signinReqWithPhoneNumber,
   socialAuthCheckRequest,
   userSignupRequest,
 } from "../../../../Network/Services/AuthServices";
@@ -44,10 +49,16 @@ import appleAuth from "@invertase/react-native-apple-authentication";
 import SocialBtnComp from "../../../Components/SocialButton/GoogleButton";
 import { uploadMedia } from "../../../../Network/Services/GeneralServices";
 import AppImagePicker from "../../../Components/CustomModal/AppImagePicker";
+import { formatPhoneNumber } from "../../../../Utils/Helper";
+import auth from "@react-native-firebase/auth";
 
 const SignUpScreen = (props: any) => {
   const { gmailLoginRequest, appleAuthReq } = SocialAuthManager();
-  const [countryValues, setCountryValues] = useState<any>();
+  const [countryValues, setCountryValues] = useState<any>({
+    code: "+92",
+    flag: "pk",
+    name: "Pakistan",
+  });
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -62,7 +73,12 @@ const SignUpScreen = (props: any) => {
   const [selectedImage, setSelectedImage] = useState<any>("");
   const [showImagePicker, setShowImagePicker] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [showCountryPicker, setShowCountryPicker] = useState<boolean>(false);
+  const [confirm, setConfirm] = useState<any>(null);
 
+  // verification code (OTP - One-Time-Passcode)
+  const [code, setCode] = useState("");
   ///error------->
   const [selectedImageError, setSelectedImageError] = useState("");
   const [firstNameError, setFirstNameError] = useState("");
@@ -70,6 +86,8 @@ const SignUpScreen = (props: any) => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [checkError, setCheckError] = useState<any>("");
+  const [phoneError, setPhoneError] = useState<any>("");
+
   ////////
 
   const dispatch = useDispatch();
@@ -80,12 +98,29 @@ const SignUpScreen = (props: any) => {
     }
   };
 
+  async function signInWithPhoneNumber(phoneNumber: any) {
+    console.log("phoneNumber --0-0-0----- ", phoneNumber);
+
+    const confirmation: any = await auth().signInWithPhoneNumber(phoneNumber);
+    console.log("confirmation ----   ", confirmation);
+
+    setConfirm(confirmation);
+  }
+
+  async function confirmCode() {
+    try {
+      await confirm.confirm(code);
+    } catch (error) {
+      console.log("Invalid code.");
+    }
+  }
+
   const onSignUpPress = async () => {
     let isFormValid = true;
-    if (!selectedImage) {
-      setSelectedImageError("Please select Profile Picture");
-      isFormValid = false;
-    }
+    // if (!selectedImage) {
+    //   setSelectedImageError("Please select Profile Picture");
+    //   isFormValid = false;
+    // }
     if (!firstName) {
       setFirstNameError("Please Enter first Name");
       isFormValid = false;
@@ -102,7 +137,12 @@ const SignUpScreen = (props: any) => {
       setEmailError("Please Enter Valid Email");
       isFormValid = false;
     }
-
+    if (!phoneNumber) {
+      setPhoneError("Please Enter Phone Number");
+    }
+    if (phoneNumber.length < 10) {
+      setPhoneError("Phone Number Should be 10 digits Long.");
+    }
     if (!password) {
       setPasswordError("Please Enter Password");
       isFormValid = false;
@@ -119,48 +159,56 @@ const SignUpScreen = (props: any) => {
       setCheckError("Please accept Privacy & Terms of use first.");
       isFormValid = false;
     }
-    if (!isFormValid) {
-      return;
-    }
+    // if (!isFormValid) {
+    //   return;
+    // }
     dispatch(setIsLoader(true));
     try {
-      await uploadMedia(selectedImage, (url) => {
-        if (url) {
-          const paramsObj: any = {
-            fullName: firstName + " " + lastName,
-            email: email?.toLocaleLowerCase(),
-            password: password,
-            profile_Image: url,
-            isServiceAvaliable: false,
-          };
-          userSignupRequest(paramsObj, (response) => {
-            if (response?.status) {
-              setUserDataInAsync(response?.data);
-              dispatch(setUserData(response?.data));
-              dispatch(setIsLoader(false));
-            } else {
-              let errorMessage = response?.message
-                ? response?.message
-                : "Something went wrong";
-              dispatch(
-                setIsAlertShow({
-                  value: true,
-                  message: errorMessage,
-                })
-              );
-              dispatch(setIsLoader(false));
-            }
-          });
-        } else {
-          dispatch(setIsLoader(false));
-          dispatch(
-            setIsAlertShow({
-              value: true,
-              message: "Something went wrong",
-            })
-          );
+      // await uploadMedia(selectedImage, (url) => {
+      const url = dummyProfile;
+      let number = formatPhoneNumber(phoneNumber);
+
+      if (url) {
+        const paramsObj: any = {
+          fullName: firstName + " " + lastName,
+          email: email?.toLocaleLowerCase(),
+          phoneNumber: number,
+          password: password,
+          profile_Image: url,
+          isServiceAvaliable: false,
+        };
+        if (number) {
+          await signInWithPhoneNumber(paramsObj?.phoneNumber);
         }
-      });
+        return;
+        userSignupRequest(paramsObj, (response) => {
+          if (response?.status) {
+            setUserDataInAsync(response?.data);
+            dispatch(setUserData(response?.data));
+            dispatch(setIsLoader(false));
+          } else {
+            let errorMessage = response?.message
+              ? response?.message
+              : "Something went wrong";
+            dispatch(
+              setIsAlertShow({
+                value: true,
+                message: errorMessage,
+              })
+            );
+            dispatch(setIsLoader(false));
+          }
+        });
+      } else {
+        dispatch(setIsLoader(false));
+        dispatch(
+          setIsAlertShow({
+            value: true,
+            message: "Something went wrong",
+          })
+        );
+      }
+      // });
     } catch (e) {
       dispatch(setIsLoader(false));
       console.log("error...", e);
@@ -331,6 +379,72 @@ const SignUpScreen = (props: any) => {
               />
             </View>
           </View>
+
+          <Text style={{ ...styles.inputText, marginTop: normalized(20) }}>
+            {"Phone Number"}
+          </Text>
+
+          <View
+            style={{
+              ...styles.phoneContChild,
+              borderColor: phoneError
+                ? AppColors.red.dark
+                : AppColors.grey.greyLevel9,
+              backgroundColor: phoneError
+                ? AppColors.red.pink
+                : AppColors.white.white,
+            }}
+          >
+            <View
+              style={{
+                ...styles.flagCont,
+                backgroundColor: phoneError
+                  ? AppColors.red.pink
+                  : AppColors.white.white,
+              }}
+            >
+              <Image source={AppImages.Auth.flag} style={styles.flag} />
+            </View>
+
+            <TextInput
+              placeholder={countryValues?.code}
+              placeholderTextColor={AppColors.black.black}
+              editable={false}
+              style={{
+                textAlign: "center",
+                fontFamily: AppFonts.PoppinsRegular,
+                includeFontPadding: false,
+                width: normalized(40),
+              }}
+            />
+
+            <View
+              style={{
+                flex: 1,
+                padding: 0,
+              }}
+            >
+              <TextInput
+                onSubmitEditing={() => focusNextField(emailRef)}
+                placeholder={"3XXXXXXXX"}
+                placeholderTextColor={AppColors.grey.greyLevel9}
+                keyboardType="number-pad"
+                maxLength={10}
+                style={{
+                  includeFontPadding: false,
+                  color: AppColors.black.black,
+                  fontFamily: AppFonts.PoppinsRegular,
+                }}
+                onChangeText={(txt: any) => {
+                  const nonnumericValue = txt.replace(/[^0-9]/g, "");
+                  setPhoneNumber(nonnumericValue);
+                  setPhoneError("");
+                }}
+                value={phoneNumber}
+              />
+            </View>
+          </View>
+
           <View style={styles.topContainerChild}>
             <View style={styles.inputCont}>
               <Text style={styles.inputText}>{"Passowrd"}</Text>
@@ -687,6 +801,11 @@ const styles = StyleSheet.create({
   },
   privacyTxt: {
     color: AppColors.themeColor.dark,
+  },
+  flag: {
+    width: normalized(30),
+    height: normalized(30),
+    resizeMode: "contain",
   },
 });
 
