@@ -35,7 +35,11 @@ const AddressItem = (props: any) => {
       }}
       activeOpacity={0.7}
     >
-      <TouchableOpacity activeOpacity={0.7} style={styles.editIconCont}>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        style={styles.editIconCont}
+        onPress={() => props?.onEdit(item)}
+      >
         <Image source={AppImages.Products.editIcon} style={styles.editIcon} />
       </TouchableOpacity>
       {item?.isDefault ? (

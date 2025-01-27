@@ -12,6 +12,7 @@ import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import { normalized, ScreenProps } from "../../../../Utils/AppConstants";
 import AddressItem from "../Components/AddressItem";
+import { Routes } from "../../../../Utils/Routes";
 
 const DeliveryAddressScreen = (props: ScreenProps) => {
   const [addressList, setAddressList] = useState([
@@ -66,6 +67,11 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
               item={item}
               changeDefaultAddress={() => {
                 changeDefaultAddress(index);
+              }}
+              onEdit={(item: any) => {
+                props?.navigation?.navigate(Routes.Home.UpdateDelivery, {
+                  item: item,
+                });
               }}
             />
           );

@@ -82,6 +82,7 @@ const Login = ({ navigation }: any) => {
       profile:
         "https://firebasestorage.googleapis.com/v0/b/zippy-6ae4c.appspot.com/o/admin.jpg?alt=media&token=3b1094c3-7e07-400d-90bd-dbc80dcfc916",
       secretId: "12345678",
+      isAdmin: true,
     };
     await setUserDataInAsync(userData);
     dispatch(setUserData(userData));

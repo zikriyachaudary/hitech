@@ -8,6 +8,10 @@ import Container from "../UI/Sections/Container/Screens/Container";
 import ProductDetailScreen from "../UI/Sections/Home/Screens/ProductDetailScreen";
 import CartScreen from "../UI/Sections/Cart/Screens/CartScreen";
 import DeliveryAddressScreen from "../UI/Sections/Profile/Screens/DeliveryAddressScreen";
+import UpdateDeliveryScreen from "../UI/Sections/Profile/Screens/UpdateDeliveryScreen";
+import AddProducScreen from "../UI/Sections/Home/Screens/AddProducScreen";
+import ManageProductScreen from "../UI/Sections/Home/Screens/ManageProductScreen";
+import ManageCategories from "../UI/Sections/Home/Screens/ManageCategories";
 
 const MainStack = createStackNavigator();
 
@@ -30,6 +34,22 @@ const MainNavigation = () => {
       <MainStack.Screen
         name={Routes.Home.DeliveryAddress}
         component={DeliveryAddressScreen}
+      />
+      <MainStack.Screen
+        name={Routes.Home.UpdateDelivery}
+        component={UpdateDeliveryScreen}
+      />
+      <MainStack.Screen
+        name={Routes.Admin.AddProducts}
+        component={AddProducScreen}
+      />
+      <MainStack.Screen
+        name={Routes.Admin.ManagePrducts}
+        component={ManageProductScreen}
+      />
+      <MainStack.Screen
+        name={Routes.Admin.ManageCategories}
+        component={ManageCategories}
       />
     </MainStack.Navigator>
   );

@@ -148,6 +148,9 @@ export const AppImages = {
     delete: require("../UI/assets/Images/products/Delete.png"),
     emptyCart: require("../UI/assets/Images/products/emptyCart.png"),
     warning: require("../UI/assets/Images/products/warning.png"),
+    category: require("../UI/assets/Images/products/category.png"),
+    addProduct: require("../UI/assets/Images/products/add-product.png"),
+    updateProduct: require("../UI/assets/Images/products/manage_product.png"),
   },
   bottomBar: {
     home: require("../UI/assets/Images/BottomBar/Home.png"),

@@ -16,5 +16,11 @@ export const Routes = {
     productDetail: "ProductDetail",
     cartScreen: "cartScreen",
     DeliveryAddress: "DeliveryAddress",
+    UpdateDelivery: "UpdateDelivery",
+  },
+  Admin: {
+    ManageCategories: "ManageCategories",
+    ManagePrducts: "ManageProducts",
+    AddProducts: "AddProducts",
   },
 };
