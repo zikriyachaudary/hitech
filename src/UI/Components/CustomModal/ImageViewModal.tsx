@@ -58,11 +58,7 @@ const ImageViewModal = (props: any) => {
         />
         <SafeAreaView />
 
-        <CustomHeader
-          title={`Image's`}
-          atBackPress={() => props?.onClose()}
-          type={"CreateJobHeader"}
-        />
+        <CustomHeader onPress={() => props?.onClose()} />
 
         <View style={ImageViewModalStyle.container}>
           {reload ? (
