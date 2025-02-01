@@ -1,5 +1,7 @@
 export const Routes = {
+  OtpScreen: "OtpScreen",
   Auth: {
+    welcome: "WelcomeScreen",
     login: "login",
     signup: "SignUp",
     forgerPassword: "forgetPassword",
@@ -22,5 +24,6 @@ export const Routes = {
     ManageCategories: "ManageCategories",
     ManagePrducts: "ManageProducts",
     AddProducts: "AddProducts",
+    AddAdmins: "AddAdmins",
   },
 };

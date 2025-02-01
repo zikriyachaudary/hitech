@@ -32,7 +32,9 @@ const CustomHeader = (props: any) => {
           ? icons.map((item: any, index: any) => (
               <TouchableOpacity
                 key={item.index}
-                onPress={() => {}}
+                onPress={() => {
+                  props?.onRightIconPress();
+                }}
                 activeOpacity={0.7}
               >
                 <Image source={props?.icon[index]} style={styles.icon1} />
@@ -78,6 +80,7 @@ const styles = StyleSheet.create({
   icon1: {
     width: normalized(24),
     height: normalized(24),
+    tintColor: AppColors.themeColor.dark,
   },
 });
 

@@ -8,17 +8,20 @@ import Login from "../UI/Sections/Auth/Screens/Login";
 import Signup from "../UI/Sections/Auth/Screens/Signup";
 import ForgotPassword from "../UI/Sections/Auth/Screens/ForgotPassword";
 import SocialAuthScreen from "../UI/Sections/Auth/Screens/SocialAuthScreen";
+import OTPScreen from "../UI/Sections/Home/Screens/OTPScreen";
+import WelcomeScreen from "../UI/Sections/Welcome/Screens/WelcomeScreen";
 
 const Stack = createStackNavigator();
 const AuthStack = () => {
   return (
     <Stack.Navigator
-      initialRouteName={Routes.Auth.login}
+      initialRouteName={Routes.Auth.welcome}
       screenOptions={{
         headerShown: false,
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
       }}
     >
+      <Stack.Screen name={Routes.Auth.welcome} component={WelcomeScreen} />
       <Stack.Screen name={Routes.Auth.login} component={Login} />
       <Stack.Screen name={Routes.Auth.signup} component={Signup} />
       <Stack.Screen
@@ -29,6 +32,7 @@ const AuthStack = () => {
         name={Routes.Auth.socialAuthScreen}
         component={SocialAuthScreen}
       />
+      <Stack.Screen name={Routes.OtpScreen} component={OTPScreen} />
     </Stack.Navigator>
   );
 };

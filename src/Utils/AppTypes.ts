@@ -9,4 +9,5 @@ export interface IReduxState {
   isNotchBar: boolean;
   isRtl: boolean;
   cartDetail: any;
+  adminUsersList: any;
 }

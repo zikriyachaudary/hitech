@@ -143,6 +143,7 @@ export const AppImages = {
     cart: require("../UI/assets/Images/Home/cart.png"),
     star: require("../UI/assets/Images/Home/star.png"),
     PlusBlack: require("../UI/assets/Images/Home/plus.png"),
+    Admin: require("../UI/assets/Images/Home/admin.png"),
   },
   Products: {
     editIcon: require("../UI/assets/Images/products/editIcon.png"),
@@ -1192,7 +1193,7 @@ export const Categories = [
 export const dummyList = [
   {
     name: "Bike Tyres",
-    price: 8000,
+    price: "8000",
     images: [
       "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
       "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",

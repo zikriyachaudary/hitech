@@ -8,11 +8,16 @@ import {
 } from "../../../../Utils/AppConstants";
 import ProductItem from "../Components/ProductItem";
 import { Routes } from "../../../../Utils/Routes";
+import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 
 const ManageProductScreen = (props: ScreenProps) => {
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
+      <CustomHeader
+        title={"All Products"}
+        onPress={() => props?.navigation?.goBack()}
+      />
       <FlatList
         data={dummyList}
         showsVerticalScrollIndicator={false}
@@ -34,7 +39,6 @@ const ManageProductScreen = (props: ScreenProps) => {
           );
         }}
       />
-      <Text>ManageProductScreen</Text>
     </View>
   );
 };

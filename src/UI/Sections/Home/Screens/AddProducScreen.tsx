@@ -40,8 +40,7 @@ const AddProducScreen = (props: ScreenProps) => {
   const [productMainCat, setProductMainCat] = useState<any>(
     productDetail?.category || null
   );
-
-  const [catList, setCatList] = useState<any>(Categories);
+  const [catList, setCatList] = useState<any>([...Categories]);
 
   const [productSubCat, setProductSubCat] = useState<any>(
     productDetail?.subCategory || null
@@ -87,12 +86,13 @@ const AddProducScreen = (props: ScreenProps) => {
   };
 
   useEffect(() => {
-    if (productDetail) {
-      const matchedCategory = Categories.find(
-        (cat) => cat.category === productDetail.category
-      );
-      setCatList(matchedCategory || null);
-    }
+    // if (productDetail) {
+    //   const matchedCategory = Categories.find(
+    //     (cat) => cat.category === productDetail.category
+    //   );
+    //   setCatList(matchedCategory || null);
+    // }
+    setCatList(Categories);
   }, [productDetail]);
 
   const removeImage = (index: number) => {
@@ -142,6 +142,10 @@ const AddProducScreen = (props: ScreenProps) => {
       <CustomHeader
         title={productDetail ? "Update Product" : "Add Product"}
         onPress={() => props?.navigation?.goBack()}
+        {...(productDetail && {
+          icon: [AppImages.Products.delete],
+          onRightIconPress: () => console.log(" deleted ---------"),
+        })}
       />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -218,11 +222,13 @@ const AddProducScreen = (props: ScreenProps) => {
             atSelect={(val: any) => {
               setCatError("");
               setProductSubCat(null);
-              setProductMainCat(val);
+              console.log(" val ----", val);
+
+              // setProductMainCat(val);
             }}
-            selected={productMainCat?.category || productMainCat}
+            selected={productMainCat}
             optionKey={"category"}
-            list={catList}
+            list={Categories}
           />
           {catError && <Text style={styles.errorMsg}>{catError}</Text>}
           {catList?.subcategories?.length > 0 && (
@@ -238,7 +244,7 @@ const AddProducScreen = (props: ScreenProps) => {
                   setProductSubCat(val);
                 }}
                 selected={productSubCat?.name || productSubCat}
-                optionKey={"title"}
+                optionKey={"name"}
                 list={catList?.subcategories}
               />
               {catSubError && (

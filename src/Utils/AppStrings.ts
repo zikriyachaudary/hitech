@@ -65,3 +65,8 @@ export const SocialTypeStrings = {
   google: "Google",
   apple: "Apple",
 };
+
+export const ADMN_TYPE = {
+  superAdmin: "Super Admin",
+  Admin: "Admin",
+};

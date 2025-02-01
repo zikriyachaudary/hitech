@@ -12,6 +12,7 @@ const initialState: IReduxState = {
   isNotchBar: false,
   isRtl: false,
   cartDetail: [],
+  adminUsersList: [],
 };
 
 export const Reducer = createSlice({
@@ -52,6 +53,9 @@ export const Reducer = createSlice({
     updateCartDetail: (state, action) => {
       state.cartDetail = action.payload;
     },
+    setAdminUsersList: (state, action) => {
+      state.cartDetail = action.payload;
+    },
   },
 });
 
@@ -67,6 +71,7 @@ export const {
   setIsNotchBar,
   setIsRtl,
   updateCartDetail,
+  setAdminUsersList,
 } = Reducer.actions;
 
 export default Reducer.reducer;

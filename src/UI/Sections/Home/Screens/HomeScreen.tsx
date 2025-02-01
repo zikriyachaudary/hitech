@@ -47,6 +47,11 @@ const HomeScreen = (props: ScreenProps) => {
       title: "Update & Delete Existing Products",
       id: 3,
     },
+    {
+      icon: AppImages.Home.Admin,
+      title: "Manage Multiple Admins",
+      id: 4,
+    },
   ];
   return (
     <View style={[AppStyles.MainStyle]}>
@@ -73,6 +78,8 @@ const HomeScreen = (props: ScreenProps) => {
                     props?.navigation?.navigate(Routes.Admin.AddProducts);
                   } else if (item?.id == 3) {
                     props?.navigation?.navigate(Routes.Admin.ManagePrducts);
+                  } else if (item?.id == 4) {
+                    props?.navigation?.navigate(Routes.Admin.AddAdmins);
                   }
                 }}
               >
