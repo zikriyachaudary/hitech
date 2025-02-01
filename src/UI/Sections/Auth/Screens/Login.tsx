@@ -6,6 +6,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import {
@@ -14,6 +15,7 @@ import {
   normalized,
   AppFonts,
   AppHorizontalMargin,
+  ScreenProps,
 } from "../../../../Utils/AppConstants";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import { Routes } from "../../../../Utils/Routes";
@@ -41,7 +43,7 @@ import SocialAuthManager from "../../../../Hooks/SocialAuthManager";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 
-const Login = ({ navigation }: any) => {
+const Login = (props: ScreenProps) => {
   const { gmailLoginRequest, appleAuthReq } = SocialAuthManager();
   const [email, setEmail] = useState<string>("");
   const { isNetConnected } = useSelector(
@@ -50,6 +52,7 @@ const Login = ({ navigation }: any) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const isAdmin = props?.route?.params?.isAdmin;
   const [password, setPassword] = useState<string>("");
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -194,13 +197,13 @@ const Login = ({ navigation }: any) => {
                 setUserDataInAsync(res?.data);
                 dispatch(setUserData(res?.data));
               } else {
-                navigation?.navigate(Routes.Auth.socialAuthScreen, {
+                props?.navigation?.navigate(Routes.Auth.socialAuthScreen, {
                   socialParams: { ...paramsObj, socailAuthType: type },
                 });
               }
             });
           } else {
-            navigation?.navigate(Routes.Auth.socialAuthScreen, {
+            props?.navigation?.navigate(Routes.Auth.socialAuthScreen, {
               socialParams: { ...paramsObj, socailAuthType: type },
             });
           }
@@ -292,86 +295,117 @@ const Login = ({ navigation }: any) => {
               value={password}
               errorMsg={passwordError}
             />
-            <Text
-              style={{
-                ...styles.forgetText,
-
-                alignSelf: selector?.isRtl ? "flex-start" : "flex-end",
-              }}
-              onPress={() => navigation.navigate(Routes.Auth.forgerPassword)}
-            >
-              {selector?.isRtl ? "پاس ورڈ بھول گئے؟" : "Forgot Password?"}
-            </Text>
-            <FilledButton
-              label={selector?.isRtl ? "لاگ ان" : "Login"}
-              onPress={LogIn}
-            />
-            <View style={styles.midCont}>
-              <View style={styles.line}></View>
+            {!isAdmin && (
               <Text
                 style={{
-                  ...styles.signinText,
-                  textAlign: selector?.isRtl ? "right" : "left",
+                  ...styles.forgetText,
+
+                  alignSelf: selector?.isRtl ? "flex-start" : "flex-end",
+                }}
+                onPress={() =>
+                  props?.navigation.navigate(Routes.Auth.forgerPassword)
+                }
+              >
+                {selector?.isRtl ? "پاس ورڈ بھول گئے؟" : "Forgot Password?"}
+              </Text>
+            )}
+            <FilledButton
+              label={
+                isAdmin
+                  ? "Sign in with Super Admin"
+                  : selector?.isRtl
+                  ? "لاگ ان"
+                  : "Login"
+              }
+              onPress={LogIn}
+            />
+
+            {isAdmin ? (
+              <TouchableOpacity
+                activeOpacity={1}
+                style={styles.unfilledBtn}
+                onPress={() => {
+                  props?.navigation?.navigate(Routes.OtpScreen, {
+                    fromAuth: true,
+                  });
                 }}
               >
-                {selector?.isRtl ? " سائن ان کریں" : "Sign In With"}
-              </Text>
-              <View style={styles.line}></View>
-            </View>
+                <Text style={styles.unfilledBtnTxt}>Sign in with Admin</Text>
+              </TouchableOpacity>
+            ) : (
+              <>
+                <View style={styles.midCont}>
+                  <View style={styles.line}></View>
+                  <Text
+                    style={{
+                      ...styles.signinText,
+                      textAlign: selector?.isRtl ? "right" : "left",
+                    }}
+                  >
+                    {selector?.isRtl ? " سائن ان کریں" : "Sign In With"}
+                  </Text>
+                  <View style={styles.line}></View>
+                </View>
 
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent:
-                  appleAuth.isSupported && Platform.OS === "ios"
-                    ? "space-between"
-                    : "center",
-                alignItems: "center",
-              }}
-            >
-              <SocialBtnComp
-                title={
-                  selector?.isRtl
-                    ? "گوگل کے ساتھ سائن ان کریں"
-                    : "Sign in with Google"
-                }
-                image={AppImages.Auth.google}
-                atPress={() => {
-                  socialAuthReq(SocialTypeStrings.google);
-                }}
-                fontSize={selector?.isRtl ? normalized(10) : normalized(12)}
-                isRtl={selector?.isRtl}
-              />
-              {appleAuth.isSupported && Platform.OS === "ios" ? (
-                <SocialBtnComp
-                  title={
-                    selector?.isRtl
-                      ? "ایپل کے ساتھ سائن ان کریں"
-                      : "Sign in with Apple"
-                  }
-                  image={AppImages.Auth.apple}
-                  atPress={() => {
-                    socialAuthReq(SocialTypeStrings.apple);
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent:
+                      appleAuth.isSupported && Platform.OS === "ios"
+                        ? "space-between"
+                        : "center",
+                    alignItems: "center",
                   }}
-                  fontSize={selector?.isRtl ? normalized(10) : normalized(12)}
-                />
-              ) : null}
-            </View>
+                >
+                  <SocialBtnComp
+                    title={
+                      selector?.isRtl
+                        ? "گوگل کے ساتھ سائن ان کریں"
+                        : "Sign in with Google"
+                    }
+                    image={AppImages.Auth.google}
+                    atPress={() => {
+                      socialAuthReq(SocialTypeStrings.google);
+                    }}
+                    fontSize={selector?.isRtl ? normalized(10) : normalized(12)}
+                    isRtl={selector?.isRtl}
+                  />
+                  {appleAuth.isSupported && Platform.OS === "ios" ? (
+                    <SocialBtnComp
+                      title={
+                        selector?.isRtl
+                          ? "ایپل کے ساتھ سائن ان کریں"
+                          : "Sign in with Apple"
+                      }
+                      image={AppImages.Auth.apple}
+                      atPress={() => {
+                        socialAuthReq(SocialTypeStrings.apple);
+                      }}
+                      fontSize={
+                        selector?.isRtl ? normalized(10) : normalized(12)
+                      }
+                    />
+                  ) : null}
+                </View>
+              </>
+            )}
           </ScrollView>
         </KeyboardAvoidingView>
-        <View style={styles.lastCont}>
-          <Text style={styles.firstText}>
-            {selector?.isRtl
-              ? "کیا آپ کا اکاؤنٹ نہیں ہے؟ "
-              : "Don't have an account? "}
-            <Text
-              onPress={() => navigation.navigate(Routes.Auth.signup)}
-              style={styles.signupText}
-            >
-              {selector?.isRtl ? "سائن اپ کریں" : "Sign Up"}
+        {!isAdmin && (
+          <View style={styles.lastCont}>
+            <Text style={styles.firstText}>
+              {selector?.isRtl
+                ? "کیا آپ کا اکاؤنٹ نہیں ہے؟ "
+                : "Don't have an account? "}
+              <Text
+                onPress={() => props?.navigation.navigate(Routes.Auth.signup)}
+                style={styles.signupText}
+              >
+                {selector?.isRtl ? "سائن اپ کریں" : "Sign Up"}
+              </Text>
             </Text>
-          </Text>
-        </View>
+          </View>
+        )}
       </SafeAreaView>
     </View>
   );
@@ -443,6 +477,23 @@ const styles = StyleSheet.create({
     fontFamily: AppFonts.PoppinsRegular,
     fontSize: normalized(14),
     fontWeight: "700",
+  },
+  unfilledBtn: {
+    marginTop: 25,
+    backgroundColor: AppColors.white.white,
+    borderRadius: normalized(24),
+    alignItems: "center",
+    justifyContent: "center",
+    height: normalized(49),
+    marginHorizontal: normalized(20),
+    width: "90%",
+    borderWidth: 1,
+    borderColor: AppColors.themeColor.dark,
+  },
+  unfilledBtnTxt: {
+    color: AppColors.themeColor.dark,
+    fontSize: normalized(14),
+    fontFamily: AppFonts.PoppinsMedium,
   },
 });
 

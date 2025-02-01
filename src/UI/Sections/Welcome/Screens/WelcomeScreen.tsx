@@ -15,11 +15,12 @@ import {
   AppFonts,
   AppImages,
   normalized,
+  ScreenProps,
   ScreenSize,
 } from "../../../../Utils/AppConstants";
-import FilledButton from "../../../Components/CustomButton/FilledButton";
+import { Routes } from "../../../../Utils/Routes";
 
-const WelcomeScreen = () => {
+const WelcomeScreen = (props: ScreenProps) => {
   return (
     <LinearGradient colors={["#0900FF", "#DE8225"]} style={AppStyles.MainStyle}>
       <AppStatusBar backgroundColor="transparent" barStyle="light-content" />
@@ -36,14 +37,20 @@ const WelcomeScreen = () => {
           </View>
           <View style={styles.btnCont}>
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={() => {
+                props?.navigation?.navigate(Routes.Auth.login);
+              }}
               activeOpacity={0.7}
               style={styles.btn}
             >
               <Text style={styles.btnTxt}>Continue As User</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={() => {
+                props?.navigation?.navigate(Routes.Auth.login, {
+                  isAdmin: true,
+                });
+              }}
               activeOpacity={0.7}
               style={styles.btn}
             >
