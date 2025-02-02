@@ -21,6 +21,7 @@ import { AppRootStore } from "../../../../Redux/store/AppStore";
 import {
   setIsLoader,
   setShowToast,
+  setUserData,
 } from "../../../../Redux/Reducers/AppReducers";
 import { ADMN_TYPE, AppStrings } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
@@ -30,11 +31,19 @@ import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import CodeInput from "../Components/OTPInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
+import {
+  addAdminInToSuperAdminReq,
+  fetchAdminListReq,
+  findAdminByEmail,
+  updateAdminInToSuperAdminReq,
+} from "../../../../Network/Services/AdminGeneralServices";
+import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 
 const OTPScreen = (props: ScreenProps) => {
   const params = props?.route?.params;
   const isFromAuth = params?.fromAuth;
   const adminObj = params?.adminObj;
+
   const dispatch = useDispatch();
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
@@ -61,89 +70,99 @@ const OTPScreen = (props: ScreenProps) => {
     }
   };
   ////////////
+  const onAddAdminFunc = async () => {
+    let isFormValid = true;
+    if (!firstName) {
+      setFirstNameError("Please Enter first Name");
+      isFormValid = false;
+    }
+    if (!lastName) {
+      setLastNameError("Please Enter last Name");
+      isFormValid = false;
+    }
+    if (otp?.length < 6) {
+      setOTPerror("Please Enter OTP");
+      isFormValid = false;
+    }
+    if (!isFormValid) {
+      return;
+    }
+    if (!selector?.isNetConnected) {
+      dispatch(
+        setShowToast({
+          type: AppStrings.ToastType.error,
+          message: AppStrings.Network.internetError,
+        })
+      );
+      return;
+    }
+    dispatch(setIsLoader(true));
+    let payload: any = {
+      firstName: firstName.toLocaleLowerCase(),
+      lastName: lastName.toLocaleLowerCase(),
+      pinCode: otp,
+      email: email,
+      userId: selector?.userData?.userId,
+      adminType: ADMN_TYPE.Admin,
+      profile: selector?.userData?.profileImage || "",
+      adminId: adminObj?.adminId
+        ? adminObj?.adminId
+        : CommonDataManager.getSharedInstance().makeid(8).toString(),
+    };
+    let isEmailMatch = false;
+    const list: any = await fetchAdminListReq(selector?.userData?.adminId);
+    console.log("list ---->>>   ", list);
 
-  // const onAddAdminFunc = async () => {
-  //   let isFormValid = true;
-  //   if (!firstName) {
-  //     setFirstNameError("Please Enter first Name");
-  //     isFormValid = false;
-  //   }
-  //   if (!lastName) {
-  //     setLastNameError("Please Enter last Name");
-  //     isFormValid = false;
-  //   }
-  //   if (otp?.length < 4) {
-  //     setOTPerror("Please Enter OTP");
-  //     isFormValid = false;
-  //   }
-  //   if (!isFormValid) {
-  //     return;
-  //   }
-  //   if (!selector?.isNetConnected) {
-  //     dispatch(
-  //       setShowToast({
-  //         type: AppStrings.ToastType.error,
-  //         message: AppStrings.Network.internetError,
-  //       })
-  //     );
-  //     return;
-  //   }
-  //   dispatch(setIsLoader(true));
-  //   let payload: any = {
-  //     firstName: firstName.toLocaleLowerCase(),
-  //     lastName: lastName.toLocaleLowerCase(),
-  //     pinCode: otp,
-  //     userId: selector?.userData?.userId,
-  //     adminType: ADMN_TYPE.Admin,
-  //     profile: selector?.userData?.profile || "",
-  //     adminId: adminObj?.adminId
-  //       ? adminObj?.adminId
-  //       : CommonDataManager.getSharedInstance().makeid(6).toString(),
-  //   };
-  //   let isOTPMatch = false;
-  //   // const list: any = await fetchAdminListReq(selector?.userData?.userId);
-  //   for (let index = 0; index < list.length; index++) {
-  //     const element = list[index];
-  //     if (element?.pinCode === otp && element?.adminId !== payload?.adminId) {
-  //       isOTPMatch = true;
-  //       dispatch(setIsLoader(false));
-  //       dispatch(
-  //         setShowToast({
-  //           type: AppStrings.ToastType.error,
-  //           message: "An admin has already been created with this PIN code.",
-  //         })
-  //       );
-  //       return;
-  //     }
-  //   }
-  //   let res = null;
-  //   if (adminObj?.adminId) {
-  //     res = await updateAdminInToSuperAdminReq(payload);
-  //   } else {
-  //     res = await addAdminInToSuperAdminReq(payload);
-  //   }
-  //   dispatch(setIsLoader(false));
-  //   props?.navigation?.goBack();
-  // };
+    for (let index = 0; index < list.length; index++) {
+      const element = list[index];
+      if (element?.email === email && element?.adminId !== payload?.adminId) {
+        isEmailMatch = true;
+        dispatch(setIsLoader(false));
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.error,
+            message: "An admin has already been created with this email.",
+          })
+        );
+        return;
+      }
+    }
+    let res = null;
+    if (adminObj?.adminId) {
+      res = await updateAdminInToSuperAdminReq(payload);
+    } else {
+      res = await addAdminInToSuperAdminReq(payload);
+    }
+    dispatch(setIsLoader(false));
+    props?.navigation?.goBack();
+  };
 
-  // const simpleAdminLogin = async () => {
-  //   if (otp?.length < 4) {
-  //     setOTPerror("Please Enter OTP");
-  //     return;
-  //   }
-  //   dispatch(setIsLoader(true));
-  //   let findAdmin = await findAdminByPinCode(otp.toString());
+  const simpleAdminLogin = async () => {
+    if (otp?.length < 4) {
+      setOTPerror("Please Enter OTP");
+      return;
+    }
+    dispatch(setIsLoader(true));
+    const params = { email: email, otp: otp };
+    let findAdmin = await findAdminByEmail(params);
 
-  //   if (findAdmin?.adminId) {
-  //     let userObj = { ...findAdmin, isAdmin: true };
-  //     setUserDataInAsync(userObj);
-  //     dispatch(setUserData(userObj));
-  //   } else {
-  //     setOTPerror("please Enter valid OTP");
-  //     setOtp("");
-  //   }
-  //   dispatch(setIsLoader(false));
-  // };
+    if (findAdmin?.adminId) {
+      let userObj = { ...findAdmin, isAdmin: true };
+      console.log("userObj -----   ", userObj);
+
+      setUserDataInAsync(userObj);
+      dispatch(setUserData(userObj));
+    } else {
+      setOtp("");
+      dispatch(
+        setShowToast({
+          type: AppStrings.ToastType.error,
+          message: "Invalid Credentials",
+        })
+      );
+    }
+    dispatch(setIsLoader(false));
+  };
 
   return (
     <View style={{ ...AppStyles.MainStyle }}>
@@ -181,7 +200,6 @@ const OTPScreen = (props: ScreenProps) => {
                 <CustomInput
                   onSubmitEditing={() => focusNextField(lastNameRef)}
                   placeHold={"First name"}
-                  placeHolderColor={AppColors.grey.greyLevel1}
                   value={firstName}
                   errorMsg={firstNameError}
                   setValue={(val: string) => {
@@ -196,7 +214,6 @@ const OTPScreen = (props: ScreenProps) => {
                 <CustomInput
                   ref={lastNameRef}
                   placeHold={"Last name"}
-                  placeHolderColor={AppColors.grey.greyLevel1}
                   value={lastName}
                   setValue={(val: string) => {
                     setLastName(val);
@@ -213,7 +230,6 @@ const OTPScreen = (props: ScreenProps) => {
             <CustomInput
               ref={lastNameRef}
               placeHold={"Email Address"}
-              placeHolderColor={AppColors.grey.greyLevel1}
               value={email}
               setValue={(val: string) => {
                 setEmail(val);
@@ -244,10 +260,24 @@ const OTPScreen = (props: ScreenProps) => {
             >
               please login your account using PinCode!
             </Text>
+            <Text style={{ ...styles.inputText, marginTop: normalized(15) }}>
+              {"Email"}
+            </Text>
+            <CustomInput
+              ref={lastNameRef}
+              placeHold={"Enter Email Address"}
+              value={email}
+              setValue={(val: string) => {
+                setEmail(val);
+                setEmailError("");
+              }}
+              keyboardType="default"
+              errorMsg={lastNameError}
+            />
           </View>
         )}
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-          <Text style={styles.pinTxt}>PIN Code</Text>
+          <Text style={styles.pinTxt}>Secret PIN Code</Text>
 
           <CodeInput
             codeLength={6}
@@ -280,9 +310,9 @@ const OTPScreen = (props: ScreenProps) => {
         }
         onPress={() => {
           if (isFromAuth) {
-            // simpleAdminLogin();
+            simpleAdminLogin();
           } else {
-            // onAddAdminFunc();
+            onAddAdminFunc();
           }
         }}
         mainCustomStyle={{ marginBottom: hv(15) }}

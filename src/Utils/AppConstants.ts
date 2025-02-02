@@ -177,6 +177,12 @@ export const AppImages = {
   },
 };
 
+export const lottieAnimation = {
+  tickAnimation: require("../UI/assets/animation/TickAnim.json"),
+  closeAnimation: require("../UI/assets/animation/CloseAnim.json"),
+  waringAnimation: require("../UI/assets/animation/warningAnim.json"),
+};
+
 export const imagePickerConstants = [
   {
     id: 0,

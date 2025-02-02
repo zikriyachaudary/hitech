@@ -6,10 +6,14 @@ export const AsyncKeyStrings = {
 };
 
 export const Collections = {
-  Users: "Users",
-  NOTIFICATION_COLLECTION: "Notification_Collection",
-  FCM_COLLECTION: "FCM_Collection",
+  CUSTOMERS_COLLECTION: "CUSTOMERS_COLLECTION",
+  NOTIFICATION_COLLECTION: "NOTIFICATIONS_COLLECTION",
+  FCM_COLLECTION: "FCM_COLLECTIONS",
   SOCIAL_AUTH_CREDENTIALS: "SOCIAL_AUTH_CREDENTIALS",
+  ORDER_COLLECTION: "ORDER_COLLECTION",
+  ADMIN_COLLECTION: "ADMIN_COLLECTION",
+  CATEGORIES_COLLECTION: "ADMIN_COLLECTION",
+  ADMIN_LIST: "Admin_List",
 };
 
 export const AppStrings = {
@@ -37,6 +41,7 @@ export const AppStrings = {
   ToastType: {
     success: "Success",
     error: "Error",
+    warning: "Warning",
   },
   Auth: {
     userToken: "user_token",

@@ -49,7 +49,7 @@ const ProfileScreen = (props: ScreenProps) => {
       <Text style={styles.profile}>Profile</Text>
       <View style={{ height: normalized(20) }} />
       <AppImageViewer
-        source={{ uri: selector?.userData?.profile }}
+        source={{ uri: selector?.userData?.profileImage }}
         style={styles.profileImg}
         resizeMode="cover"
       />

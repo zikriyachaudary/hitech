@@ -22,7 +22,6 @@ import { Routes } from "../../../../Utils/Routes";
 import { AppStrings, SocialTypeStrings } from "../../../../Utils/AppStrings";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setIsAlertShow,
   setIsLoader,
   setShowToast,
   setUserData,
@@ -79,18 +78,6 @@ const Login = (props: ScreenProps) => {
   };
 
   const LogIn = async () => {
-    const userData = {
-      fullName: "Zikriya Chaudary",
-      email: "zikriya@yopmail.com",
-      profile:
-        "https://firebasestorage.googleapis.com/v0/b/zippy-6ae4c.appspot.com/o/admin.jpg?alt=media&token=3b1094c3-7e07-400d-90bd-dbc80dcfc916",
-      secretId: "12345678",
-      isAdmin: true,
-    };
-    await setUserDataInAsync(userData);
-    dispatch(setUserData(userData));
-    return;
-
     let isFormValid = true;
     if (!email) {
       setEmailError("Please enter an Email");
@@ -109,15 +96,14 @@ const Login = (props: ScreenProps) => {
       return;
     }
     if (!isNetConnected) {
-      dispatch(
-        setIsAlertShow({
-          value: true,
-          message: AppStrings.Network.internetError,
-        })
-      );
+      showToast(AppStrings.ToastType.error, AppStrings.Network.internetError);
       return;
     }
-    const paramsObj = { email: email.toLocaleLowerCase(), password: password };
+    const paramsObj = {
+      email: email.toLocaleLowerCase(),
+      password: password,
+      isAdmin,
+    };
     dispatch(setIsLoader(true));
     await loginRequest(paramsObj, async (response) => {
       if (response?.status) {
@@ -126,35 +112,29 @@ const Login = (props: ScreenProps) => {
             ...response?.data,
             secretId: password,
           };
-          await updatedUserReq(
-            response?.data?.userId,
-            userUpdatedData,
-            async (response: any) => {
-              if (response?.status) {
-              } else {
-                console.log("Error: ", response?.message);
+          if (!isAdmin) {
+            await updatedUserReq(
+              response?.data?.userId,
+              userUpdatedData,
+              async (response: any) => {
+                if (response?.status) {
+                } else {
+                  console.log("Error: ", response?.message);
+                }
               }
-            }
-          );
+            );
+          }
+          console.log("updated data ---->>>   ", userUpdatedData);
+
           setUserDataInAsync(userUpdatedData);
           dispatch(setUserData(userUpdatedData));
         } else {
-          dispatch(
-            setIsAlertShow({
-              value: true,
-              message: "Invalid Credentials",
-            })
-          );
+          showToast(AppStrings.ToastType.error, "Invalid Credentials");
         }
         dispatch(setIsLoader(false));
       } else {
         dispatch(setIsLoader(false));
-        dispatch(
-          setIsAlertShow({
-            value: true,
-            message: response?.message,
-          })
-        );
+        showToast(AppStrings.ToastType.error, response?.message);
       }
     });
   };
@@ -194,6 +174,7 @@ const Login = (props: ScreenProps) => {
                     }
                   }
                 );
+
                 setUserDataInAsync(res?.data);
                 dispatch(setUserData(res?.data));
               } else {

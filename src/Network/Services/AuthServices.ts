@@ -24,7 +24,7 @@ export const userSignupRequest = async (
         delete loginObj["password"];
 
         await firestore()
-          .collection(Collections.Users)
+          .collection(Collections.CUSTOMERS_COLLECTION)
           .doc(id)
           .set(loginObj)
           .then((docRef) => {
@@ -82,7 +82,11 @@ export const loginRequest = async (
       )
       .then(() => {
         firestore()
-          .collection(Collections.Users)
+          .collection(
+            userInput?.isAdmin
+              ? Collections.ADMIN_COLLECTION
+              : Collections.CUSTOMERS_COLLECTION
+          )
           .where("email", "==", userInput?.email?.toLocaleLowerCase())
           .get()
           .then((querySnapshot: any) => {
@@ -156,7 +160,7 @@ export const checkUserInCollection = async (
   onComplete: any
 ) => {
   await firestore()
-    .collection(Collections.Users)
+    .collection(Collections.CUSTOMERS_COLLECTION)
     .where("socialId", "==", userInput?.password)
     .get()
     .then((querySnapshot: any) => {
@@ -185,7 +189,7 @@ export const createNewSocialUser = async (userInput: any, getResponse: any) => {
   };
   delete loginObj["password"];
   await firestore()
-    .collection(Collections.Users)
+    .collection(Collections.CUSTOMERS_COLLECTION)
     .doc(id)
     .set(loginObj)
     .then((docRef) => {
@@ -203,7 +207,7 @@ export const updatedUserReq = async (
 ) => {
   try {
     await firestore()
-      .collection(Collections.Users)
+      .collection(Collections.CUSTOMERS_COLLECTION)
       .doc(userId)
       .update(fieldsToUpdate)
       .then(() => {
@@ -278,10 +282,16 @@ export const deleteUserAccount = async (
         await user.reauthenticateWithCredential(credential);
       }
       await user.delete();
-      await firestore().collection(Collections.Users).doc(userId).delete();
+      await firestore()
+        .collection(Collections.CUSTOMERS_COLLECTION)
+        .doc(userId)
+        .delete();
       onComplete({ status: true, message: "User delete successfully" });
     } else {
-      await firestore().collection(Collections.Users).doc(userId).delete();
+      await firestore()
+        .collection(Collections.CUSTOMERS_COLLECTION)
+        .doc(userId)
+        .delete();
       onComplete({ status: true, message: "No user is currently signed in" });
     }
   } catch (error) {

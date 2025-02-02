@@ -26,17 +26,30 @@ import {
 import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import { Routes } from "../../../../Utils/Routes";
+import {
+  deleteAdminInToSuperAdminReq,
+  fetchAdminListReq,
+} from "../../../../Network/Services/AdminGeneralServices";
 
 const AddAdminScreen = (props: ScreenProps) => {
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
   const selector = useSelector((state: AppRootStore) => state.SliceReducer);
-  const [adminList, setAdminList] = useState([
-    {
-      firstName: "First",
-      lastName: "Last",
-    },
-  ]);
+  const [adminList, setAdminList] = useState([]);
+
+  useEffect(() => {
+    if (selector?.userData?.userId) fetchAdminList();
+  }, [isFocused]);
+
+  const fetchAdminList = async () => {
+    if (!selector?.adminUsersList[0]) {
+      dispatch(setIsLoader(true));
+    }
+    const list: any = await fetchAdminListReq(selector?.userData?.userId);
+    dispatch(setIsLoader(false));
+    setAdminList(list ?? []);
+    dispatch(setAdminUsersList(list ?? []));
+  };
 
   return (
     <View style={AppStyles.MainStyle}>
@@ -86,7 +99,7 @@ const AddAdminScreen = (props: ScreenProps) => {
                       fontFamily: AppFonts.PoppinsMedium,
                     }}
                   >
-                    {"* * * * * *"}
+                    {item?.email}
                   </Text>
                 </View>
                 <View style={styles.ratingCont}>
@@ -109,8 +122,8 @@ const AddAdminScreen = (props: ScreenProps) => {
                     }}
                     onPress={async () => {
                       dispatch(setIsLoader(true));
-                      //   await deleteAdminInToSuperAdminReq(item);
-                      //   await fetchAdminList();
+                      await deleteAdminInToSuperAdminReq(item);
+                      await fetchAdminList();
                       dispatch(setIsLoader(false));
                     }}
                   >

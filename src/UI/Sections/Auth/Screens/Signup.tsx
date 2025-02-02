@@ -159,9 +159,9 @@ const SignUpScreen = (props: any) => {
       setCheckError("Please accept Privacy & Terms of use first.");
       isFormValid = false;
     }
-    // if (!isFormValid) {
-    //   return;
-    // }
+    if (!isFormValid) {
+      return;
+    }
     dispatch(setIsLoader(true));
     try {
       // await uploadMedia(selectedImage, (url) => {
@@ -174,14 +174,16 @@ const SignUpScreen = (props: any) => {
           email: email?.toLocaleLowerCase(),
           phoneNumber: number,
           password: password,
-          profile_Image: url,
-          isServiceAvaliable: false,
+          profileImage: url,
         };
-        if (number) {
-          await signInWithPhoneNumber(paramsObj?.phoneNumber);
-        }
-        return;
-        userSignupRequest(paramsObj, (response) => {
+        // if (number) {
+        //   await signInWithPhoneNumber(paramsObj?.phoneNumber);
+        // }
+        // return;
+
+        await userSignupRequest(paramsObj, (response) => {
+          console.log("response --->>>   ", response);
+
           if (response?.status) {
             setUserDataInAsync(response?.data);
             dispatch(setUserData(response?.data));
