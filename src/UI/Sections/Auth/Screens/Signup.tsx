@@ -33,11 +33,14 @@ import { useDispatch } from "react-redux";
 import {
   setIsAlertShow,
   setIsLoader,
+  setShowToast,
   setUserData,
 } from "../../../../Redux/Reducers/AppReducers";
 import {
   checkUserInCollection,
   getSocialAuthReq,
+  isEmailAlreadyRegistered,
+  sendEmailOtp,
   signinReqWithPhoneNumber,
   socialAuthCheckRequest,
   userSignupRequest,
@@ -98,29 +101,20 @@ const SignUpScreen = (props: any) => {
     }
   };
 
-  async function signInWithPhoneNumber(phoneNumber: any) {
-    console.log("phoneNumber --0-0-0----- ", phoneNumber);
-
-    const confirmation: any = await auth().signInWithPhoneNumber(phoneNumber);
-    console.log("confirmation ----   ", confirmation);
-
-    setConfirm(confirmation);
+  function onAuthStateChanged(user: any) {
+    console.log("user ---->>>>   ", user);
   }
-
-  async function confirmCode() {
-    try {
-      await confirm.confirm(code);
-    } catch (error) {
-      console.log("Invalid code.");
-    }
-  }
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, []);
 
   const onSignUpPress = async () => {
     let isFormValid = true;
-    // if (!selectedImage) {
-    //   setSelectedImageError("Please select Profile Picture");
-    //   isFormValid = false;
-    // }
+    if (!selectedImage) {
+      setSelectedImageError("Please select Profile Picture");
+      isFormValid = false;
+    }
     if (!firstName) {
       setFirstNameError("Please Enter first Name");
       isFormValid = false;
@@ -162,59 +156,105 @@ const SignUpScreen = (props: any) => {
     if (!isFormValid) {
       return;
     }
+    const number = formatPhoneNumber(phoneNumber);
     dispatch(setIsLoader(true));
-    try {
-      // await uploadMedia(selectedImage, (url) => {
-      const url = dummyProfile;
-      let number = formatPhoneNumber(phoneNumber);
-
-      if (url) {
-        const paramsObj: any = {
-          fullName: firstName + " " + lastName,
-          email: email?.toLocaleLowerCase(),
-          phoneNumber: number,
-          password: password,
-          profileImage: url,
-        };
-        // if (number) {
-        //   await signInWithPhoneNumber(paramsObj?.phoneNumber);
-        // }
-        // return;
-
-        await userSignupRequest(paramsObj, (response) => {
-          console.log("response --->>>   ", response);
-
-          if (response?.status) {
-            setUserDataInAsync(response?.data);
-            dispatch(setUserData(response?.data));
-            dispatch(setIsLoader(false));
-          } else {
-            let errorMessage = response?.message
-              ? response?.message
-              : "Something went wrong";
-            dispatch(
-              setIsAlertShow({
-                value: true,
-                message: errorMessage,
-              })
-            );
-            dispatch(setIsLoader(false));
-          }
-        });
-      } else {
-        dispatch(setIsLoader(false));
-        dispatch(
-          setIsAlertShow({
-            value: true,
-            message: "Something went wrong",
-          })
-        );
+    const obj = {
+      fullName: firstName + " " + lastName,
+      email: email?.toLocaleLowerCase(),
+      phoneNumber: number,
+      password: password,
+      profilePath: selectedImage,
+    };
+    await isEmailAlreadyRegistered(
+      email?.toLocaleLowerCase(),
+      "email",
+      async (res: any) => {
+        if (res?.status) {
+          setEmailError("Email Already in Use");
+          dispatch(setIsLoader(false));
+        } else {
+          await isEmailAlreadyRegistered(
+            number,
+            "phoneNumber",
+            async (res: any) => {
+              if (res?.status) {
+                setPhoneError("Phone Number Already in Use");
+                dispatch(setIsLoader(false));
+              } else {
+                const confirmation = await auth().signInWithPhoneNumber(number);
+                const isOtpSend = await sendEmailOtp({
+                  recipientEmail: obj?.email,
+                });
+                if (confirmation && isOtpSend?.status) {
+                  props?.navigation?.navigate(
+                    Routes.Auth.otpVerificationScreen,
+                    {
+                      obj,
+                      phoneVerification: confirmation,
+                    }
+                  );
+                } else {
+                  dispatch(
+                    setShowToast({
+                      type: AppStrings.ToastType.error,
+                      message: "Network Error",
+                    })
+                  );
+                }
+              }
+            }
+          );
+        }
       }
-      // });
-    } catch (e) {
-      dispatch(setIsLoader(false));
-      console.log("error...", e);
-    }
+    );
+    // try {
+    //   await uploadMedia(selectedImage, async (url) => {
+    //     let number = formatPhoneNumber(phoneNumber);
+    //     console.log("url ---->>>   ", url);
+
+    //     if (url) {
+    //       const paramsObj: any = {
+    //         fullName: firstName + " " + lastName,
+    //         email: email?.toLocaleLowerCase(),
+    //         phoneNumber: number,
+    //         password: password,
+    //         profileImage: url,
+    //       };
+
+    //       await userSignupRequest(paramsObj, (response) => {
+    //         console.log("response --->>>   ", response);
+
+    //         if (response?.status) {
+    //           setUserDataInAsync(response?.data);
+    //           dispatch(setUserData(response?.data));
+    //           dispatch(setIsLoader(false));
+    //         } else {
+    //           let errorMessage = response?.message
+    //             ? response?.message
+    //             : "Something went wrong";
+    //           dispatch(
+    //             setIsAlertShow({
+    //               value: true,
+    //               message: errorMessage,
+    //             })
+    //           );
+    //           dispatch(setIsLoader(false));
+    //         }
+    //       });
+    //     } else {
+    //       dispatch(setIsLoader(false));
+    //       dispatch(
+    //         setIsAlertShow({
+    //           value: true,
+    //           message: "Something went wrong",
+    //         })
+    //       );
+    //     }
+    //   });
+    // } catch (e) {
+    //   dispatch(setIsLoader(false));
+    //   console.log("error...", e);
+    // }
   };
 
   const socialAuthReq = async (type: string) => {
@@ -446,6 +486,7 @@ const SignUpScreen = (props: any) => {
               />
             </View>
           </View>
+          {phoneError && <Text style={styles.errorMsg}>{phoneError}</Text>}
 
           <View style={styles.topContainerChild}>
             <View style={styles.inputCont}>

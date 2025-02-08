@@ -14,6 +14,7 @@ import ManageProductScreen from "../UI/Sections/Home/Screens/ManageProductScreen
 import ManageCategories from "../UI/Sections/Home/Screens/ManageCategories";
 import AddAdminScreen from "../UI/Sections/Home/Screens/AddAdminScreen";
 import OTPScreen from "../UI/Sections/Home/Screens/OTPScreen";
+import AddCategoryScreen from "../UI/Sections/Home/Screens/AddCategoryScreen";
 
 const MainStack = createStackNavigator();
 
@@ -58,6 +59,10 @@ const MainNavigation = () => {
         component={AddAdminScreen}
       />
       <MainStack.Screen name={Routes.OtpScreen} component={OTPScreen} />
+      <MainStack.Screen
+        name={Routes.Admin.AddCategory}
+        component={AddCategoryScreen}
+      />
     </MainStack.Navigator>
   );
 };

@@ -10,6 +10,7 @@ import ForgotPassword from "../UI/Sections/Auth/Screens/ForgotPassword";
 import SocialAuthScreen from "../UI/Sections/Auth/Screens/SocialAuthScreen";
 import OTPScreen from "../UI/Sections/Home/Screens/OTPScreen";
 import WelcomeScreen from "../UI/Sections/Welcome/Screens/WelcomeScreen";
+import OtpVerificationScreen from "../UI/Sections/Auth/Screens/OtpVerificationScreen";
 
 const Stack = createStackNavigator();
 const AuthStack = () => {
@@ -33,6 +34,10 @@ const AuthStack = () => {
         component={SocialAuthScreen}
       />
       <Stack.Screen name={Routes.OtpScreen} component={OTPScreen} />
+      <Stack.Screen
+        name={Routes.Auth.otpVerificationScreen}
+        component={OtpVerificationScreen}
+      />
     </Stack.Navigator>
   );
 };

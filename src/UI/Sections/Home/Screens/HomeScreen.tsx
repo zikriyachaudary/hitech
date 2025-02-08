@@ -52,6 +52,11 @@ const HomeScreen = (props: ScreenProps) => {
       title: "Manage Multiple Admins",
       id: 4,
     },
+    {
+      icon: AppImages.Home.Admin,
+      title: "Add Category & Sub-Category",
+      id: 5,
+    },
   ];
   return (
     <View style={[AppStyles.MainStyle]}>
@@ -80,6 +85,8 @@ const HomeScreen = (props: ScreenProps) => {
                     props?.navigation?.navigate(Routes.Admin.ManagePrducts);
                   } else if (item?.id == 4) {
                     props?.navigation?.navigate(Routes.Admin.AddAdmins);
+                  } else if (item?.id == 5) {
+                    props?.navigation?.navigate(Routes.Admin.AddCategory);
                   }
                 }}
               >

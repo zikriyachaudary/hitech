@@ -2,6 +2,9 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { AppStrings, Collections } from "../../Utils/AppStrings";
 import CommonDataManager from "../../Utils/CommonManager";
+import { BASE_URL } from "../Url";
+import { ApiResponseHandler } from "./ApiResponseHandler";
+import Api from "./Api";
 
 export const userSignupRequest = async (
   userInput: any,
@@ -61,8 +64,8 @@ export const signinReqWithPhoneNumber = async (
 
     await auth()
       .signInWithPhoneNumber(phoneNumber)
-      .then(async () => {
-        getResponse({ status: true, message: "User Created Success." });
+      .then(async (obj) => {
+        getResponse({ status: true, data: obj });
       });
   } catch (error) {
     console.log("Error while singup with phone number --->>  ", error);
@@ -91,7 +94,7 @@ export const loginRequest = async (
           .get()
           .then((querySnapshot: any) => {
             if (querySnapshot?._docs?.length == 0) {
-              complete({ status: false, message: "" });
+              complete({ status: false, message: "Invalid Credentials" });
             } else {
               querySnapshot.forEach(async (doc: any) => {
                 let loginObj = {
@@ -343,4 +346,49 @@ export const getSocialAuthReq = async (
         });
       }
     });
+};
+
+export const isEmailAlreadyRegistered = async (
+  email: any,
+  query = "email",
+  onComplete: any
+) => {
+  try {
+    const snapshot = await firestore()
+      .collection(Collections.CUSTOMERS_COLLECTION)
+      .where(query, "==", email)
+      .get();
+
+    if (snapshot.empty) {
+      console.log("No matching documents found.");
+      onComplete({ status: false });
+    }
+
+    snapshot.forEach((doc) => {
+      onComplete({ status: true });
+    });
+
+    return true;
+  } catch (error) {
+    console.log("Error --->>>>  ", error);
+    return false;
+  }
+};
+
+export const sendEmailOtp = async <T>(
+  params: any
+): Promise<ApiResponseHandler<T>> => {
+  const urlForApiCall = BASE_URL + "sendOtp";
+  const method = "POST";
+  let apiRequest = await Api(urlForApiCall, method, params);
+  return apiRequest;
+};
+
+export const verifyEmailOtp = async <T>(
+  params: any
+): Promise<ApiResponseHandler<T>> => {
+  const urlForApiCall = BASE_URL + "verifyOtp";
+  const method = "POST";
+  let apiRequest = await Api(urlForApiCall, method, params);
+  return apiRequest;
 };

@@ -6,6 +6,7 @@ export const Routes = {
     signup: "SignUp",
     forgerPassword: "forgetPassword",
     socialAuthScreen: "SocicalAuthScreen",
+    otpVerificationScreen: "otpVerificationScreen",
   },
   Main: {
     container: "Container",
@@ -25,5 +26,6 @@ export const Routes = {
     ManagePrducts: "ManageProducts",
     AddProducts: "AddProducts",
     AddAdmins: "AddAdmins",
+    AddCategory: "AddCategory",
   },
 };
