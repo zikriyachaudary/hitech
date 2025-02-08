@@ -1,38 +1,34 @@
-import { FlatList, Image, SafeAreaView, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  SafeAreaView,
+  View,
+  Text,
+  StyleSheet,
+} from "react-native";
 import React, { useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
-import { normalized, ScreenProps } from "../../../../Utils/AppConstants";
+import {
+  AppColors,
+  AppFonts,
+  AppHorizontalMargin,
+  AppImages,
+  normalized,
+  ScreenProps,
+} from "../../../../Utils/AppConstants";
 import AddressItem from "../Components/AddressItem";
 import { Routes } from "../../../../Utils/Routes";
+import { useSelector } from "react-redux";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const DeliveryAddressScreen = (props: ScreenProps) => {
-  const [addressList, setAddressList] = useState([
-    {
-      general: "House 00 Stree 00 Mohallah Lahore Pakistan",
-      street: "00",
-      house: "00",
-      Area: "Some Area here",
-      City: "Lahore",
-      isDefault: true,
-    },
-    {
-      general: "House 01 Stree 01 Mohallah Mian Chunnu Pakistan",
-      street: "01",
-      house: "01",
-      Area: "Some Area here",
-      City: "Lahore",
-      isDefault: false,
-    },
-    {
-      general: "House 01 Stree 01 Mohallah Mian Chunnu Pakistan",
-      street: "01",
-      house: "01",
-      Area: "Some Area here",
-      City: "Lahore",
-      isDefault: false,
-    },
-  ]);
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const userData = selector?.userData || null;
+
+  const [addressList, setAddressList] = useState([]);
   const changeDefaultAddress = (index: number) => {
     const updatedList = addressList.map((item: any, i: any) => ({
       ...item,
@@ -47,30 +43,71 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
       <CustomHeader
         onPress={() => props?.navigation?.goBack()}
         title={"Delivery Address"}
-      />
-      <FlatList
-        data={addressList}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: normalized(40) }}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => {
-          return (
-            <AddressItem
-              item={item}
-              changeDefaultAddress={() => {
-                changeDefaultAddress(index);
-              }}
-              onEdit={(item: any) => {
-                props?.navigation?.navigate(Routes.Home.UpdateDelivery, {
-                  item: item,
-                });
-              }}
-            />
-          );
+        icon={[AppImages.Home.PlusBlack]}
+        rightIconCont={{
+          width: normalized(33),
+          height: normalized(33),
+          borderColor: AppColors.themeColor.dark,
+          borderRadius: normalized(40),
+          borderWidth: 1,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+        rightIconStyle={{
+          width: normalized(20),
+          height: normalized(20),
+        }}
+        onRightIconPress={() => {
+          props?.navigation?.navigate(Routes.Home.UpdateDelivery);
         }}
       />
+      {addressList?.length > 0 ? (
+        <FlatList
+          data={addressList}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: normalized(40) }}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => {
+            return (
+              <AddressItem
+                item={item}
+                changeDefaultAddress={() => {
+                  changeDefaultAddress(index);
+                }}
+                onEdit={(item: any) => {
+                  props?.navigation?.navigate(Routes.Home.UpdateDelivery, {
+                    item: item,
+                  });
+                }}
+              />
+            );
+          }}
+        />
+      ) : (
+        <View style={styles.emptyListCont}>
+          <Text style={styles.emptyTxt}>
+            No address added yet. Tap the button in the top right corner to add
+            a new address and complete the required details.
+          </Text>
+        </View>
+      )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  emptyListCont: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    marginHorizontal: AppHorizontalMargin,
+  },
+  emptyTxt: {
+    textAlign: "center",
+    fontSize: normalized(14),
+    fontFamily: AppFonts.PoppinsMedium,
+    color: AppColors.black.black,
+  },
+});
 
 export default DeliveryAddressScreen;

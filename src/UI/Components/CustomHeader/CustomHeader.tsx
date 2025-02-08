@@ -36,8 +36,12 @@ const CustomHeader = (props: any) => {
                   props?.onRightIconPress();
                 }}
                 activeOpacity={0.7}
+                style={props?.rightIconCont}
               >
-                <Image source={props?.icon[index]} style={styles.icon1} />
+                <Image
+                  source={props?.icon[index]}
+                  style={{ ...styles.icon1, ...props?.rightIconStyle }}
+                />
               </TouchableOpacity>
             ))
           : null}

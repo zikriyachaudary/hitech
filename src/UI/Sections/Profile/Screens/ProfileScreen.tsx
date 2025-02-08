@@ -31,6 +31,7 @@ const ProfileScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const userData = selector?.userData || null;
   const [openLogoutModal, setOpenLogoutModal] = useState({
     value: false,
     type: "",
@@ -41,7 +42,6 @@ const ProfileScreen = (props: ScreenProps) => {
     dispatch(setTab(0));
     setUserDataInAsync(null);
   };
-
   const dispatch = useDispatch();
   return (
     <View style={AppStyles.MainStyle}>
@@ -53,12 +53,12 @@ const ProfileScreen = (props: ScreenProps) => {
         style={styles.profileImg}
         resizeMode="cover"
       />
-      <Text style={styles.username}>Zikriya Chaudary</Text>
+      <Text style={styles.username}>{userData?.fullName}</Text>
       <ProfileBar
         List={profileBarList}
         setValue={(id: any) => {
           if (id == 1) {
-            // props?.navigation?.navigate(Routes.Profile.editProfile);
+            props?.navigation?.navigate(Routes.Home.EditProfile);
           } else if (id == 2) {
             props?.navigation?.navigate(Routes.Home.DeliveryAddress);
           } else if (id == 3) {

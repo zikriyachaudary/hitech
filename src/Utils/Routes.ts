@@ -20,6 +20,7 @@ export const Routes = {
     cartScreen: "cartScreen",
     DeliveryAddress: "DeliveryAddress",
     UpdateDelivery: "UpdateDelivery",
+    EditProfile: "EditProfile",
   },
   Admin: {
     ManageCategories: "ManageCategories",

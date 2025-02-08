@@ -56,7 +56,7 @@ const AddressItem = (props: any) => {
         />
         <Text style={styles.addressTxt}>Address</Text>
         <View style={styles.divider} />
-        <Text style={styles.generalAddress}>{item?.general}</Text>
+        <Text style={styles.generalAddress}>{item?.address}</Text>
       </View>
 
       <View style={styles.cont}>
@@ -79,14 +79,14 @@ const AddressItem = (props: any) => {
         <Image source={AppImages.Profile.area} style={styles.icon} />
         <Text style={styles.addressTxt}>Area </Text>
         <View style={styles.divider} />
-        <Text style={styles.generalAddress}>{item?.Area}</Text>
+        <Text style={styles.generalAddress}>{item?.area}</Text>
       </View>
 
       <View style={styles.cont}>
         <Image source={AppImages.Profile.city} style={styles.icon} />
         <Text style={styles.addressTxt}>City</Text>
         <View style={styles.divider} />
-        <Text style={styles.generalAddress}>{item?.City}</Text>
+        <Text style={styles.generalAddress}>{item?.city}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -113,9 +113,10 @@ const styles = StyleSheet.create({
     marginTop: normalized(20),
   },
   icon: {
-    width: normalized(20),
-    height: normalized(20),
+    width: normalized(23),
+    height: normalized(23),
     resizeMode: "contain",
+    tintColor: AppColors.themeColor.dark,
   },
   cont: {
     flexDirection: "row",
@@ -123,7 +124,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   divider: {
-    backgroundColor: AppColors.black.black,
+    // backgroundColor: AppColors.black.black,
+    backgroundColor: AppColors.themeColor.dark,
     width: normalized(1.5),
     height: normalized(15),
     borderRadius: normalized(10),
@@ -131,8 +133,9 @@ const styles = StyleSheet.create({
   },
   addressTxt: {
     fontSize: normalized(14),
-    fontFamily: AppFonts.PoppinsMedium,
-    color: AppColors.black.black,
+    fontFamily: AppFonts.PoppinsSemiBold,
+    // color: AppColors.black.black,
+    color: AppColors.themeColor.dark,
     marginLeft: normalized(10),
     width: normalized(80),
   },

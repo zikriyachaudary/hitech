@@ -15,6 +15,7 @@ import ManageCategories from "../UI/Sections/Home/Screens/ManageCategories";
 import AddAdminScreen from "../UI/Sections/Home/Screens/AddAdminScreen";
 import OTPScreen from "../UI/Sections/Home/Screens/OTPScreen";
 import AddCategoryScreen from "../UI/Sections/Home/Screens/AddCategoryScreen";
+import EditProfileScreen from "../UI/Sections/Profile/Screens/EditProfileScreen";
 
 const MainStack = createStackNavigator();
 
@@ -62,6 +63,10 @@ const MainNavigation = () => {
       <MainStack.Screen
         name={Routes.Admin.AddCategory}
         component={AddCategoryScreen}
+      />
+      <MainStack.Screen
+        name={Routes.Home.EditProfile}
+        component={EditProfileScreen}
       />
     </MainStack.Navigator>
   );

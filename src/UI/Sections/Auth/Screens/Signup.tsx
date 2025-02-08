@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
-  Linking,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -21,9 +20,6 @@ import {
   AppFonts,
   hv,
   normalized,
-  prefixCodes,
-  countriesList,
-  dummyProfile,
 } from "../../../../Utils/AppConstants";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
@@ -31,7 +27,6 @@ import { Routes } from "../../../../Utils/Routes";
 import { AppStrings, SocialTypeStrings } from "../../../../Utils/AppStrings";
 import { useDispatch } from "react-redux";
 import {
-  setIsAlertShow,
   setIsLoader,
   setShowToast,
   setUserData,
@@ -41,16 +36,13 @@ import {
   getSocialAuthReq,
   isEmailAlreadyRegistered,
   sendEmailOtp,
-  signinReqWithPhoneNumber,
   socialAuthCheckRequest,
-  userSignupRequest,
 } from "../../../../Network/Services/AuthServices";
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import SocialAuthManager from "../../../../Hooks/SocialAuthManager";
 import appleAuth from "@invertase/react-native-apple-authentication";
 import SocialBtnComp from "../../../Components/SocialButton/GoogleButton";
-import { uploadMedia } from "../../../../Network/Services/GeneralServices";
 import AppImagePicker from "../../../Components/CustomModal/AppImagePicker";
 import { formatPhoneNumber } from "../../../../Utils/Helper";
 import auth from "@react-native-firebase/auth";
@@ -77,11 +69,7 @@ const SignUpScreen = (props: any) => {
   const [showImagePicker, setShowImagePicker] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [showCountryPicker, setShowCountryPicker] = useState<boolean>(false);
-  const [confirm, setConfirm] = useState<any>(null);
 
-  // verification code (OTP - One-Time-Passcode)
-  const [code, setCode] = useState("");
   ///error------->
   const [selectedImageError, setSelectedImageError] = useState("");
   const [firstNameError, setFirstNameError] = useState("");
