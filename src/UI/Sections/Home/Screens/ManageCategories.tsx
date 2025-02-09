@@ -1,4 +1,5 @@
 import {
+  FlatList,
   Image,
   LayoutAnimation,
   SafeAreaView,
@@ -8,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import {
   AppColors,
@@ -21,216 +22,91 @@ import {
   ScreenSize,
 } from "../../../../Utils/AppConstants";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
+import { Routes } from "../../../../Utils/Routes";
+import { fetchCatListReq } from "../../../../Network/Services/GeneralServices";
+import { useDispatch } from "react-redux";
+import {
+  setIsLoader,
+  setShowToast,
+} from "../../../../Redux/Reducers/AppReducers";
+import { AppStrings } from "../../../../Utils/AppStrings";
 
 const ManageCategories = (props: ScreenProps) => {
-  const [category, setCategory] = useState<any>(null);
+  const [categoryList, setCategoryList] = useState<any>([]);
   const [subCategory, setSubCategory] = useState<any>(null);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetchCat();
+  }, []);
+
+  const fetchCat = async () => {
+    try {
+      if (categoryList?.length == 0) dispatch(setIsLoader(true));
+      fetchCatListReq((resp: any) => {
+        if (resp?.status) {
+          setCategoryList(resp?.data);
+        } else {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.error,
+              message: resp?.message,
+            })
+          );
+        }
+        dispatch(setIsLoader(false));
+      });
+    } catch (error) {
+      console.log("error --->>>  ", error);
+    }
+  };
 
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{
-          marginHorizontal: normalized(10),
-          marginVertical: normalized(10),
-          marginBottom: normalized(20),
+      <CustomHeader
+        onPress={() => props?.navigation?.goBack()}
+        title={"Categories"}
+        titleStyle={styles.heading}
+        icon={[AppImages.Home.PlusBlack]}
+        rightIconCont={{
+          width: normalized(33),
+          height: normalized(33),
+          borderColor: AppColors.themeColor.dark,
+          borderRadius: normalized(40),
+          borderWidth: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: AppColors.themeColor.dark,
         }}
-      >
-        <CustomHeader
-          onPress={() => props?.navigation?.goBack()}
-          title={"Categories"}
-          titleStyle={styles.heading}
+        rightIconStyle={{
+          width: normalized(20),
+          height: normalized(20),
+          tintColor: AppColors.white.white,
+        }}
+        onRightIconPress={() => {
+          props?.navigation?.navigate(Routes.Admin.AddCategory);
+        }}
+      />
+      {categoryList?.length > 0 ? (
+        <FlatList
+          data={categoryList}
+          horizontal
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => (
+            <View>
+              <Text>{item?.category}</Text>
+            </View>
+          )}
         />
-        {/* <Text style={styles.heading}>Categories</Text> */}
-        <View style={styles.itemCont}>
-          {Categories.map((item) => {
-            return (
-              <TouchableOpacity
-                style={{
-                  ...styles.item,
-                  backgroundColor:
-                    category?.id == item?.id
-                      ? AppColors.themeColor.dark
-                      : AppColors.white.white,
-                }}
-                activeOpacity={0.7}
-                onPress={() => {
-                  if (item?.id == category?.id) {
-                    LayoutAnimation.configureNext({
-                      ...LayoutAnimation.Presets.linear,
-                      duration: 200,
-                    });
-                    setCategory(null);
-                  } else {
-                    LayoutAnimation.configureNext({
-                      ...LayoutAnimation.Presets.linear,
-                      duration: 200,
-                    });
-                    setCategory(item);
-                  }
-                  setSubCategory(null);
-                }}
-              >
-                <Text
-                  style={{
-                    ...styles.itemTxt,
-                    color:
-                      category?.id == item?.id
-                        ? AppColors.white.white
-                        : AppColors.black.black,
-                  }}
-                >
-                  {item?.category}
-                </Text>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={{
-                    ...styles.imgCont,
-                    backgroundColor:
-                      category?.id == item?.id
-                        ? AppColors.white.white
-                        : AppColors.themeColor.dark,
-                  }}
-                  onPress={() => {}}
-                >
-                  <Image
-                    style={{
-                      ...styles.img,
-                      tintColor:
-                        category?.id == item?.id
-                          ? AppColors.themeColor.dark
-                          : AppColors.white.white,
-                    }}
-                    source={AppImages.Products.editIcon}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  activeOpacity={0.7}
-                  style={{
-                    ...styles.imgCont,
-                    backgroundColor:
-                      category?.id == item?.id
-                        ? AppColors.white.white
-                        : AppColors.themeColor.dark,
-                  }}
-                  onPress={() => {}}
-                >
-                  <Image
-                    style={{
-                      ...styles.img,
-                      tintColor:
-                        category?.id == item?.id
-                          ? AppColors.themeColor.dark
-                          : AppColors.white.white,
-                    }}
-                    source={AppImages.Home.close}
-                  />
-                </TouchableOpacity>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
-        {category?.id && (
-          <Text
-            style={{
-              ...styles.heading,
-              marginVertical: normalized(10),
-            }}
-          >
-            Sub-Categoires
+      ) : (
+        <View style={styles.emptyListCont}>
+          <Text style={styles.emptyTxt}>
+            No Category added yet. Tap the button in the top right corner to add
+            a new Category List.
           </Text>
-        )}
-
-        <View style={styles.itemCont}>
-          {category?.id &&
-            category?.subcategories.map((item: any) => {
-              return (
-                <TouchableOpacity
-                  style={{
-                    ...styles.item,
-                    backgroundColor:
-                      subCategory?.id == item?.id
-                        ? AppColors.themeColor.dark
-                        : AppColors.white.white,
-                  }}
-                  activeOpacity={0.7}
-                  onPress={() => {
-                    if (item?.id == subCategory?.id) {
-                      LayoutAnimation.configureNext({
-                        ...LayoutAnimation.Presets.linear,
-                        duration: 200,
-                      });
-                      setSubCategory(null);
-                    } else {
-                      LayoutAnimation.configureNext({
-                        ...LayoutAnimation.Presets.linear,
-                        duration: 200,
-                      });
-                      setSubCategory(item);
-                    }
-                  }}
-                >
-                  <Text
-                    style={{
-                      ...styles.itemTxt,
-                      color:
-                        subCategory?.id == item?.id
-                          ? AppColors.white.white
-                          : AppColors.black.black,
-                    }}
-                  >
-                    {item?.name}
-                  </Text>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    style={{
-                      ...styles.imgCont,
-                      backgroundColor:
-                        subCategory?.id == item?.id
-                          ? AppColors.white.white
-                          : AppColors.themeColor.dark,
-                    }}
-                    onPress={() => {}}
-                  >
-                    <Image
-                      style={{
-                        ...styles.img,
-                        tintColor:
-                          subCategory?.id == item?.id
-                            ? AppColors.themeColor.dark
-                            : AppColors.white.white,
-                      }}
-                      source={AppImages.Products.editIcon}
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    activeOpacity={0.7}
-                    style={{
-                      ...styles.imgCont,
-                      backgroundColor:
-                        subCategory?.id == item?.id
-                          ? AppColors.white.white
-                          : AppColors.themeColor.dark,
-                    }}
-                    onPress={() => {}}
-                  >
-                    <Image
-                      style={{
-                        ...styles.img,
-                        tintColor:
-                          subCategory?.id == item?.id
-                            ? AppColors.themeColor.dark
-                            : AppColors.white.white,
-                      }}
-                      source={AppImages.Home.close}
-                    />
-                  </TouchableOpacity>
-                </TouchableOpacity>
-              );
-            })}
         </View>
-      </ScrollView>
+      )}
     </View>
   );
 };
@@ -238,42 +114,22 @@ const ManageCategories = (props: ScreenProps) => {
 export default ManageCategories;
 
 const styles = StyleSheet.create({
-  item: {
-    flexDirection: "row",
-    borderWidth: 1.5,
-    borderColor: AppColors.themeColor.dark,
-    paddingHorizontal: normalized(5),
-    paddingVertical: normalized(5),
-    margin: normalized(5),
-    borderRadius: normalized(10),
-    gap: normalized(10),
-    alignItems: "center",
-  },
-  itemCont: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
-  itemTxt: {
-    fontSize: normalized(14),
-    fontFamily: AppFonts.PoppinsMedium,
-  },
   heading: {
     fontSize: normalized(18),
     fontFamily: AppFonts.PoppinsSemiBold,
     alignSelf: "center",
+    color: AppColors.black.black,
   },
-  img: {
-    width: normalized(15),
-    height: normalized(15),
-    resizeMode: "contain",
-  },
-  imgCont: {
-    width: normalized(27),
-    height: normalized(27),
-    borderWidth: 1,
-    borderRadius: 25,
+  emptyListCont: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    borderColor: AppColors.themeColor.dark,
+    marginHorizontal: AppHorizontalMargin,
+  },
+  emptyTxt: {
+    textAlign: "center",
+    fontSize: normalized(14),
+    fontFamily: AppFonts.PoppinsMedium,
+    color: AppColors.black.black,
   },
 });

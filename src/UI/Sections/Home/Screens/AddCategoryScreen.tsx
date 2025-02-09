@@ -1,12 +1,103 @@
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import React, { useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
-import { ScreenProps } from "../../../../Utils/AppConstants";
+import {
+  AppColors,
+  AppFonts,
+  AppHorizontalMargin,
+  AppImages,
+  normalized,
+  ScreenProps,
+} from "../../../../Utils/AppConstants";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
+import CommonDataManager from "../../../../Utils/CommonManager";
+import { addCategoryReq } from "../../../../Network/Services/GeneralServices";
+import { useDispatch } from "react-redux";
+import {
+  setIsAlertShow,
+  setIsLoader,
+  setShowToast,
+} from "../../../../Redux/Reducers/AppReducers";
+import { AppStrings } from "../../../../Utils/AppStrings";
 
 const AddCategoryScreen = (props: ScreenProps) => {
+  const [category, setCategory] = useState<string | null>(null);
+  const [subCategories, setSubCategories] = useState<
+    { id: string; name: string }[]
+  >([]);
+  const dispatch = useDispatch();
+
+  const addSubCategory = () => {
+    setSubCategories([
+      ...subCategories,
+      { id: CommonDataManager.getSharedInstance().makeid(6), name: "" },
+    ]);
+  };
+
+  const updateSubCategory = (id: string, value: string) => {
+    setSubCategories(
+      subCategories.map((subCat) =>
+        subCat.id === id ? { ...subCat, name: value } : subCat
+      )
+    );
+  };
+
+  const removeSubCategory = (id: string) => {
+    setSubCategories(subCategories.filter((subCat) => subCat.id !== id));
+  };
+
+  const handlePublish = () => {
+    if (
+      (!category && subCategories.every((sub) => sub.name.trim() === "")) ||
+      subCategories?.length == 0
+    ) {
+      dispatch(
+        setIsAlertShow({
+          value: true,
+          message: "Please enter a category or at least one sub-category.",
+        })
+      );
+      console.log("Please enter a category or at least one sub-category.");
+      return;
+    }
+
+    const data = {
+      category: category || "No Category",
+      id: CommonDataManager.getSharedInstance().makeid(6),
+      subCat: subCategories.filter((sub) => sub.name.trim() !== ""),
+    };
+    dispatch(setIsLoader(true));
+    addCategoryReq(data, (resp: any) => {
+      if (resp?.status) {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.success,
+            message: resp?.message,
+          })
+        );
+        props?.navigation?.goBack();
+      } else {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.success,
+            message: resp?.message,
+          })
+        );
+      }
+      dispatch(setIsLoader(false));
+    });
+  };
+
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
@@ -14,13 +105,86 @@ const AddCategoryScreen = (props: ScreenProps) => {
         Text={"Add Category"}
         onPress={() => props?.navigation?.goBack()}
       />
-      <Text>Category Name</Text>
-      <CustomInput value />
-      <FilledButton label={"Publish"} onPress={() => {}} />
+      <ScrollView
+        style={{ marginHorizontal: AppHorizontalMargin }}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={{ height: normalized(20) }} />
+
+        {/* Category Input */}
+        <Text style={styles.heading}>Category Name</Text>
+        <CustomInput value={category} setValue={setCategory} />
+
+        {/* Sub-Category Inputs */}
+        {subCategories.map((sub, index) => (
+          <View key={sub.id} style={{ marginTop: normalized(10) }}>
+            <Text style={styles.heading}>Sub-Category {index + 1}</Text>
+            <View style={styles.subCatCont}>
+              <View style={{ flex: 1 }}>
+                <CustomInput
+                  value={sub.name}
+                  setValue={(val: string) => updateSubCategory(sub.id, val)}
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.closeImgCont}
+                onPress={() => removeSubCategory(sub.id)}
+              >
+                <Image source={AppImages.Home.close} style={styles.closeImg} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+
+        <TouchableOpacity style={styles.addButton} onPress={addSubCategory}>
+          <Text style={styles.addButtonText}>+ Add Sub-Category</Text>
+        </TouchableOpacity>
+
+        <FilledButton label={"Publish"} onPress={handlePublish} />
+      </ScrollView>
     </View>
   );
 };
 
 export default AddCategoryScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  heading: {
+    fontSize: normalized(14),
+    fontFamily: AppFonts.PoppinsMedium,
+    color: AppColors.black.black,
+    marginBottom: normalized(10),
+  },
+  addButton: {
+    marginTop: normalized(10),
+    padding: normalized(10),
+    backgroundColor: AppColors.themeColor.dark,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  addButtonText: {
+    color: "#fff",
+    fontSize: normalized(14),
+    fontFamily: AppFonts.PoppinsMedium,
+  },
+  closeImg: {
+    width: normalized(14),
+    height: normalized(14),
+    resizeMode: "contain",
+    tintColor: AppColors.red.dark,
+  },
+  closeImgCont: {
+    width: normalized(26),
+    height: normalized(26),
+    borderRadius: normalized(30),
+    borderWidth: 1,
+    borderColor: AppColors.red.dark,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  subCatCont: {
+    flexDirection: "row",
+    gap: normalized(10),
+    alignItems: "center",
+  },
+});
