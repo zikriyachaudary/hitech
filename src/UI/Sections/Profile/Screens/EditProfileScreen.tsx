@@ -28,6 +28,15 @@ import AppImagePicker from "../../../Components/CustomModal/AppImagePicker";
 import { useDispatch, useSelector } from "react-redux";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
+import { uploadMedia } from "../../../../Network/Services/GeneralServices";
+import {
+  setIsLoader,
+  setShowToast,
+  setUserData,
+} from "../../../../Redux/Reducers/AppReducers";
+import { updatedUserReq } from "../../../../Network/Services/AuthServices";
+import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
+import { AppStrings } from "../../../../Utils/AppStrings";
 
 const EditProfileScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -70,6 +79,88 @@ const EditProfileScreen = (props: ScreenProps) => {
   const focusNextField = (inputRef: any) => {
     if (inputRef?.current) {
       inputRef?.current?.focus();
+    }
+  };
+
+  const onUpdateProfile = async () => {
+    let isFormValid = true;
+    if (!selectedImage) {
+      setSelectedImageError("Please select Profile Picture");
+      isFormValid = false;
+    }
+    if (!firstName) {
+      setFirstNameError("Please Enter first Name");
+      isFormValid = false;
+    }
+    if (!lastName) {
+      setLastNameError("Please Enter last Name");
+      isFormValid = false;
+    }
+    if (!email) {
+      setEmailError("Please enter Email.");
+      isFormValid = false;
+    }
+    if (!phoneNumber) {
+      setPhoneError("Please Enter Phone Number");
+    }
+    if (!isFormValid) {
+      return;
+    }
+
+    try {
+      dispatch(setIsLoader(true));
+      let url = selectedImage;
+      if (!selectedImage.includes("https")) {
+        url = await new Promise<string>((resolve, reject) => {
+          uploadMedia(selectedImage, (imageUrl: string | null) => {
+            if (imageUrl) {
+              resolve(imageUrl);
+            } else {
+              console.error("Image upload failed");
+              reject("Image upload failed");
+            }
+          });
+        });
+      }
+      if (url) {
+        const paramsObj = {
+          firstName: firstName,
+          lastName: lastName,
+          fullName: firstName + " " + lastName,
+          email: email,
+          phoneNumber: phoneNumber,
+          profileImage: url,
+        };
+        updatedUserReq(selector?.userData?.userId, paramsObj, (response) => {
+          if (response?.status) {
+            let obj = { ...selector?.userData, ...paramsObj };
+            setUserDataInAsync(obj);
+            dispatch(setUserData(obj));
+            dispatch(
+              setShowToast({
+                type: AppStrings.ToastType.success,
+                message: response?.message,
+              })
+            );
+            props?.navigation?.goBack();
+            dispatch(setIsLoader(false));
+          } else {
+            let errorMessage = response?.message
+              ? response?.message
+              : "Something went wrong";
+            dispatch(
+              setShowToast({
+                type: AppStrings.ToastType.error,
+                message: errorMessage,
+              })
+            );
+            dispatch(setIsLoader(false));
+          }
+        });
+      }
+    } catch (error) {
+      console.log("Eror while update profile --->>>   ", error),
+        dispatch(setIsLoader(false));
     }
   };
 
@@ -186,6 +277,8 @@ const EditProfileScreen = (props: ScreenProps) => {
                   setEmailError("");
                 }}
                 errorMsg={emailError}
+                isDisable={true}
+                isEditable={false}
               />
             </View>
           </View>
@@ -200,17 +293,11 @@ const EditProfileScreen = (props: ScreenProps) => {
               borderColor: phoneError
                 ? AppColors.red.dark
                 : AppColors.grey.greyLevel9,
-              backgroundColor: phoneError
-                ? AppColors.red.pink
-                : AppColors.white.white,
             }}
           >
             <View
               style={{
                 ...styles.flagCont,
-                backgroundColor: phoneError
-                  ? AppColors.red.pink
-                  : AppColors.white.white,
               }}
             >
               <Image source={AppImages.Auth.flag} style={styles.flag} />
@@ -228,9 +315,10 @@ const EditProfileScreen = (props: ScreenProps) => {
                 placeholderTextColor={AppColors.grey.greyLevel9}
                 keyboardType="number-pad"
                 maxLength={10}
+                editable={false}
                 style={{
                   includeFontPadding: false,
-                  color: AppColors.black.black,
+                  color: AppColors.grey.greyLevel9,
                   fontFamily: AppFonts.PoppinsRegular,
                 }}
                 onChangeText={(txt: any) => {
@@ -244,7 +332,12 @@ const EditProfileScreen = (props: ScreenProps) => {
           </View>
           {phoneError && <Text style={styles.errorMsg}>{phoneError}</Text>}
 
-          <FilledButton label={"Update Profile"} onPress={() => {}} />
+          <FilledButton
+            label={"Update Profile"}
+            onPress={() => {
+              onUpdateProfile();
+            }}
+          />
         </ScrollView>
       </KeyboardAvoidingView>
 

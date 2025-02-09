@@ -34,24 +34,34 @@ import {
 import { uploadMedia } from "../../../../Network/Services/GeneralServices";
 import { AppStrings } from "../../../../Utils/AppStrings";
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
+import { Routes } from "../../../../Utils/Routes";
+import auth from "@react-native-firebase/auth";
 
 const OtpVerificationScreen = (props: ScreenProps) => {
   const [emailOtp, setEmailOtp] = useState("");
   const [numberOtp, setNumberOtp] = useState("");
   const [emailOtpError, setEmailOtpError] = useState("");
   const [numberOtpError, setNumberOtpError] = useState("");
-  const signupObj = props?.route?.params?.obj;
-  const phoneVerification = props?.route?.params?.phoneVerification;
+  const signupObj = props?.route?.params?.obj || null;
+  const phoneVerification = props?.route?.params?.phoneVerification || null;
+  const isResetPasswordScreen =
+    props?.route?.params?.isResetPasswordScreen || false;
+  const isEmail = props?.route?.params?.isEmail || false;
+
+  function onAuthStateChanged(user: any) {}
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return subscriber;
+  }, []);
 
   const onSubmit = async () => {
     try {
+      if (emailOtp?.length < 6 && numberOtp?.length < 6) return;
       const resp = await phoneVerification.confirm(numberOtp);
-      console.log("Phone Res UID ----->>  ", resp?.user?.uid);
       const emailOtpRes = await verifyEmailOtp({
         recipientEmail: signupObj?.email,
         OTP: emailOtp,
       });
-      console.log("email REsp --->>>   ", emailOtpRes);
       if (!resp?.user?.uid) {
         setNumberOtpError("Invalid Code");
       }
@@ -61,8 +71,6 @@ const OtpVerificationScreen = (props: ScreenProps) => {
       if (resp?.user?.uid && emailOtpRes?.status) {
         try {
           await uploadMedia(signupObj?.profilePath, async (url) => {
-            console.log("Profile url ---->>>   ", url);
-
             if (url) {
               const paramsObj: any = {
                 fullName: signupObj?.fullName,
@@ -71,11 +79,8 @@ const OtpVerificationScreen = (props: ScreenProps) => {
                 password: signupObj?.password,
                 profileImage: url,
               };
-              console.log("paramsObj -0--0-0-----  ", paramsObj);
 
               await userSignupRequest(paramsObj, (response) => {
-                console.log("response --->>>   ", response);
-
                 if (response?.status) {
                   setUserDataInAsync(response?.data);
                   dispatch(setUserData(response?.data));
@@ -112,8 +117,50 @@ const OtpVerificationScreen = (props: ScreenProps) => {
       console.log("Invalid code.");
     }
   };
+
+  const onResetPassword = async () => {
+    if (emailOtp?.length < 5) return;
+    try {
+      dispatch(setIsLoader(true));
+      if (isEmail) {
+        const emailOtpRes = await verifyEmailOtp({
+          recipientEmail: props?.route?.params?.email,
+          OTP: emailOtp,
+        });
+
+        if (emailOtpRes?.status) {
+          props?.navigation?.navigate(Routes.Auth.newPasswordScreen, {
+            email: props?.route?.params?.email,
+            isEmail: true,
+          });
+        } else {
+          setEmailOtpError("Invalid Code");
+        }
+      } else {
+        const resp = await phoneVerification.confirm(emailOtp);
+        if (!resp?.user?.uid) {
+          setEmailOtpError("Invalid Code");
+        } else {
+          props?.navigation?.navigate(Routes.Auth.newPasswordScreen, {
+            email: props?.route?.params?.email,
+            isPhoneNumber: true,
+          });
+        }
+      }
+      dispatch(setIsLoader(false));
+    } catch (error) {
+      console.log("Error ---0-----  ", error);
+      dispatch(
+        setShowToast({
+          type: AppStrings.ToastType.error,
+          message: "Invalid OTP / Expired",
+        })
+      );
+      dispatch(setIsLoader(false));
+    }
+  };
+
   const dispatch = useDispatch();
-  dispatch(setIsLoader(false));
 
   return (
     <View style={AppStyles.MainStyle}>
@@ -129,71 +176,110 @@ const OtpVerificationScreen = (props: ScreenProps) => {
           marginTop: normalized(10),
         }}
       >
-        <Text style={styles.header}>Email OTP</Text>
-        <CodeInput
-          codeLength={6}
-          cellSize={normalized(50)}
-          cellSpacing={normalized(8)}
-          cellStyle={{
-            ...styles.codeInput,
-            borderColor: emailOtpError
-              ? AppColors.red.dark
-              : "rgba(226, 227, 228, 1)",
-            backgroundColor: emailOtpError
-              ? AppColors.red.pink
-              : "rgba(255, 255, 255, 1)",
-          }}
-          onFulfill={() => {}}
-          value={emailOtp}
-          onChangeText={(otp: any) => {
-            setEmailOtpError("");
-            setEmailOtp(otp);
-            if (otp?.length == 6) {
-            }
-          }}
-          keyboardType={"number-pad"}
-        />
-        <View style={styles.txtCont}>
-          <Text>Didn't get a code?</Text>
-          <Text onPress={() => {}} style={styles.resendTxt}>
-            Resend Otp
-          </Text>
-        </View>
-        <View style={{ height: normalized(15) }} />
-        <Text style={styles.header}>Phone Number OTP</Text>
-        <CodeInput
-          codeLength={6}
-          cellSize={normalized(50)}
-          cellSpacing={normalized(8)}
-          cellStyle={{
-            ...styles.codeInput,
-            borderColor: numberOtpError
-              ? AppColors.red.dark
-              : "rgba(226, 227, 228, 1)",
-            backgroundColor: numberOtpError
-              ? AppColors.red.pink
-              : "rgba(255, 255, 255, 1)",
-          }}
-          onFulfill={() => {}}
-          value={numberOtp}
-          onChangeText={(otp: any) => {
-            setNumberOtpError("");
-            setNumberOtp(otp);
-            if (otp?.length == 6) {
-            }
-          }}
-          keyboardType={"number-pad"}
-        />
-        <View style={styles.txtCont}>
-          <Text>Didn't get a code?</Text>
-          <Text onPress={() => {}} style={styles.resendTxt}>
-            Resend Otp
-          </Text>
-        </View>
+        {isResetPasswordScreen ? (
+          <>
+            <Text style={styles.header}>
+              {isEmail ? "Email OTP" : "Phone Number OTP"}
+            </Text>
+            <CodeInput
+              codeLength={6}
+              cellSize={normalized(50)}
+              cellSpacing={normalized(8)}
+              cellStyle={{
+                ...styles.codeInput,
+                borderColor: emailOtpError
+                  ? AppColors.red.dark
+                  : "rgba(226, 227, 228, 1)",
+                backgroundColor: emailOtpError
+                  ? AppColors.red.pink
+                  : "rgba(255, 255, 255, 1)",
+              }}
+              onFulfill={() => {}}
+              value={emailOtp}
+              onChangeText={(otp: any) => {
+                setEmailOtpError("");
+                setEmailOtp(otp);
+                if (otp?.length == 6) {
+                }
+              }}
+              keyboardType={"number-pad"}
+            />
+            <View style={styles.txtCont}>
+              <Text>Didn't get a code?</Text>
+              <Text onPress={() => {}} style={styles.resendTxt}>
+                Resend Otp
+              </Text>
+            </View>
+          </>
+        ) : (
+          <>
+            <Text style={styles.header}>Email OTP</Text>
+            <CodeInput
+              codeLength={6}
+              cellSize={normalized(50)}
+              cellSpacing={normalized(8)}
+              cellStyle={{
+                ...styles.codeInput,
+                borderColor: emailOtpError
+                  ? AppColors.red.dark
+                  : "rgba(226, 227, 228, 1)",
+                backgroundColor: emailOtpError
+                  ? AppColors.red.pink
+                  : "rgba(255, 255, 255, 1)",
+              }}
+              onFulfill={() => {}}
+              value={emailOtp}
+              onChangeText={(otp: any) => {
+                setEmailOtpError("");
+                setEmailOtp(otp);
+                if (otp?.length == 6) {
+                }
+              }}
+              keyboardType={"number-pad"}
+            />
+            <View style={styles.txtCont}>
+              <Text>Didn't get a code?</Text>
+              <Text onPress={() => {}} style={styles.resendTxt}>
+                Resend Otp
+              </Text>
+            </View>
+            <View style={{ height: normalized(15) }} />
+            <Text style={styles.header}>Phone Number OTP</Text>
+            <CodeInput
+              codeLength={6}
+              cellSize={normalized(50)}
+              cellSpacing={normalized(8)}
+              cellStyle={{
+                ...styles.codeInput,
+                borderColor: numberOtpError
+                  ? AppColors.red.dark
+                  : "rgba(226, 227, 228, 1)",
+                backgroundColor: numberOtpError
+                  ? AppColors.red.pink
+                  : "rgba(255, 255, 255, 1)",
+              }}
+              onFulfill={() => {}}
+              value={numberOtp}
+              onChangeText={(otp: any) => {
+                setNumberOtpError("");
+                setNumberOtp(otp);
+                if (otp?.length == 6) {
+                }
+              }}
+              keyboardType={"number-pad"}
+            />
+            <View style={styles.txtCont}>
+              <Text>Didn't get a code?</Text>
+              <Text onPress={() => {}} style={styles.resendTxt}>
+                Resend Otp
+              </Text>
+            </View>
+          </>
+        )}
         <FilledButton
-          label={"Submit"}
+          label={isResetPasswordScreen ? "Reset Password" : "Submit"}
           onPress={() => {
-            onSubmit();
+            isResetPasswordScreen ? onResetPassword() : onSubmit();
           }}
         />
       </ScrollView>

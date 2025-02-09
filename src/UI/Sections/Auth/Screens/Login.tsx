@@ -41,6 +41,11 @@ import SocialBtnComp from "../../../Components/SocialButton/GoogleButton";
 import SocialAuthManager from "../../../../Hooks/SocialAuthManager";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
+import {
+  detectInputType,
+  formatPhoneNumber,
+  validateInput,
+} from "../../../../Utils/Helper";
 
 const Login = (props: ScreenProps) => {
   const { gmailLoginRequest, appleAuthReq } = SocialAuthManager();
@@ -79,13 +84,20 @@ const Login = (props: ScreenProps) => {
 
   const LogIn = async () => {
     let isFormValid = true;
+    const result = validateInput(email);
+    console.log("result --->>> ", result);
+
     if (!email) {
-      setEmailError("Please enter an Email");
+      setEmailError("Please enter an Email / Phone Number");
       isFormValid = false;
-    }
-    if (!CommonDataManager.getSharedInstance().isEmailValid(email)) {
-      setEmailError(AppStrings.Validation.invalidEmailError);
-      isFormValid = false;
+    } else if (!result.isValid) {
+      if (result.type === "email") {
+        setEmailError("Invalid email format.");
+        isFormValid = false;
+      } else if (result.type === "phone") {
+        setEmailError("Phone number must be exactly 11 digits long.");
+        isFormValid = false;
+      }
     }
     if (!password) {
       setPasswordError("Please enter Password");
@@ -100,10 +112,16 @@ const Login = (props: ScreenProps) => {
       return;
     }
     const paramsObj = {
-      email: email.toLocaleLowerCase(),
+      email:
+        result?.type == "phone"
+          ? formatPhoneNumber(email)
+          : email.toLocaleLowerCase(),
       password: password,
       isAdmin,
+      key: result?.type == "email" ? "email" : "phoneNumber",
     };
+    console.log("params obj --->>  ", paramsObj);
+
     dispatch(setIsLoader(true));
     await loginRequest(paramsObj, async (response) => {
       if (response?.status) {
@@ -124,8 +142,6 @@ const Login = (props: ScreenProps) => {
               }
             );
           }
-          console.log("updated data ---->>>   ", userUpdatedData);
-
           setUserDataInAsync(userUpdatedData);
           dispatch(setUserData(userUpdatedData));
         } else {

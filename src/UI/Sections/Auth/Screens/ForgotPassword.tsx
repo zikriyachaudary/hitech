@@ -25,9 +25,16 @@ import { useDispatch } from "react-redux";
 import {
   setIsAlertShow,
   setIsLoader,
+  setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
+import { formatPhoneNumber, validateInput } from "../../../../Utils/Helper";
+import {
+  isEmailAlreadyRegistered,
+  sendEmailOtp,
+} from "../../../../Network/Services/AuthServices";
+import { Routes } from "../../../../Utils/Routes";
 
 const ForgetPassword = (props: any) => {
   const [email, setEmail] = useState<string>("");
@@ -36,28 +43,94 @@ const ForgetPassword = (props: any) => {
 
   const onForgotPass = async () => {
     let isFormValid = true;
+    const result = validateInput(email);
+    console.log("result ---  ", result);
+
     if (!email) {
-      setEmailError("Please enter an Email");
+      setEmailError("Please enter an Email / Phone Number");
       isFormValid = false;
-    }
-    if (!CommonDataManager.getSharedInstance().isEmailValid(email)) {
-      setEmailError(AppStrings.Validation.invalidEmailError);
-      isFormValid = false;
+    } else if (!result.isValid) {
+      if (result.type === "email") {
+        setEmailError("Invalid email format.");
+        isFormValid = false;
+      } else if (result.type === "phone") {
+        setEmailError("Phone number must be exactly 11 digits long.");
+        isFormValid = false;
+      } else {
+        setEmailError("Invalid Email / Phone Number");
+        isFormValid = false;
+      }
     }
     if (!isFormValid) {
       return;
     }
     try {
       dispatch(setIsLoader(true));
-      setEmail("");
-      await auth().sendPasswordResetEmail(email.toLocaleLowerCase());
-      dispatch(
-        setIsAlertShow({
-          value: true,
-          message: "A reset Email has been send to your email",
-        })
-      );
-      props?.navigation.goBack();
+      if (result?.type == "phone") {
+        const number = formatPhoneNumber(email);
+        console.log("phoneNumber ---- ", number);
+
+        await isEmailAlreadyRegistered(
+          number,
+          "phoneNumber",
+          async (res: any) => {
+            if (res?.status) {
+              const phoneVerification = await auth().signInWithPhoneNumber(
+                number
+              );
+              if (phoneVerification) {
+                props?.navigation?.navigate(Routes.Auth.otpVerificationScreen, {
+                  isResetPasswordScreen: true,
+                  email: email,
+                  isEmail: false,
+                  phoneVerification,
+                });
+              } else {
+                dispatch(
+                  setShowToast({
+                    type: AppStrings.ToastType.error,
+                    message: AppStrings.Network.someThingError,
+                  })
+                );
+              }
+            } else {
+              setEmailError("Phone Number does not Registered before.");
+            }
+          }
+        );
+        dispatch(setIsLoader(false));
+      } else {
+        await isEmailAlreadyRegistered(
+          email?.toLocaleLowerCase(),
+          "phoneNumber",
+          async (res: any) => {
+            if (res?.status) {
+              const isOtpSend = await sendEmailOtp({
+                recipientEmail: email,
+              });
+              if (isOtpSend?.status) {
+                props?.navigation?.navigate(Routes.Auth.otpVerificationScreen, {
+                  isResetPasswordScreen: true,
+                  email: email,
+                  isEmail: true,
+                });
+                dispatch(setIsLoader(false));
+              } else {
+                dispatch(
+                  setShowToast({
+                    type: AppStrings.ToastType.error,
+                    message: AppStrings.Network.tryAgainLater,
+                  })
+                );
+                dispatch(setIsLoader(false));
+              }
+            } else {
+              setEmailError("Email deost not Registered before");
+            }
+          }
+        );
+        dispatch(setIsLoader(false));
+      }
     } catch (error: any) {
       dispatch(
         setIsAlertShow({
@@ -75,7 +148,7 @@ const ForgetPassword = (props: any) => {
       <SafeAreaView />
       <CustomHeader
         onPress={() => props?.navigation?.goBack()}
-        Text={"Forgot Passowrd"}
+        Text={"Reset Passowrd"}
       />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -86,19 +159,13 @@ const ForgetPassword = (props: any) => {
           showsVerticalScrollIndicator={false}
           style={{ flex: 1, paddingHorizontal: AppHorizontalMargin }}
         >
-          {email ? (
-            <Text style={styles.descText}>
-              {`We’ll send you a one time password on your email `}
-              <Text style={{ fontFamily: AppFonts.PoppinsSemiBold }}>
-                {email}
-              </Text>
-            </Text>
-          ) : (
-            <View style={{ marginVertical: hv(25) }} />
-          )}
-          <Text style={styles.inputText}>{"Email"}</Text>
+          <Text style={styles.descText}>
+            {`We’ll send you a one time password on your email Or Phone Number `}
+          </Text>
+
+          <Text style={styles.inputText}>{"Email / Phone Number"}</Text>
           <CustomInput
-            placeHold={"email@example.com"}
+            placeHold={""}
             showLastIcon={true}
             rightIcon={AppImages.Auth.message}
             secureEntry={false}
@@ -112,7 +179,7 @@ const ForgetPassword = (props: any) => {
 
           <FilledButton
             mainContainer={{ marginVertical: hv(30) }}
-            label={"Reset Passwword"}
+            label={"Reset Password"}
             onPress={onForgotPass}
           />
         </ScrollView>

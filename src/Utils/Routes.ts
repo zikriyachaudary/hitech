@@ -7,6 +7,7 @@ export const Routes = {
     forgerPassword: "forgetPassword",
     socialAuthScreen: "SocicalAuthScreen",
     otpVerificationScreen: "otpVerificationScreen",
+    newPasswordScreen: "newPasswordScreen",
   },
   Main: {
     container: "Container",

@@ -78,36 +78,30 @@ export const loginRequest = async (
   complete: (userObj: any) => void
 ) => {
   try {
-    await auth()
-      .signInWithEmailAndPassword(
-        userInput.email.toLocaleLowerCase(),
-        userInput.password
+    firestore()
+      .collection(
+        userInput?.isAdmin
+          ? Collections.ADMIN_COLLECTION
+          : Collections.CUSTOMERS_COLLECTION
       )
-      .then(() => {
-        firestore()
-          .collection(
-            userInput?.isAdmin
-              ? Collections.ADMIN_COLLECTION
-              : Collections.CUSTOMERS_COLLECTION
-          )
-          .where("email", "==", userInput?.email?.toLocaleLowerCase())
-          .get()
-          .then((querySnapshot: any) => {
-            if (querySnapshot?._docs?.length == 0) {
-              complete({ status: false, message: "Invalid Credentials" });
-            } else {
-              querySnapshot.forEach(async (doc: any) => {
-                let loginObj = {
-                  ...doc.data(),
-                };
-                complete({ status: true, data: loginObj });
-              });
-            }
-          })
-          .catch((error) => {
-            console.log("Error while getting data", error);
-            complete({ status: false, message: error });
+      .where(userInput?.key, "==", userInput?.email?.toLocaleLowerCase())
+      .where("secretId", "==", userInput?.password)
+      .get()
+      .then((querySnapshot: any) => {
+        if (querySnapshot?._docs?.length == 0) {
+          complete({ status: false, message: "Invalid Credentials" });
+        } else {
+          querySnapshot.forEach(async (doc: any) => {
+            let loginObj = {
+              ...doc.data(),
+            };
+            complete({ status: true, data: loginObj });
           });
+        }
+      })
+      .catch((error) => {
+        console.log("Error while getting data", error);
+        complete({ status: false, message: error });
       });
   } catch (error: any) {
     console.log(" Login error ==>>>>  ", error);

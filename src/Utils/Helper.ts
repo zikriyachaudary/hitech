@@ -26,9 +26,23 @@ export const capitalizeFirstLetter = (txt = "") => {
 };
 
 export const formatPhoneNumber = (phoneNumber: any) => {
-  if (phoneNumber.startsWith("0")) {
+  if (phoneNumber.startsWith("+92")) {
+    return phoneNumber;
+  } else if (phoneNumber.startsWith("0")) {
     return phoneNumber.replace(/^0/, "+92");
   } else {
     return "+92" + phoneNumber;
+  }
+};
+
+export const validateInput = (value: any) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const phoneRegex = /^(\+?[0-9]{11,13})$/;
+  if (emailRegex.test(value)) {
+    return { type: "email", isValid: true };
+  } else if (phoneRegex.test(value)) {
+    return { type: "phone", isValid: true };
+  } else {
+    return { type: "invalid", isValid: false };
   }
 };

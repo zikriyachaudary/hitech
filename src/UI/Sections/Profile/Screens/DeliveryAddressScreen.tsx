@@ -52,10 +52,12 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
           borderWidth: 1,
           alignItems: "center",
           justifyContent: "center",
+          backgroundColor: AppColors.themeColor.dark,
         }}
         rightIconStyle={{
           width: normalized(20),
           height: normalized(20),
+          tintColor: AppColors.white.white,
         }}
         onRightIconPress={() => {
           props?.navigation?.navigate(Routes.Home.UpdateDelivery);
