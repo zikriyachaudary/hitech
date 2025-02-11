@@ -21,7 +21,10 @@ import {
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import CommonDataManager from "../../../../Utils/CommonManager";
-import { addCategoryReq } from "../../../../Network/Services/GeneralServices";
+import {
+  addCategoryReq,
+  updateCategoryReq,
+} from "../../../../Network/Services/GeneralServices";
 import { useDispatch } from "react-redux";
 import {
   setIsAlertShow,
@@ -31,11 +34,15 @@ import {
 import { AppStrings } from "../../../../Utils/AppStrings";
 
 const AddCategoryScreen = (props: ScreenProps) => {
-  const [category, setCategory] = useState<string | null>(null);
+  const item = props?.route?.params?.item;
+  const [category, setCategory] = useState<string | null>(
+    item?.category || null
+  );
   const [subCategories, setSubCategories] = useState<
     { id: string; name: string }[]
-  >([]);
+  >(item?.subCat || []);
   const dispatch = useDispatch();
+  console.log("item --- ", item);
 
   const addSubCategory = () => {
     setSubCategories([
@@ -73,31 +80,52 @@ const AddCategoryScreen = (props: ScreenProps) => {
 
     const data = {
       category: category || "No Category",
-      id: CommonDataManager.getSharedInstance().makeid(6),
+      id: item?.id || CommonDataManager.getSharedInstance().makeid(6),
       subCat: subCategories.filter((sub) => sub.name.trim() !== ""),
     };
     dispatch(setIsLoader(true));
-    addCategoryReq(data, (resp: any) => {
-      if (resp?.status) {
-        dispatch(
-          setShowToast({
-            type: AppStrings.ToastType.success,
-            message: resp?.message,
-          })
-        );
-        props?.navigation?.goBack();
-      } else {
-        dispatch(
-          setShowToast({
-            type: AppStrings.ToastType.success,
-            message: resp?.message,
-          })
-        );
-      }
-      dispatch(setIsLoader(false));
-    });
+    if (item?.category) {
+      updateCategoryReq(data, (resp: any) => {
+        if (resp?.status) {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.success,
+              message: resp?.message,
+            })
+          );
+          props?.navigation?.goBack();
+        } else {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.success,
+              message: resp?.message,
+            })
+          );
+        }
+        dispatch(setIsLoader(false));
+      });
+    } else {
+      addCategoryReq(data, (resp: any) => {
+        if (resp?.status) {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.success,
+              message: resp?.message,
+            })
+          );
+          props?.navigation?.goBack();
+        } else {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.success,
+              message: resp?.message,
+            })
+          );
+        }
+        dispatch(setIsLoader(false));
+      });
+    }
   };
-
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
@@ -140,7 +168,10 @@ const AddCategoryScreen = (props: ScreenProps) => {
           <Text style={styles.addButtonText}>+ Add Sub-Category</Text>
         </TouchableOpacity>
 
-        <FilledButton label={"Publish"} onPress={handlePublish} />
+        <FilledButton
+          label={item ? "Update " : "Publish"}
+          onPress={handlePublish}
+        />
       </ScrollView>
     </View>
   );

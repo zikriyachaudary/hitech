@@ -91,12 +91,20 @@ const ManageCategories = (props: ScreenProps) => {
       {categoryList?.length > 0 ? (
         <FlatList
           data={categoryList}
-          horizontal
           keyExtractor={(item, index) => index.toString()}
+          contentContainerStyle={styles.contentCont}
           renderItem={({ item, index }) => (
-            <View>
-              <Text>{item?.category}</Text>
-            </View>
+            <TouchableOpacity
+              style={styles.itemCont}
+              activeOpacity={0.7}
+              onPress={() => {
+                props?.navigation?.navigate(Routes.Admin.AddCategory, {
+                  item: item,
+                });
+              }}
+            >
+              <Text style={styles.itemTxt}>{item?.category}</Text>
+            </TouchableOpacity>
           )}
         />
       ) : (
@@ -131,5 +139,25 @@ const styles = StyleSheet.create({
     fontSize: normalized(14),
     fontFamily: AppFonts.PoppinsMedium,
     color: AppColors.black.black,
+  },
+  itemCont: {
+    borderWidth: 2,
+    borderColor: AppColors.themeColor.dark,
+    borderRadius: normalized(8),
+    height: normalized(40),
+    width: ScreenSize.width - normalized(20),
+    justifyContent: "center",
+    paddingHorizontal: normalized(10),
+  },
+  itemTxt: {
+    color: AppColors.black.black,
+    fontSize: normalized(16),
+    fontFamily: AppFonts.PoppinsMedium,
+  },
+  contentCont: {
+    flex: 1,
+    marginTop: normalized(20),
+    alignItems: "center",
+    gap: normalized(15),
   },
 });

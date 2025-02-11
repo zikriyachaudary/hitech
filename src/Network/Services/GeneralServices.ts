@@ -114,6 +114,8 @@ export const addCategoryReq = async (params: any, onComplete: any) => {
 
 export const updateCategoryReq = async (params: any, onComplete: any) => {
   try {
+    console.log("update cat pararams ---->>   ", params);
+
     firestore()
       .collection(Collections.CATEGORIES_COLLECTION)
       .doc(params?.id)
