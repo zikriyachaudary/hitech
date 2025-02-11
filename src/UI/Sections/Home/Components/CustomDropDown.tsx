@@ -30,14 +30,14 @@ const CustomDropDown = (props: any) => {
   useEffect(() => {
     Animated.timing(rotationAnim, {
       toValue: isOpen ? 1 : 0,
-      duration: 300, // Adjust duration for smoothness
+      duration: 300,
       useNativeDriver: true,
     }).start();
   }, [isOpen]);
 
   const rotateInterpolate = rotationAnim.interpolate({
     inputRange: [0, 1],
-    outputRange: ["180deg", "360deg"], // 180deg (closed) -> 360deg (open)
+    outputRange: ["180deg", "360deg"],
   });
 
   return (

@@ -195,54 +195,6 @@ const SignUpScreen = (props: any) => {
         }
       }
     );
-    // try {
-    //   await uploadMedia(selectedImage, async (url) => {
-    //     let number = formatPhoneNumber(phoneNumber);
-    //     console.log("url ---->>>   ", url);
-
-    //     if (url) {
-    //       const paramsObj: any = {
-    //         fullName: firstName + " " + lastName,
-    //         email: email?.toLocaleLowerCase(),
-    //         phoneNumber: number,
-    //         password: password,
-    //         profileImage: url,
-    //       };
-
-    //       await userSignupRequest(paramsObj, (response) => {
-    //         console.log("response --->>>   ", response);
-
-    //         if (response?.status) {
-    //           setUserDataInAsync(response?.data);
-    //           dispatch(setUserData(response?.data));
-    //           dispatch(setIsLoader(false));
-    //         } else {
-    //           let errorMessage = response?.message
-    //             ? response?.message
-    //             : "Something went wrong";
-    //           dispatch(
-    //             setIsAlertShow({
-    //               value: true,
-    //               message: errorMessage,
-    //             })
-    //           );
-    //           dispatch(setIsLoader(false));
-    //         }
-    //       });
-    //     } else {
-    //       dispatch(setIsLoader(false));
-    //       dispatch(
-    //         setIsAlertShow({
-    //           value: true,
-    //           message: "Something went wrong",
-    //         })
-    //       );
-    //     }
-    //   });
-    // } catch (e) {
-    //   dispatch(setIsLoader(false));
-    //   console.log("error...", e);
-    // }
   };
 
   const socialAuthReq = async (type: string) => {

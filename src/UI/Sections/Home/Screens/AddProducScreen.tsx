@@ -25,12 +25,18 @@ import ImageViewModal from "../../../Components/CustomModal/ImageViewModal";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import CustomDropDown from "../Components/CustomDropDown";
 import AppImagePicker from "../../../Components/CustomModal/AppImagePicker";
 import AppImageViewer from "../../../Components/AppImageView";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
+import { fetchCatListReq } from "../../../../Network/Services/GeneralServices";
+import {
+  setIsLoader,
+  setShowToast,
+} from "../../../../Redux/Reducers/AppReducers";
+import { AppStrings } from "../../../../Utils/AppStrings";
 
 const AddProducScreen = (props: ScreenProps) => {
   const productDetail = props?.route?.params?.item;
@@ -41,6 +47,11 @@ const AddProducScreen = (props: ScreenProps) => {
     productDetail?.category || null
   );
   const [catList, setCatList] = useState<any>([...Categories]);
+  const [categoryList, setCategoryList] = useState<any>([]);
+  const [selectedCat, setSelectedCat] = useState<any>([]);
+  const [subCatList, setSubCatList] = useState([]);
+  const [selectedSubCat, setSelectedSubCat] = useState<any>();
+  console.log("subCatList ----  ", selectedCat);
 
   const [productSubCat, setProductSubCat] = useState<any>(
     productDetail?.subCategory || null
@@ -79,6 +90,8 @@ const AddProducScreen = (props: ScreenProps) => {
   const [catError, setCatError] = useState("");
   const [catSubError, setCatSubError] = useState("");
 
+  const dispatch = useDispatch();
+
   const focusNextField = (inputRef: any) => {
     if (inputRef?.current) {
       inputRef?.current?.focus();
@@ -86,14 +99,29 @@ const AddProducScreen = (props: ScreenProps) => {
   };
 
   useEffect(() => {
-    // if (productDetail) {
-    //   const matchedCategory = Categories.find(
-    //     (cat) => cat.category === productDetail.category
-    //   );
-    //   setCatList(matchedCategory || null);
-    // }
-    setCatList(Categories);
-  }, [productDetail]);
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = () => {
+    try {
+      if (categoryList?.length == 0) dispatch(setIsLoader(true));
+      fetchCatListReq((resp: any) => {
+        if (resp?.status) {
+          setCategoryList(resp?.data);
+        } else {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.error,
+              message: resp?.message,
+            })
+          );
+        }
+        dispatch(setIsLoader(false));
+      });
+    } catch (error) {
+      console.log("error --->>>  ", error);
+    }
+  };
 
   const removeImage = (index: number) => {
     setImageList((prevImageList: any) =>
@@ -135,6 +163,48 @@ const AddProducScreen = (props: ScreenProps) => {
       </TouchableOpacity>
     </View>
   );
+
+  const onAddProduct = async () => {
+    let isFormValid = true;
+    if (imageList?.length == 0) {
+      setProductImagesError("Attach Product Pictures");
+    }
+    if (!productName) {
+      setProductNameError("* Required");
+      isFormValid = false;
+    }
+    if (!productPrice) {
+      setProductPriceError("* Required");
+      isFormValid = false;
+    }
+    if (!description) {
+      setProductDesError("* Required");
+      isFormValid = false;
+    }
+    if (!selectedCat?.category) {
+      setCatError("* Required");
+      isFormValid = false;
+    }
+    if (selectedCat?.category && !selectedSubCat?.name) {
+      setCatSubError("* Required");
+      isFormValid = false;
+    }
+
+    const obj = {
+      name: productName,
+      price: productPrice,
+      description: description,
+      category: {
+        category: selectedCat?.category,
+        id: selectedCat?.id,
+      },
+      subCat: {
+        name: selectedSubCat?.name,
+        id: selectedSubCat?.id,
+      },
+      images: [],
+    };
+  };
 
   return (
     <View style={AppStyles.MainStyle}>
@@ -221,17 +291,16 @@ const AddProducScreen = (props: ScreenProps) => {
             placeHolder={"Select product category"}
             atSelect={(val: any) => {
               setCatError("");
-              setProductSubCat(null);
-              console.log(" val ----", val);
-
-              // setProductMainCat(val);
+              setSelectedCat(val);
+              setSubCatList(val?.subCat);
+              setSelectedSubCat("");
             }}
-            selected={productMainCat}
+            selected={selectedCat?.category}
             optionKey={"category"}
-            list={Categories}
+            list={categoryList}
           />
           {catError && <Text style={styles.errorMsg}>{catError}</Text>}
-          {catList?.subcategories?.length > 0 && (
+          {subCatList?.length > 0 && (
             <>
               <Text style={{ ...styles.label, marginBottom: 5 }}>
                 {"Product Sub Category"}
@@ -241,11 +310,11 @@ const AddProducScreen = (props: ScreenProps) => {
                 placeHolder={"Select product sub category"}
                 atSelect={(val: any) => {
                   setCatSubError("");
-                  setProductSubCat(val);
+                  setSelectedSubCat(val);
                 }}
-                selected={productSubCat?.name || productSubCat}
+                selected={selectedSubCat?.name}
                 optionKey={"name"}
-                list={catList?.subcategories}
+                list={subCatList}
               />
               {catSubError && (
                 <Text style={styles.errorMsg}>{catSubError}</Text>
@@ -291,6 +360,9 @@ const AddProducScreen = (props: ScreenProps) => {
       <FilledButton
         mainCustomStyle={{ marginBottom: hv(15) }}
         label={productDetail ? "Update" : "Publish"}
+        onPress={() => {
+          onAddProduct();
+        }}
       />
 
       {openImage ? (
