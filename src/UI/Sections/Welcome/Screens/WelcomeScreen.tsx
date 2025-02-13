@@ -22,7 +22,12 @@ import { Routes } from "../../../../Utils/Routes";
 
 const WelcomeScreen = (props: ScreenProps) => {
   return (
-    <LinearGradient colors={["#0900FF", "#DE8225"]} style={AppStyles.MainStyle}>
+    <LinearGradient
+      colors={["#0900FF", "#0900FF", "#DE8225", "#DE8225"]}
+      style={AppStyles.MainStyle}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+    >
       <AppStatusBar backgroundColor="transparent" barStyle="light-content" />
       <SafeAreaView style={{ flex: 1 }}>
         <View
@@ -43,7 +48,7 @@ const WelcomeScreen = (props: ScreenProps) => {
               activeOpacity={0.7}
               style={styles.btn}
             >
-              <Text style={styles.btnTxt}>Continue As User</Text>
+              <Text style={styles.btnTxt}>User</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -54,7 +59,7 @@ const WelcomeScreen = (props: ScreenProps) => {
               activeOpacity={0.7}
               style={styles.btn}
             >
-              <Text style={styles.btnTxt}>Continue As Admin</Text>
+              <Text style={styles.btnTxt}>Admin</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -85,20 +90,26 @@ const styles = StyleSheet.create({
     width: ScreenSize.width - normalized(40),
     alignItems: "center",
     marginBottom: normalized(30),
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: normalized(20),
   },
   btn: {
-    width: normalized(300),
+    width: normalized(150),
     height: normalized(55),
     backgroundColor: "rgba(255,255,255,0.3)",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: normalized(10),
+    borderRadius: normalized(100),
     marginTop: normalized(20),
+    borderWidth: 2,
+    borderColor: AppColors.themeColor.dark,
   },
   btnTxt: {
     fontSize: normalized(22),
-    color: "#8C4D00",
-    // color: AppColors.white.white,
+    // color: "#8C4D00",
+    // color: "#0900FF",
+    color: AppColors.themeColor.dark,
     fontFamily: AppFonts.PoppinsSemiBold,
   },
 });

@@ -80,6 +80,7 @@ export const AppColors = {
   orange: {
     light: "#FDF1DB",
     dark: "#FE9311",
+    sharp: "#DE8225",
   },
   green: {
     dark: "#00BE13",
@@ -211,6 +212,24 @@ export const profileBarList = [
     id: 3,
     text: "My Cart",
     leftIcon: AppImages.Profile.cart,
+  },
+  {
+    id: 4,
+    text: "Delete Account",
+    leftIcon: AppImages.Profile.deleteUser,
+  },
+  {
+    id: 5,
+    text: "Log out",
+    leftIcon: AppImages.Profile.LogoutIcon,
+  },
+];
+
+export const adminProfileList = [
+  {
+    id: 1,
+    text: "Edit Your Profile",
+    leftIcon: AppImages.Profile.ProfileIcon,
   },
   {
     id: 4,

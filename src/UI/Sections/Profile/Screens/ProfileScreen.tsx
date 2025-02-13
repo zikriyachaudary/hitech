@@ -12,6 +12,7 @@ import { setTab, setUserData } from "../../../../Redux/Reducers/AppReducers";
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  adminProfileList,
   AppColors,
   AppFonts,
   hv,
@@ -31,6 +32,7 @@ const ProfileScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const isAdmin = selector?.userData?.isAdmin;
   const userData = selector?.userData || null;
   const [openLogoutModal, setOpenLogoutModal] = useState({
     value: false,
@@ -55,7 +57,7 @@ const ProfileScreen = (props: ScreenProps) => {
       />
       <Text style={styles.username}>{userData?.fullName}</Text>
       <ProfileBar
-        List={profileBarList}
+        List={isAdmin ? adminProfileList : profileBarList}
         setValue={(id: any) => {
           if (id == 1) {
             props?.navigation?.navigate(Routes.Home.EditProfile);

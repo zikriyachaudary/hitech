@@ -52,10 +52,10 @@ const ProductDetailScreen = (props: ScreenProps) => {
       <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={styles.headingCont}>
           <Text style={styles.itemName}>{item?.name}</Text>
-          <View style={styles.ratingCont}>
+          {/* <View style={styles.ratingCont}>
             <Text style={styles.ratingTxt}>{"5.0"}</Text>
             <Image source={AppImages.Home.star} style={styles.star} />
-          </View>
+          </View> */}
         </View>
         <Text style={styles.priceTxt}>{`Rs. ${item?.price}`}</Text>
         <Text style={styles.desc}>Description:</Text>

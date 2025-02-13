@@ -9,13 +9,17 @@ import AppImageViewer from "../../../Components/AppImageView";
 
 const ProductItem = (props: any) => {
   const { item } = props;
+
   return (
     <TouchableOpacity
       style={styles.mainCont}
       activeOpacity={0.7}
       onPress={() => props?.onItemPress(item)}
     >
-      <AppImageViewer source={{ uri: item?.images[0] }} style={styles.img} />
+      <AppImageViewer
+        source={{ uri: item?.images[0]?.url }}
+        style={styles.img}
+      />
       <View style={styles.rightCont}>
         <Text style={styles.nameTxt}>{item?.name}</Text>
         <Text numberOfLines={2} style={styles.descTxt}>
@@ -54,6 +58,7 @@ const styles = StyleSheet.create({
     width: normalized(80),
     height: normalized(80),
     borderRadius: normalized(10),
+    resizeMode: "contain",
   },
   nameTxt: {
     fontSize: normalized(16),
@@ -72,7 +77,7 @@ const styles = StyleSheet.create({
   },
   priceCont: {
     height: normalized(25),
-    backgroundColor: AppColors.themeColor.dark,
+    backgroundColor: AppColors.orange.sharp,
     alignItems: "center",
     justifyContent: "center",
     width: normalized(110),

@@ -35,7 +35,7 @@ const ProductSliderComp = (props: any) => {
               let image = item.item;
               return (
                 <AppImageViewer
-                  source={{ uri: image }}
+                  source={{ uri: image?.url }}
                   style={styles.productPic}
                 />
               );
@@ -49,13 +49,13 @@ const ProductSliderComp = (props: any) => {
             dotsLength={props?.productImagesList.length}
             activeDotIndex={activeImgIndex}
             containerStyle={{
-              paddingVertical: 5,
+              paddingTop: normalized(10),
             }}
-            dotColor={AppColors.black.black}
+            dotColor={AppColors.themeColor.dark}
             dotStyle={styles.dotStyle}
-            activeDotScale={0.5}
+            activeDotScale={0.8}
             inactiveDotColor={AppColors.grey.greyLevel3}
-            inactiveDotOpacity={0.7}
+            inactiveDotOpacity={1}
             inactiveDotScale={0.5}
             carouselRef={imageCrouselRef}
             tappableDots={!!imageCrouselRef}

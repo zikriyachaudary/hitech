@@ -1,5 +1,5 @@
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import {
   dummyList,
@@ -9,8 +9,45 @@ import {
 import ProductItem from "../Components/ProductItem";
 import { Routes } from "../../../../Utils/Routes";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
+import { fetchAllProducts } from "../../../../Network/Services/ProductServices";
+import { useDispatch } from "react-redux";
+import {
+  setIsLoader,
+  setShowToast,
+} from "../../../../Redux/Reducers/AppReducers";
+import { AppStrings } from "../../../../Utils/AppStrings";
+import { useIsFocused } from "@react-navigation/native";
 
 const ManageProductScreen = (props: ScreenProps) => {
+  const [productsList, setProductsList] = useState([]);
+  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
+
+  const fetchProductsReq = async () => {
+    try {
+      productsList?.length == 0 && dispatch(setIsLoader(true));
+      await fetchAllProducts((resp: any) => {
+        if (resp?.status) {
+          setProductsList(resp?.data);
+        } else {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.error,
+              message:
+                "Error While Getting Products, Check your Internet Connection",
+            })
+          );
+        }
+        dispatch(setIsLoader(false));
+      });
+    } catch (error) {
+      console.log("error whille fetching products --->>>  ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductsReq();
+  }, [isFocused]);
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
@@ -19,7 +56,7 @@ const ManageProductScreen = (props: ScreenProps) => {
         onPress={() => props?.navigation?.goBack()}
       />
       <FlatList
-        data={dummyList}
+        data={productsList}
         showsVerticalScrollIndicator={false}
         keyExtractor={(item, index) => index.toString()}
         contentContainerStyle={{

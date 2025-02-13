@@ -1,10 +1,10 @@
-import {Alert, Linking, Share} from 'react-native';
-import moment from 'moment';
+import { Alert, Linking, Share } from "react-native";
+import moment from "moment";
 
 export default class CommonDataManager {
   static shared: CommonDataManager;
   _translations = [];
-  _currentLanguage = 'en';
+  _currentLanguage = "en";
   selector: any = null;
   dispatch: any = null;
   _packageDetails: any;
@@ -18,7 +18,7 @@ export default class CommonDataManager {
   setup = async () => {
     try {
       this._translations = [];
-      const localTranslaionsData = require('../Utils/translation.json');
+      const localTranslaionsData = require("../Utils/translation.json");
       this._translations = localTranslaionsData;
     } catch (e) {}
   };
@@ -29,25 +29,29 @@ export default class CommonDataManager {
 
   capitalizeFirstLetter = (str: any) => {
     if (!str) {
-      return '';
+      return "";
     }
     let firstChar = str.charAt(0);
     return firstChar.toUpperCase() + str.slice(1);
   };
 
   makeid = (length: any) => {
-    var result = '';
-    var characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    const timestamp = Date.now().toString(36); // Convert timestamp to base36 for compact representation
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let result = "";
+
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
     }
-    return result;
+
+    return `${timestamp}-${result}`;
   };
 
   getTranslation = (language: any, screen: any, labelString: string) => {
-    var lbl = '';
+    var lbl = "";
     var languageDic = this._translations[language];
     var mainScreen = languageDic[screen];
     if (mainScreen !== undefined) {
@@ -62,11 +66,11 @@ export default class CommonDataManager {
     try {
       await Linking.openURL(this.validateUrl(url));
     } catch (e) {
-      console.log('Something wrong ', e);
+      console.log("Something wrong ", e);
     }
   };
   validateUrl = (url: string) => {
-    if (url && !url?.toLowerCase()?.includes('http')) {
+    if (url && !url?.toLowerCase()?.includes("http")) {
       return `https://${url}`;
     }
     return url;
@@ -75,28 +79,28 @@ export default class CommonDataManager {
     Alert.alert(
       title,
       message,
-      [{text: 'OK', onPress: () => console.log('OK Pressed')}],
-      {cancelable: true},
+      [{ text: "OK", onPress: () => console.log("OK Pressed") }],
+      { cancelable: true }
     );
   };
   showPopUpWithOk = (title: string, message: string, onClick: () => void) => {
-    Alert.alert(title, message, [{text: 'OK', onPress: () => onClick()}], {
+    Alert.alert(title, message, [{ text: "OK", onPress: () => onClick() }], {
       cancelable: false,
     });
   };
   showPopUpWithOkCancel = (
     title: string,
     message: string,
-    onClick: () => void,
+    onClick: () => void
   ) => {
     Alert.alert(
       title,
       message,
       [
-        {text: 'Cancel', onPress: () => console.log('OK Pressed')},
-        {text: 'OK', onPress: () => onClick()},
+        { text: "Cancel", onPress: () => console.log("OK Pressed") },
+        { text: "OK", onPress: () => onClick() },
       ],
-      {cancelable: true},
+      { cancelable: true }
     );
   };
 
@@ -109,12 +113,12 @@ export default class CommonDataManager {
 
   truncateString = (str: any) => {
     if (!str) {
-      return '';
+      return "";
     }
-    let newStringArray = str.split(' ');
-    let combinedString = '';
+    let newStringArray = str.split(" ");
+    let combinedString = "";
     newStringArray.map((el: any) => {
-      combinedString = combinedString + (el == '' ? '' : el.trim() + ' ');
+      combinedString = combinedString + (el == "" ? "" : el.trim() + " ");
     });
     return combinedString.trim();
   };
@@ -123,11 +127,11 @@ export default class CommonDataManager {
     return number?.trim()?.length == 10;
   };
   getCountryFlagCode = (str: string) => {
-    const flagString = str.split('-');
+    const flagString = str.split("-");
     if (flagString[1]) {
       return flagString[1];
     } else {
-      return '';
+      return "";
     }
   };
 
@@ -161,7 +165,7 @@ export default class CommonDataManager {
     searchText: any,
     listData: any,
     key1: any,
-    key2: any,
+    key2: any
   ) => {
     if (searchText && listData?.length > 0) {
       const newData = listData.filter(function (item: any) {
@@ -169,12 +173,12 @@ export default class CommonDataManager {
         if (key1 in item) {
           keyValue = item[key1];
         }
-        let keyValue2 = '';
+        let keyValue2 = "";
         if (key2 in keyValue) {
           keyValue2 = item[key2];
         }
 
-        const itemData = keyValue2 ? keyValue2.toUpperCase() : ''.toUpperCase();
+        const itemData = keyValue2 ? keyValue2.toUpperCase() : "".toUpperCase();
         const textData = searchText.toUpperCase();
         return itemData.indexOf(textData) > -1;
       });
@@ -182,16 +186,16 @@ export default class CommonDataManager {
     }
   };
 
-  capitalizeFirstLetterFromSentence = (txt = '') => {
+  capitalizeFirstLetterFromSentence = (txt = "") => {
     if (txt?.length > 0) {
-      const arr = txt.split(' ');
+      const arr = txt.split(" ");
       return arr.length == 0
-        ? '-'
+        ? "-"
         : arr.length == 1
         ? txt.charAt(0).toUpperCase()
         : arr[0].charAt(0).toUpperCase() + arr[1].charAt(0).toUpperCase();
     } else {
-      return '';
+      return "";
     }
   };
 
@@ -200,7 +204,7 @@ export default class CommonDataManager {
     return value;
   };
   utcToLocal = (datenTime: any, format: any, type: any) => {
-    if (type == 'time') {
+    if (type == "time") {
       let localTime = moment(datenTime, format).local().toDate();
       let utcText = moment(localTime).format(format);
       return moment.utc(utcText, format).local().format(format);
@@ -210,9 +214,9 @@ export default class CommonDataManager {
     }
   };
   extractCountryFromAddress = (address: any) => {
-    const addressParts = address?.split(',');
+    const addressParts = address?.split(",");
     const lastPart = addressParts[addressParts?.length - 1];
-    const lastPartWords = lastPart?.trim()?.split(' ');
+    const lastPartWords = lastPart?.trim()?.split(" ");
     const country = lastPartWords[lastPartWords?.length - 1];
     return country;
   };
@@ -227,8 +231,8 @@ export default class CommonDataManager {
     const dates = [];
 
     while (currentDate <= moment(endDate)) {
-      dates.push(currentDate.format('YYYY-MM-DD'));
-      currentDate = currentDate.add(1, 'days'); // Increment the current date without modifying the original startDate
+      dates.push(currentDate.format("YYYY-MM-DD"));
+      currentDate = currentDate.add(1, "days"); // Increment the current date without modifying the original startDate
     }
 
     return dates;
@@ -237,28 +241,28 @@ export default class CommonDataManager {
   makeStartAndEndDate(dateArr: any) {
     let tempArr: any = [];
     dateArr?.map((element: any) => {
-      let start_date = moment(element?.start_session_time).format('YYYY-MM-DD');
-      let end_date = moment(element?.end_session_time).format('YYYY-MM-DD');
-      tempArr.push({start_date: start_date, end_date: end_date});
+      let start_date = moment(element?.start_session_time).format("YYYY-MM-DD");
+      let end_date = moment(element?.end_session_time).format("YYYY-MM-DD");
+      tempArr.push({ start_date: start_date, end_date: end_date });
     });
     return tempArr;
   }
 
   // Accepts both with +1 numbers and without as well.
   formatUSNumber = (phoneNumberString: string) => {
-    var cleaned = ('' + phoneNumberString).replace(/\D/g, '');
+    var cleaned = ("" + phoneNumberString).replace(/\D/g, "");
     var match = cleaned.match(/^(1|)?(\d{3})(\d{3})(\d{4})$/);
     if (match) {
-      var intlCode = match[1] ? '+1 ' : '';
-      return [intlCode, '(', match[2], ') ', match[3], '-', match[4]].join('');
+      var intlCode = match[1] ? "+1 " : "";
+      return [intlCode, "(", match[2], ") ", match[3], "-", match[4]].join("");
     }
-    return '';
+    return "";
   };
   addPlusToNumber = (str: any) => {
     if (!str) {
-      return '';
+      return "";
     }
-    if (str.includes('+')) {
+    if (str.includes("+")) {
       return str;
     } else {
       return `+${str}`;
@@ -266,9 +270,9 @@ export default class CommonDataManager {
   };
   // remove empty lines at the end and start of a string
   removeEmptyLines = (str: any) => {
-    if (!str) return '';
+    if (!str) return "";
     str = str.trim();
-    return str.replace(/^\s+|\s+$/g, '');
+    return str.replace(/^\s+|\s+$/g, "");
   };
 
   generateUniqueImageName = () => {
@@ -281,15 +285,15 @@ export default class CommonDataManager {
   getFormattedPhoneNumber = (
     code: string,
     phone: string,
-    ignoreCode = false,
+    ignoreCode = false
   ) => {
     if (!code || !phone) {
-      return '';
+      return "";
     }
     let fullNumber = `${this.addPlusToNumber(code)}${phone}`;
     const customNumber = ignoreCode ? phone : fullNumber;
     if (
-      CommonDataManager.getSharedInstance().addPlusToNumber(code) == '+1' &&
+      CommonDataManager.getSharedInstance().addPlusToNumber(code) == "+1" &&
       phone.length >= 10
     ) {
       return this.formatUSNumber(customNumber);
@@ -321,16 +325,16 @@ export default class CommonDataManager {
     message: string,
     leftTitle: string,
     rightTitle: string,
-    okPress: (type: number) => void,
+    okPress: (type: number) => void
   ) => {
     Alert.alert(
       title,
       message,
       [
-        {text: leftTitle, onPress: () => okPress(0)},
-        {text: rightTitle, onPress: () => okPress(1)},
+        { text: leftTitle, onPress: () => okPress(0) },
+        { text: rightTitle, onPress: () => okPress(1) },
       ],
-      {cancelable: false},
+      { cancelable: false }
     );
   };
 }

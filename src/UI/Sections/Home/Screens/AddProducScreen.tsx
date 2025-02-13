@@ -17,6 +17,7 @@ import {
   AppHorizontalMargin,
   AppImages,
   Categories,
+  fullDate,
   hv,
   normalized,
   ScreenProps,
@@ -31,12 +32,22 @@ import CustomDropDown from "../Components/CustomDropDown";
 import AppImagePicker from "../../../Components/CustomModal/AppImagePicker";
 import AppImageViewer from "../../../Components/AppImageView";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
-import { fetchCatListReq } from "../../../../Network/Services/GeneralServices";
+import {
+  fetchCatListReq,
+  uploadMedia,
+} from "../../../../Network/Services/GeneralServices";
 import {
   setIsLoader,
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
+import CommonDataManager from "../../../../Utils/CommonManager";
+import {
+  deleteProductReq,
+  updateProduct,
+  uploadProductToFireStore,
+} from "../../../../Network/Services/ProductServices";
+import moment from "moment";
 
 const AddProducScreen = (props: ScreenProps) => {
   const productDetail = props?.route?.params?.item;
@@ -51,7 +62,6 @@ const AddProducScreen = (props: ScreenProps) => {
   const [selectedCat, setSelectedCat] = useState<any>([]);
   const [subCatList, setSubCatList] = useState([]);
   const [selectedSubCat, setSelectedSubCat] = useState<any>();
-  console.log("subCatList ----  ", selectedCat);
 
   const [productSubCat, setProductSubCat] = useState<any>(
     productDetail?.subCategory || null
@@ -192,8 +202,10 @@ const AddProducScreen = (props: ScreenProps) => {
 
     const obj = {
       name: productName,
+      id: CommonDataManager.getSharedInstance()?.makeid(8),
       price: productPrice,
       description: description,
+      createdAt: moment.utc(new Date()).format(fullDate),
       category: {
         category: selectedCat?.category,
         id: selectedCat?.id,
@@ -204,6 +216,95 @@ const AddProducScreen = (props: ScreenProps) => {
       },
       images: [],
     };
+    let productImagesList: any = [];
+    dispatch(setIsLoader(true));
+    const uploadTasks = imageList.map((el: any) => {
+      if (!el?.url) {
+        return new Promise((resolve: any) => {
+          uploadMedia(el, (url: any) => {
+            productImagesList.push({
+              imageId: CommonDataManager.getSharedInstance().makeid(4),
+              url,
+            });
+            resolve();
+          });
+        });
+      } else {
+        productImagesList.push(el);
+        return Promise.resolve();
+      }
+    });
+    await Promise.all(uploadTasks);
+    obj["images"] = productImagesList;
+    if (productDetail?.id) {
+      await updateProduct(obj, (resp: any) => {
+        if (resp?.status) {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.success,
+              message: "Product Updated Successfully",
+            })
+          );
+          props?.navigation?.goBack();
+        } else {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.error,
+              message: AppStrings.Network.someThingError,
+            })
+          );
+        }
+      });
+      dispatch(setIsLoader(false));
+    } else {
+      await uploadProductToFireStore(obj, (resp: any) => {
+        if (resp?.status) {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.success,
+              message: "Product Added Successfully",
+            })
+          );
+          props?.navigation?.goBack();
+        } else {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.error,
+              message: AppStrings.Network.someThingError,
+            })
+          );
+        }
+      });
+      dispatch(setIsLoader(false));
+    }
+  };
+
+  const deleteProduct = async () => {
+    try {
+      await deleteProductReq(productDetail?.id, (resp: any) => {
+        dispatch(setIsLoader(true));
+        if (resp?.status) {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.success,
+              message: resp?.message,
+            })
+          );
+          props?.navigation?.goBack();
+        } else {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.error,
+              message: resp?.message,
+            })
+          );
+        }
+        dispatch(setIsLoader(false));
+      });
+    } catch (error) {
+      console.log("error --->  ", error);
+      dispatch(setIsLoader(false));
+    }
   };
 
   return (
@@ -214,7 +315,7 @@ const AddProducScreen = (props: ScreenProps) => {
         onPress={() => props?.navigation?.goBack()}
         {...(productDetail && {
           icon: [AppImages.Products.delete],
-          onRightIconPress: () => console.log(" deleted ---------"),
+          onRightIconPress: () => deleteProduct(),
         })}
       />
       <KeyboardAvoidingView

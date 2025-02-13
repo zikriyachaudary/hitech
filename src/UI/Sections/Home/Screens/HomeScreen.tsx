@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import {
   AppColors,
@@ -22,14 +22,51 @@ import ProfileHeader from "../Components/ProfileHeader";
 import CategoryModal from "../Components/CategoryModal";
 import ProductItem from "../Components/ProductItem";
 import { Routes } from "../../../../Utils/Routes";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
+import { useIsFocused } from "@react-navigation/native";
+import { fetchAllProducts } from "../../../../Network/Services/ProductServices";
+import {
+  setIsLoader,
+  setShowToast,
+} from "../../../../Redux/Reducers/AppReducers";
+import { AppStrings } from "../../../../Utils/AppStrings";
 
 const HomeScreen = (props: ScreenProps) => {
   const [isShowCategoryModal, setIsShowCategoryModal] = useState<any>(false);
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const [productsList, setProductsList] = useState([]);
+  const dispatch = useDispatch();
+
+  const isFocused = useIsFocused();
+
+  const fetchProductsReq = async () => {
+    try {
+      productsList?.length == 0 && dispatch(setIsLoader(true));
+      await fetchAllProducts((resp: any) => {
+        if (resp?.status) {
+          setProductsList(resp?.data);
+        } else {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.error,
+              message:
+                "Error While Getting Products, Check your Internet Connection",
+            })
+          );
+        }
+        dispatch(setIsLoader(false));
+      });
+    } catch (error) {
+      console.log("error whille fetching products --->>>  ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductsReq();
+  }, [isFocused]);
 
   const adminBarItems = [
     {
@@ -107,7 +144,7 @@ const HomeScreen = (props: ScreenProps) => {
             }}
           />
           <FlatList
-            data={dummyList}
+            data={productsList}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={{
