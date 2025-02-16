@@ -122,6 +122,7 @@ const ToastComp = () => {
                 : AppColors.red.dark,
             fontSize: normalized(14),
             fontWeight: "400",
+            width: normalized(250),
           }}
         >
           {CommonDataManager.getSharedInstance().capitalizeFirstLetter(

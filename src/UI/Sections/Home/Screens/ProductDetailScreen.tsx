@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useState } from "react";
@@ -36,19 +37,22 @@ const ProductDetailScreen = (props: ScreenProps) => {
       <ProductHeader
         leftIcon={AppImages.Auth.backArrow}
         onBackPress={() => props?.navigation?.goBack()}
-        title={"Details"}
+        title={"Product Details"}
         rightIcon={AppImages.Home.cart}
         onRightIconPress={() => {
           props?.navigation?.navigate(Routes.Home.cartScreen);
         }}
         cartDetail={cartDetail}
       />
-      <ProductSliderComp
-        productImagesList={item?.images}
-        atBackPress={() => {
-          props?.navigation?.goBack();
-        }}
-      />
+
+      <View>
+        <ProductSliderComp
+          productImagesList={item?.images}
+          atBackPress={() => {
+            props?.navigation?.goBack();
+          }}
+        />
+      </View>
       <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={styles.headingCont}>
           <Text style={styles.itemName}>{item?.name}</Text>

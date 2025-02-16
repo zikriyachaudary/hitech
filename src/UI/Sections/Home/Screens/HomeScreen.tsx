@@ -10,6 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import {
+  adminHomeBarItems,
   AppColors,
   AppFonts,
   AppImages,
@@ -31,6 +32,7 @@ import {
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
+import CategorySelectionModal from "../../../Components/CustomModal/CategorySelectionModal";
 
 const HomeScreen = (props: ScreenProps) => {
   const [isShowCategoryModal, setIsShowCategoryModal] = useState<any>(false);
@@ -39,6 +41,10 @@ const HomeScreen = (props: ScreenProps) => {
   );
   const [productsList, setProductsList] = useState([]);
   const dispatch = useDispatch();
+  const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const [selectedSubCategory, setSelectedSubCategory] = useState<any>([]);
+  const [categoryModal, setCategoryModal] = useState(false);
+  const [filterProductList, setFilterProductList] = useState([]);
 
   const isFocused = useIsFocused();
 
@@ -68,40 +74,25 @@ const HomeScreen = (props: ScreenProps) => {
     fetchProductsReq();
   }, [isFocused]);
 
-  const adminBarItems = [
-    {
-      icon: AppImages.Products.category,
-      title: "Manage Categories & Sub-Categories",
-      id: 1,
-    },
-    {
-      icon: AppImages.Products.addProduct,
-      title: "Add New Products",
-      id: 2,
-    },
-    {
-      icon: AppImages.Products.updateProduct,
-      title: "Update & Delete Existing Products",
-      id: 3,
-    },
-    {
-      icon: AppImages.Home.Admin,
-      title: "Manage Multiple Admins",
-      id: 4,
-    },
-    {
-      icon: AppImages.Home.Admin,
-      title: "Add Category & Sub-Category",
-      id: 5,
-    },
-  ];
+  const filterProduct = (category: any, subCategory: any) => {
+    const updatedFilterList = productsList.filter((item: any) => {
+      if (subCategory?.length > 0) {
+        return subCategory.includes(item?.subCat?.name);
+      } else if (category) {
+        return item?.category?.category.includes(category);
+      }
+      return false;
+    });
+    setFilterProductList(updatedFilterList);
+  };
+
   return (
     <View style={[AppStyles.MainStyle]}>
       <SafeAreaView />
 
       {selector?.userData?.isAdmin ? (
         <FlatList
-          data={adminBarItems}
+          data={adminHomeBarItems}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={{
@@ -140,11 +131,15 @@ const HomeScreen = (props: ScreenProps) => {
             title={"Zikriya Chaudary"}
             rightIcon={AppImages.Home.filter}
             onRightIconPress={() => {
-              setIsShowCategoryModal(true);
+              setCategoryModal(true);
             }}
           />
           <FlatList
-            data={productsList}
+            data={
+              selectedCategory?.category?.length > 0
+                ? filterProductList
+                : productsList
+            }
             showsVerticalScrollIndicator={false}
             keyExtractor={(item, index) => index.toString()}
             contentContainerStyle={{
@@ -166,10 +161,24 @@ const HomeScreen = (props: ScreenProps) => {
           />
         </>
       )}
-      {isShowCategoryModal && (
-        <CategoryModal
+      {categoryModal && (
+        <CategorySelectionModal
+          selectedCategory={selectedCategory}
+          selectedSubCategory={selectedSubCategory}
+          atApply={async (categoy: any, subCategory: any) => {
+            setCategoryModal(false);
+            setSelectedCategory(categoy);
+            setSelectedSubCategory(subCategory);
+            filterProduct(categoy?.category, subCategory);
+          }}
+          atClear={() => {
+            setSelectedCategory(null);
+            setSelectedSubCategory([]);
+            setFilterProductList([]);
+            setCategoryModal(false);
+          }}
           onClose={() => {
-            setIsShowCategoryModal(false);
+            setCategoryModal(false);
           }}
         />
       )}

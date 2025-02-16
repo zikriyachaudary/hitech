@@ -13,6 +13,7 @@ const initialState: IReduxState = {
   isRtl: false,
   cartDetail: [],
   adminUsersList: [],
+  productCategoryList: [],
 };
 
 export const Reducer = createSlice({
@@ -56,6 +57,9 @@ export const Reducer = createSlice({
     setAdminUsersList: (state, action) => {
       state.cartDetail = action.payload;
     },
+    setProductCategoryList: (state, action) => {
+      state.productCategoryList = action.payload;
+    },
   },
 });
 
@@ -72,6 +76,7 @@ export const {
   setIsRtl,
   updateCartDetail,
   setAdminUsersList,
+  setProductCategoryList,
 } = Reducer.actions;
 
 export default Reducer.reducer;

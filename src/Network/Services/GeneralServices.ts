@@ -50,7 +50,7 @@ export const addAddressReq = async (
 
     if (isUpdate) {
       const addressIndex = existingAddresses.findIndex(
-        (address) => address.id === params.id
+        (address: any) => address.id === params.id
       );
 
       if (addressIndex === -1) {
@@ -127,21 +127,39 @@ export const updateCategoryReq = async (params: any, onComplete: any) => {
   }
 };
 
-export const fetchCatListReq = (onComplete: (result: any) => void) => {
-  return firestore()
-    .collection(Collections.CATEGORIES_COLLECTION)
-    .onSnapshot(
-      (snapshot) => {
-        const categories = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+export const fetchCatListReq = async (onComplete: (result: any) => void) => {
+  try {
+    const snapshot = await firestore()
+      .collection(Collections.CATEGORIES_COLLECTION)
+      .get();
 
-        onComplete({ status: true, data: categories });
-      },
-      (error) => {
-        console.log("Error --->>>", error);
-        onComplete({ status: false, message: "Failed to fetch categories" });
-      }
-    );
+    const categories = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    onComplete({ status: true, data: categories });
+  } catch (error) {
+    console.log("Error --->>>", error);
+    onComplete({ status: false, message: "Failed to fetch categories" });
+  }
+};
+
+export const getUserOrdersList = async (userId: any, onComplete: any) => {
+  try {
+    const snapshot = await firestore()
+      .collection(Collections.ORDER_COLLECTION)
+      .where("userDetail.userId", "==", userId)
+      .get();
+
+    const orders = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    onComplete({ status: true, data: orders });
+  } catch (error: any) {
+    console.log("getUserOrdersList --->>>", error);
+    onComplete({ status: false, error: error.message });
+  }
 };

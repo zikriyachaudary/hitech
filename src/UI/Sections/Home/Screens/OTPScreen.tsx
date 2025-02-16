@@ -38,6 +38,7 @@ import {
   updateAdminInToSuperAdminReq,
 } from "../../../../Network/Services/AdminGeneralServices";
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
+import { Routes } from "../../../../Utils/Routes";
 
 const OTPScreen = (props: ScreenProps) => {
   const params = props?.route?.params;
@@ -138,19 +139,23 @@ const OTPScreen = (props: ScreenProps) => {
   };
 
   const simpleAdminLogin = async () => {
-    if (otp?.length < 4) {
-      setOTPerror("Please Enter OTP");
+    if (!email) {
+      setEmailError("Email Required*");
+    }
+    if (!otp) {
+      setOTPerror("Please Enter PIN");
+      return;
+    }
+    if (otp?.length < 6) {
+      setOTPerror("Please Complete PIN Code");
       return;
     }
     dispatch(setIsLoader(true));
     const params = { email: email, otp: otp };
     let findAdmin = await findAdminByEmail(params);
-
     if (findAdmin?.adminId) {
       let userObj = { ...findAdmin, isAdmin: true };
-      console.log("userObj -----   ", userObj);
-
-      setUserDataInAsync(userObj);
+      await setUserDataInAsync(userObj);
       dispatch(setUserData(userObj));
     } else {
       setOtp("");
@@ -178,7 +183,7 @@ const OTPScreen = (props: ScreenProps) => {
         }}
         title={
           isFromAuth
-            ? "Verify OTP"
+            ? "Login Sub-Admin"
             : adminObj?.adminId
             ? "Update Admin"
             : "Add Admin"
@@ -243,22 +248,13 @@ const OTPScreen = (props: ScreenProps) => {
           <View style={{ marginHorizontal: AppHorizontalMargin }}>
             <Text
               style={{
-                fontSize: normalized(18),
-                fontFamily: AppFonts.PoppinsMedium,
-                color: AppColors.black.black,
-              }}
-            >
-              Login Admin
-            </Text>
-            <Text
-              style={{
                 fontSize: normalized(14),
                 fontFamily: AppFonts.PoppinsRegular,
                 color: AppColors.grey.greyLevel4,
                 marginTop: 5,
               }}
             >
-              please login your account using PinCode!
+              Please login your account using PinCode!
             </Text>
             <Text style={{ ...styles.inputText, marginTop: normalized(15) }}>
               {"Email"}
@@ -272,7 +268,7 @@ const OTPScreen = (props: ScreenProps) => {
                 setEmailError("");
               }}
               keyboardType="default"
-              errorMsg={lastNameError}
+              errorMsg={emailError}
             />
           </View>
         )}
@@ -281,7 +277,7 @@ const OTPScreen = (props: ScreenProps) => {
 
           <CodeInput
             codeLength={6}
-            cellSize={normalized(50)}
+            cellSize={normalized(80)}
             cellSpacing={normalized(8)}
             cellStyle={{
               ...styles.codeInput,
@@ -397,7 +393,7 @@ const styles = StyleSheet.create({
     height: Platform.OS == "ios" ? 55 : 53,
     width: normalized(50),
     borderRadius: normalized(5),
-    marginTop: normalized(30),
+    // marginTop: normalized(30),
     borderWidth: 1,
   },
   backArrowImgStyle: {

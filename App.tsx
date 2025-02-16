@@ -16,7 +16,8 @@ import {
 } from "./src/Redux/Reducers/AppReducers";
 import AppContainer from "./src/AppContainer";
 import DeviceInfo from "react-native-device-info";
-import { GOOGLE_MAP_KEY, GOOGLE_SIGNIN_KEY } from "./src/Network/Url";
+import { GOOGLE_SIGNIN_KEY } from "./src/Network/Url";
+import WelcomeScreen from "./src/UI/Sections/Welcome/Screens/WelcomeScreen";
 const App = () => {
   const dispatch = useDispatch();
   const [fetching, setFetching] = useState(true);
@@ -36,7 +37,6 @@ const App = () => {
   }, []);
   useEffect(() => {
     if (fetching) {
-      Geocoder.init(GOOGLE_MAP_KEY);
     }
   }, [fetching]);
 

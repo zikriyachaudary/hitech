@@ -27,7 +27,13 @@ const CustomHeader = (props: any) => {
           {props?.Text ?? props?.title}
         </Text>
       </View>
-      <View style={{ flexDirection: "row", gap: normalized(15) }}>
+      <View
+        style={{
+          flexDirection: "row",
+          gap: normalized(15),
+          paddingRight: normalized(5),
+        }}
+      >
         {props?.icon
           ? icons.map((item: any, index: any) => (
               <TouchableOpacity
@@ -58,6 +64,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: AppHorizontalMargin,
+    borderWidth: 1,
+    borderBottomColor: "transparent",
+    borderTopColor: "transparent",
+    borderLeftColor: "transparent",
+    borderRightColor: "transparent",
+    borderRadius: normalized(50),
+    shadowColor: AppColors.black.black,
+    shadowOffset: {
+      height: 2,
+      width: 0,
+    },
+    elevation: 3,
+    shadowOpacity: 0.3,
+    backgroundColor: AppColors.white.white,
   },
   imageCont: {
     width: normalized(47),

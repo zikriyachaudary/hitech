@@ -59,7 +59,6 @@ class CodeInput extends React.PureComponent<CodeInputProps, CodeInputState> {
           onBlur={this.onBlurred}
           spellCheck={false}
           numberOfLines={1}
-          placeholder={"0000"}
           placeholderTextColor={AppColors.grey.greyLevel2}
           caretHidden={true}
           maxLength={codeLength}

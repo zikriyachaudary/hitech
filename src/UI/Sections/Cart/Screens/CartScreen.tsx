@@ -26,7 +26,15 @@ import ProductCounterComp from "../../Home/Components/ProductCounterComp";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import EmptyCartListComp from "../Components/EmptyCartListComp";
 import { Routes } from "../../../../Utils/Routes";
-import { setTab } from "../../../../Redux/Reducers/AppReducers";
+import {
+  setIsLoader,
+  setShowToast,
+  setTab,
+  updateCartDetail,
+} from "../../../../Redux/Reducers/AppReducers";
+import { placeOrderReq } from "../../../../Network/Services/ProductServices";
+import { AppStrings } from "../../../../Utils/AppStrings";
+import CommonDataManager from "../../../../Utils/CommonManager";
 
 const CartScreen = (props: ScreenProps) => {
   const { updateProductList, removeProductFromCart, getProductsTotalPrice } =
@@ -34,6 +42,7 @@ const CartScreen = (props: ScreenProps) => {
   const dispatch = useDispatch();
   const selector = useSelector((state: any) => state.SliceReducer);
   const [locationError, setLocationError] = useState("");
+
   const address = {
     general: "House 00 Stree 00 Mohallah Lahore Pakistan",
     street: "00",
@@ -43,6 +52,44 @@ const CartScreen = (props: ScreenProps) => {
     isDefault: true,
   };
   let productList = useSelector((state: any) => state.SliceReducer.cartDetail);
+
+  const placeOrder = async () => {
+    const obj = {
+      deliveryDetails: {
+        generalAddress: "House 00 Stree 00 Mohallah Lahore Pakistan",
+        street: "00",
+        house: "00",
+        Area: "Some Area here",
+        City: "Pakistan",
+      },
+      orderPrice: getProductsTotalPrice(true),
+      products: selector?.cartDetail,
+      userDetail: selector?.userData,
+      orderId: CommonDataManager.getSharedInstance().makeid(1),
+    };
+    dispatch(setIsLoader(true));
+    await placeOrderReq(obj, (resp: any) => {
+      if (resp?.status) {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.success,
+            message: resp?.message,
+          })
+        );
+        props?.navigation?.pop(2);
+        dispatch(updateCartDetail([]));
+        dispatch(setIsLoader(false));
+      } else {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.error,
+            message: resp?.message,
+          })
+        );
+        dispatch(setIsLoader(false));
+      }
+    });
+  };
 
   return (
     <View style={AppStyles.MainStyle}>
@@ -80,7 +127,10 @@ const CartScreen = (props: ScreenProps) => {
                       style={styles.editIcon}
                       activeOpacity={0.7}
                       onPress={() => {
-                        // Addres management screen navigation
+                        props?.navigation?.navigate(
+                          Routes.Home.DeliveryAddress,
+                          { address: address }
+                        );
                       }}
                     >
                       <Image source={AppImages.Products.editIcon} />
@@ -118,7 +168,8 @@ const CartScreen = (props: ScreenProps) => {
                               </TouchableOpacity>
                               <FastImage
                                 source={{
-                                  uri: item?.productImage || item?.images[0],
+                                  uri:
+                                    item?.productImage || item?.images[0]?.url,
                                 }}
                                 style={styles.proImage}
                               />
@@ -129,8 +180,8 @@ const CartScreen = (props: ScreenProps) => {
                                 alignItems: "flex-start",
                               }}
                             >
-                              <Text style={styles.nameTxt}>
-                                {item?.productName}
+                              <Text style={styles.nameTxt} numberOfLines={1}>
+                                {item?.name}
                               </Text>
                               <View style={styles.priceCont}>
                                 <Text style={styles.priceTxt}>{`$ ${Number(
@@ -250,7 +301,7 @@ const CartScreen = (props: ScreenProps) => {
             <View style={styles.bottomCont}>
               <Text style={styles.leftTxt}>Total (incl. DC)</Text>
               <Text style={styles.rightTxt}>
-                {`$ ${getProductsTotalPrice(true)}`}
+                {`Rs. ${getProductsTotalPrice(true)}`}
               </Text>
             </View>
             <FilledButton
@@ -260,6 +311,7 @@ const CartScreen = (props: ScreenProps) => {
                   setLocationError("Please select delivery address");
                   return;
                 }
+                placeOrder();
               }}
             />
           </View>
@@ -280,7 +332,7 @@ const CartScreen = (props: ScreenProps) => {
                   label={"Explore Products"}
                   onPress={() => {
                     dispatch(setTab(0));
-                    props?.navigation?.navigate(Routes.Home.HomeScreen);
+                    props?.navigation?.pop(1);
                   }}
                   mainContainer={{ width: normalized(270) }}
                 />
@@ -404,19 +456,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 100,
-    bottom: 10,
-    left: 10,
+    bottom: 0,
+    left: 0,
   },
   proImage: {
-    height: normalized(60),
-    width: normalized(60),
-    borderRadius: normalized(5),
+    height: normalized(100),
+    width: normalized(100),
+    borderRadius: normalized(8),
   },
   nameTxt: {
     fontSize: normalized(14),
     color: AppColors.black.black,
     fontWeight: "600",
-    maxWidth: normalized(230),
+    minWidth: normalized(200),
+    marginLeft: normalized(10),
   },
   priceCont: {
     flexDirection: "row",
@@ -476,7 +529,8 @@ const styles = StyleSheet.create({
   bottomSheet: {
     paddingHorizontal: AppHorizontalMargin,
     borderWidth: 1,
-    borderColor: AppColors.grey.light,
+    borderColor: AppColors.themeColor.dark,
+    paddingTop: normalized(10),
     borderTopLeftRadius: normalized(20),
     borderTopRightRadius: normalized(20),
   },

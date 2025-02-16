@@ -12,7 +12,7 @@ const CartManager = () => {
   const updateProductList = (productObj: any) => {
     const updatedArr = [...cartDetail];
     const existingProductIndex = updatedArr.findIndex(
-      (el) => el?.productId === productObj?.productId
+      (el) => el?.id === productObj?.id
     );
     if (existingProductIndex !== -1) {
       updatedArr[existingProductIndex] = productObj;

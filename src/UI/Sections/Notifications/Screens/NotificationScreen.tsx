@@ -23,6 +23,7 @@ import AppImageViewer from "../../../Components/AppImageView";
 import moment from "moment";
 import { useSelector } from "react-redux";
 import ProfilePlaceHolderComp from "../Components/ProfilePlaceHolder";
+import SimpleHeader from "../../../Components/CustomHeader/SimpleHeader";
 
 const NotificationScreen = (props: ScreenProps) => {
   const selector = useSelector((state: any) => state.SliceReducer);
@@ -233,10 +234,7 @@ const NotificationScreen = (props: ScreenProps) => {
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
-      <CustomHeader
-        title={"Notifications"}
-        containerStyle={{ height: normalized(25) }}
-      />
+      <SimpleHeader title={"Notifications"} />
       <FlatList
         data={notificationList}
         style={styles.mainList}

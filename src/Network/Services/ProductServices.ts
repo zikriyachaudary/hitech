@@ -1,5 +1,5 @@
 import firestore from "@react-native-firebase/firestore";
-import { Collections } from "../../Utils/AppStrings";
+import { AppStrings, Collections } from "../../Utils/AppStrings";
 
 export const uploadProductToFireStore = async (obj: any, onComplete: any) => {
   try {
@@ -40,7 +40,6 @@ export const fetchAllProducts = async (onComplete: any) => {
       id: doc.id,
       ...doc.data(),
     }));
-
     onComplete({ status: true, data: products });
   } catch (error) {
     console.error("Error --->>>", error);
@@ -63,5 +62,26 @@ export const deleteProductReq = async (id: any, onComplete: any) => {
       status: false,
       message: "Something Wrong. Check your internet connection",
     });
+  }
+};
+
+export const placeOrderReq = async (params: any, onComplete: any) => {
+  try {
+    firestore()
+      .collection(Collections.ORDER_COLLECTION)
+      .doc(params?.orderId)
+      .set(params)
+      .then(() => {
+        onComplete({ status: true, message: "Order Placed Successfully" });
+      })
+      .catch((e) => {
+        onComplete({
+          status: false,
+          message: AppStrings.Network.someThingError,
+        });
+      });
+  } catch (error) {
+    console.log("order placed error -->>>  ", error);
+    onComplete({ status: false, message: AppStrings.Network.someThingError });
   }
 };

@@ -10,4 +10,5 @@ export interface IReduxState {
   isRtl: boolean;
   cartDetail: any;
   adminUsersList: any;
+  productCategoryList: any;
 }

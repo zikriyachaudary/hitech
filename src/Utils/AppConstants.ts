@@ -243,6 +243,34 @@ export const adminProfileList = [
   },
 ];
 
+export const adminHomeBarItems = [
+  {
+    icon: AppImages.Products.category,
+    title: "Manage Categories & Sub-Categories",
+    id: 1,
+  },
+  {
+    icon: AppImages.Products.addProduct,
+    title: "Add New Products",
+    id: 2,
+  },
+  {
+    icon: AppImages.Products.updateProduct,
+    title: "Update & Delete Existing Products",
+    id: 3,
+  },
+  {
+    icon: AppImages.Home.Admin,
+    title: "Manage Multiple Admins",
+    id: 4,
+  },
+  {
+    icon: AppImages.Home.Admin,
+    title: "Add Category & Sub-Category",
+    id: 5,
+  },
+];
+
 export const Modal_Type = {
   deleteAccount: "DeleteAccount",
   logout: "Logout",

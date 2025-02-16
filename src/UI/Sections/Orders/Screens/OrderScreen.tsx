@@ -1,5 +1,5 @@
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import AppImageViewer from "../../../Components/AppImageView";
 import {
@@ -7,165 +7,103 @@ import {
   AppFonts,
   AppHorizontalMargin,
   normalized,
+  ScreenSize,
 } from "../../../../Utils/AppConstants";
+import { getUserOrdersList } from "../../../../Network/Services/GeneralServices";
+import { useDispatch, useSelector } from "react-redux";
+import { setIsLoader } from "../../../../Redux/Reducers/AppReducers";
+import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
+import SimpleHeader from "../../../Components/CustomHeader/SimpleHeader";
 
 const OrderScreen = () => {
-  const orders_list = [
-    {
-      name: "Bike Tyres",
-      status: "Pending",
-      price: 8000,
-      images: [
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-      ],
-      productId: "45XG3446",
-      description:
-        "Conquer rugged trails and steep hills with this durable and lightweight mountain bike. Built with advanced suspension and high-traction tires, it's perfect for off-road adventures and challenging terrains.",
-    },
-    {
-      name: "Bike Tyres",
-      status: "Pending",
-      price: 8000,
-      images: [
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-      ],
-      productId: "45XG3446",
-      description:
-        "Conquer rugged trails and steep hills with this durable and lightweight mountain bike. Built with advanced suspension and high-traction tires, it's perfect for off-road adventures and challenging terrains.",
-    },
-    {
-      name: "Bike Tyres",
-      status: "Pending",
-      price: 8000,
-      images: [
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-      ],
-      productId: "45XG3446",
-      description:
-        "Conquer rugged trails and steep hills with this durable and lightweight mountain bike. Built with advanced suspension and high-traction tires, it's perfect for off-road adventures and challenging terrains.",
-    },
-    {
-      name: "Bike Tyres",
-      status: "Pending",
-      price: 8000,
-      images: [
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-      ],
-      productId: "45XG3446",
-      description:
-        "Conquer rugged trails and steep hills with this durable and lightweight mountain bike. Built with advanced suspension and high-traction tires, it's perfect for off-road adventures and challenging terrains.",
-    },
-    {
-      name: "Bike Tyres",
-      status: "Pending",
-      price: 8000,
-      images: [
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-      ],
-      productId: "45XG3446",
-      description:
-        "Conquer rugged trails and steep hills with this durable and lightweight mountain bike. Built with advanced suspension and high-traction tires, it's perfect for off-road adventures and challenging terrains.",
-    },
-    {
-      name: "Bike Tyres",
-      status: "Pending",
-      price: 8000,
-      images: [
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-      ],
-      productId: "45XG3446",
-      description:
-        "Conquer rugged trails and steep hills with this durable and lightweight mountain bike. Built with advanced suspension and high-traction tires, it's perfect for off-road adventures and challenging terrains.",
-    },
-    {
-      name: "Bike Tyres",
-      status: "Pending",
-      price: 8000,
-      images: [
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-        "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/aPdZjzFB883E3B-14F9-4179-8E09-04AF917E667E.jpg?alt=media&token=3db7e6ad-4041-49e2-ac6c-e6fc418be435",
-      ],
-      productId: "45XG3446",
-      description:
-        "Conquer rugged trails and steep hills with this durable and lightweight mountain bike. Built with advanced suspension and high-traction tires, it's perfect for off-road adventures and challenging terrains.",
-    },
-  ];
+  const selector = useSelector((state: any) => state.SliceReducer);
+  const userData = selector?.userData;
+  const [ordersList, setOrdersList] = useState([]);
+  const [isFetched, setIsFetched] = useState(false);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    if (ordersList?.length == 0) dispatch(setIsLoader(true));
+    await getUserOrdersList(userData?.userId, (resp: any) => {
+      if (resp?.status) {
+        setOrdersList(resp?.data);
+      } else {
+        setIsFetched(true);
+      }
+    });
+    dispatch(setIsLoader(false));
+  };
+
+  console.log("ordersList ---->>>  ", ordersList?.length);
+
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
-      <FlatList
-        data={orders_list}
-        keyExtractor={(index, item) => `${index}`}
-        style={{
-          // marginHorizontal: normalized(20),
-          marginBottom: normalized(25),
-        }}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item, index }: any) => {
-          return (
-            <View style={styles.cont}>
-              <AppImageViewer
-                source={{ uri: item?.images[0] }}
-                style={styles.image}
-              />
-              <View style={styles.txtCont}>
-                <Text style={styles.title}>{item?.name}</Text>
-                <Text style={styles.desc} numberOfLines={2}>
-                  {item?.description}
-                </Text>
-                <View style={styles.bottomCont}>
-                  <View style={styles.priceCont}>
-                    <Text style={styles.price}>{`Rs. ${item?.price}`}</Text>
-                  </View>
-                  <View
-                    style={{
-                      ...styles.statusCont,
-                      backgroundColor: AppColors.green.light,
-                      borderColor: AppColors.green.dark,
-                      borderWidth: 1,
-                    }}
-                  >
-                    <View
-                      style={{
-                        ...styles.dot,
-                        backgroundColor: AppColors.green.dark,
-                      }}
-                    />
-                    <Text
-                      style={{
-                        ...styles.status,
-                        color: AppColors.green.dark,
-                      }}
-                    >
-                      Completed
-                    </Text>
-                  </View>
+      <SimpleHeader Text={"Order History"} />
+      {ordersList?.length > 0 ? (
+        <FlatList
+          data={ordersList}
+          keyExtractor={(index, item) => `${index}`}
+          style={{
+            // marginHorizontal: normalized(20),
+            marginBottom: normalized(25),
+          }}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item, index }: any) => {
+            return (
+              <View style={styles.cont}>
+                <View style={styles.txtCont}>
+                  <Text style={styles.title}>{`Order ID`}</Text>
+                  <View style={styles.divider} />
+                  <Text style={styles.title}>{item?.orderId}</Text>
+                </View>
+                {item?.products?.map((product: any, index: any) => (
+                  <>
+                    <View key={index} style={styles.productCont}>
+                      <AppImageViewer
+                        style={styles.productImg}
+                        source={{ uri: product?.images?.[0]?.url }}
+                      />
+                      <View
+                        style={{
+                          ...styles.divider,
+                          height: normalized(20),
+                          marginHorizontal: normalized(10),
+                        }}
+                      />
+                      <Text style={styles.productName} numberOfLines={2}>
+                        {product?.name}
+                      </Text>
+                    </View>
+                    {item?.products?.length - 1 != index && (
+                      <View style={styles.horiDivider} />
+                    )}
+                  </>
+                ))}
+                <View style={styles.priceCont}>
+                  <Text style={styles.priceTxt}>
+                    {`Rs. ${Math.floor(item?.orderPrice || 0)}`}
+                  </Text>
                 </View>
               </View>
-            </View>
-          );
-        }}
-      />
+            );
+          }}
+        />
+      ) : (
+        <View style={styles.emptyCont}>
+          {isFetched && (
+            <Text style={styles.emptyTxt}>
+              You have not placed an order yet. Once you make a purchase, your
+              order details will appear here. Start exploring now and find the
+              perfect parts for your vehicle!
+            </Text>
+          )}
+        </View>
+      )}
     </View>
   );
 };
@@ -173,16 +111,10 @@ const OrderScreen = () => {
 export default OrderScreen;
 
 const styles = StyleSheet.create({
-  image: {
-    width: normalized(75),
-    height: normalized(75),
-    borderRadius: normalized(10),
-  },
   cont: {
-    flexDirection: "row",
-    alignItems: "center",
-    height: normalized(100),
-    paddingHorizontal: normalized(10),
+    // alignItems: "center",
+    // height: normalized(100),
+    paddingHorizontal: normalized(15),
     borderRadius: normalized(10),
     marginTop: normalized(20),
     gap: normalized(10),
@@ -195,59 +127,79 @@ const styles = StyleSheet.create({
       height: 2,
     },
     marginHorizontal: AppHorizontalMargin,
+    paddingBottom: normalized(10),
   },
-  title: {
+
+  emptyCont: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: AppHorizontalMargin,
+  },
+  emptyTxt: {
     fontSize: normalized(16),
-    color: AppColors.black.black,
-    fontFamily: AppFonts.PoppinsSemiBold,
-  },
-  txtCont: {
-    // marginBottom: normalized(10),
-  },
-  desc: {
-    color: AppColors.grey.greyLevel5,
-    fontSize: normalized(13),
-    fontFamily: AppFonts.PoppinsRegular,
-    width: normalized(220),
-    textAlign: "justify",
-  },
-  price: {
-    fontSize: normalized(14),
+    fontWeight: "500",
     fontFamily: AppFonts.PoppinsMedium,
     color: AppColors.black.black,
+    textAlign: "justify",
+  },
+  txtCont: {
+    flexDirection: "row",
+    gap: normalized(5),
+    alignItems: "center",
+    alignSelf: "center",
+    marginTop: normalized(5),
+  },
+  title: {
+    fontSize: normalized(14),
+    color: AppColors.black.black,
+    fontFamily: AppFonts.PoppinsMedium,
+  },
+  divider: {
+    width: normalized(2),
+    height: normalized(13),
+    backgroundColor: AppColors.black.black,
+    marginHorizontal: normalized(5),
+    borderRadius: normalized(10),
+  },
+  productImg: {
+    width: normalized(30),
+    height: normalized(30),
+    borderRadius: normalized(5),
+  },
+  productCont: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  productName: {
+    color: AppColors.black.black,
+    fontSize: normalized(14),
+    fontFamily: AppFonts.PoppinsRegular,
+    maxWidth: normalized(250),
+  },
+  horiDivider: {
+    height: normalized(1),
+    width: ScreenSize.width - normalized(160),
+    backgroundColor: AppColors.grey.greyLevel3,
+    alignSelf: "center",
+    marginVertical: normalized(1),
   },
   priceCont: {
-    width: normalized(100),
+    // width: normalized(100),
+    height: normalized(28),
+    paddingHorizontal: normalized(14),
+    borderRadius: normalized(25),
+    backgroundColor: AppColors.white.white,
+    alignSelf: "flex-end",
     borderWidth: 1,
     borderColor: AppColors.themeColor.dark,
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: normalized(5),
-    marginTop: normalized(6),
-    backgroundColor: AppColors.themeColor.medium,
+    marginTop: normalized(-5),
   },
-  statusCont: {
-    width: normalized(100),
-    height: normalized(22),
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: normalized(5),
-    borderRadius: normalized(4),
-    marginTop: normalized(5),
-  },
-  dot: {
-    width: normalized(5),
-    height: normalized(5),
-    borderRadius: normalized(5),
-  },
-  status: {
-    fontSize: normalized(10),
+  priceTxt: {
+    color: AppColors.themeColor.dark,
     fontFamily: AppFonts.PoppinsSemiBold,
-  },
-  bottomCont: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    fontSize: normalized(13),
   },
 });

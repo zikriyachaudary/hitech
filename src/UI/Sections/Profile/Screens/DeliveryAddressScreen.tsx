@@ -6,7 +6,7 @@ import {
   Text,
   StyleSheet,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import {
@@ -21,6 +21,7 @@ import AddressItem from "../Components/AddressItem";
 import { Routes } from "../../../../Utils/Routes";
 import { useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
+import { useIsFocused } from "@react-navigation/native";
 
 const DeliveryAddressScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -36,6 +37,14 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
     }));
     setAddressList(updatedList);
   };
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    if (userData?.addresses) {
+      setAddressList(userData?.addresses);
+    }
+  }, [isFocused || userData]);
 
   return (
     <View style={AppStyles.MainStyle}>

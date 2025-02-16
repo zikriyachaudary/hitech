@@ -36,7 +36,11 @@ import {
 } from "../../../../Redux/Reducers/AppReducers";
 import { updatedUserReq } from "../../../../Network/Services/AuthServices";
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
-import { AppStrings } from "../../../../Utils/AppStrings";
+import { ADMN_TYPE, AppStrings } from "../../../../Utils/AppStrings";
+import {
+  updateAdminReq,
+  updateSubAdminReq,
+} from "../../../../Network/Services/AdminGeneralServices";
 
 const EditProfileScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -44,11 +48,6 @@ const EditProfileScreen = (props: ScreenProps) => {
   );
   const userData = selector?.userData || null;
 
-  const [countryValues, setCountryValues] = useState<any>({
-    code: "+92",
-    flag: "pk",
-    name: "Pakistan",
-  });
   const [email, setEmail] = useState<string>(userData?.email || "");
   const [firstName, setFirstName] = useState<string>(userData?.firstName || "");
   const [lastName, setLastName] = useState<string>(userData?.lastName || "");
@@ -58,7 +57,7 @@ const EditProfileScreen = (props: ScreenProps) => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const [selectedImage, setSelectedImage] = useState<any>(
-    userData?.profileImage || ""
+    userData?.profileImage || userData?.profile || ""
   );
   const [showImagePicker, setShowImagePicker] = useState<boolean>(false);
   const [phoneNumber, setPhoneNumber] = useState<string>(
@@ -102,6 +101,7 @@ const EditProfileScreen = (props: ScreenProps) => {
     }
     if (!phoneNumber) {
       setPhoneError("Please Enter Phone Number");
+      isFormValid = false;
     }
     if (!isFormValid) {
       return;
@@ -123,40 +123,105 @@ const EditProfileScreen = (props: ScreenProps) => {
         });
       }
       if (url) {
-        const paramsObj = {
-          firstName: firstName,
-          lastName: lastName,
-          fullName: firstName + " " + lastName,
-          email: email,
-          phoneNumber: phoneNumber,
-          profileImage: url,
-        };
-        updatedUserReq(selector?.userData?.userId, paramsObj, (response) => {
-          if (response?.status) {
-            let obj = { ...selector?.userData, ...paramsObj };
-            setUserDataInAsync(obj);
-            dispatch(setUserData(obj));
-            dispatch(
-              setShowToast({
-                type: AppStrings.ToastType.success,
-                message: response?.message,
-              })
-            );
-            props?.navigation?.goBack();
-            dispatch(setIsLoader(false));
-          } else {
-            let errorMessage = response?.message
-              ? response?.message
-              : "Something went wrong";
-            dispatch(
-              setShowToast({
-                type: AppStrings.ToastType.error,
-                message: errorMessage,
-              })
-            );
-            dispatch(setIsLoader(false));
-          }
-        });
+        if (userData?.adminType == ADMN_TYPE.superAdmin) {
+          const paramsObj = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phoneNumber: phoneNumber,
+            profileImage: url,
+            adminId: userData?.adminId,
+          };
+          await updateAdminReq(paramsObj, (resp: any) => {
+            if (resp?.status) {
+              let obj = { ...selector?.userData, ...paramsObj };
+              setUserDataInAsync(obj);
+              dispatch(setUserData(obj));
+              dispatch(
+                setShowToast({
+                  type: AppStrings.ToastType.success,
+                  message: resp?.message,
+                })
+              );
+              props?.navigation?.goBack();
+            } else {
+              dispatch(
+                setShowToast({
+                  type: AppStrings.ToastType.error,
+                  message: resp?.message,
+                })
+              );
+            }
+          });
+        } else if (userData?.adminType == ADMN_TYPE.Admin) {
+          const paramsObj = {
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phoneNumber: phoneNumber,
+            profileImage: url,
+            adminId: userData?.adminId,
+            userId: userData?.userId,
+          };
+          await updateSubAdminReq(paramsObj, (resp: any) => {
+            if (resp?.status) {
+              let obj = { ...selector?.userData, ...paramsObj };
+              setUserDataInAsync(obj);
+              dispatch(setUserData(obj));
+              dispatch(
+                setShowToast({
+                  type: AppStrings.ToastType.success,
+                  message: resp?.message,
+                })
+              );
+              props?.navigation?.goBack();
+            } else {
+              dispatch(
+                setShowToast({
+                  type: AppStrings.ToastType.error,
+                  message: resp?.message,
+                })
+              );
+            }
+          });
+        } else {
+          const paramsObj = {
+            firstName: firstName,
+            lastName: lastName,
+            fullName: firstName + " " + lastName,
+            email: email,
+            phoneNumber: phoneNumber,
+            profileImage: url,
+          };
+          updatedUserReq(selector?.userData?.userId, paramsObj, (response) => {
+            if (response?.status) {
+              let obj = { ...selector?.userData, ...paramsObj };
+              setUserDataInAsync(obj);
+              dispatch(setUserData(obj));
+              dispatch(
+                setShowToast({
+                  type: AppStrings.ToastType.success,
+                  message: response?.message,
+                })
+              );
+              props?.navigation?.goBack();
+              dispatch(setIsLoader(false));
+              props?.navigation?.goBack();
+            } else {
+              let errorMessage = response?.message
+                ? response?.message
+                : "Something went wrong";
+              dispatch(
+                setShowToast({
+                  type: AppStrings.ToastType.error,
+                  message: errorMessage,
+                })
+              );
+              dispatch(setIsLoader(false));
+            }
+          });
+        }
+        dispatch(setIsLoader(false));
       }
     } catch (error) {
       console.log("Eror while update profile --->>>   ", error),
@@ -315,10 +380,12 @@ const EditProfileScreen = (props: ScreenProps) => {
                 placeholderTextColor={AppColors.grey.greyLevel9}
                 keyboardType="number-pad"
                 maxLength={10}
-                editable={false}
+                editable={userData?.isAdmin ? true : false}
                 style={{
                   includeFontPadding: false,
-                  color: AppColors.grey.greyLevel9,
+                  color: userData?.isAdmin
+                    ? AppColors.black.black
+                    : AppColors.grey.greyLevel9,
                   fontFamily: AppFonts.PoppinsRegular,
                 }}
                 onChangeText={(txt: any) => {

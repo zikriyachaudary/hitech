@@ -57,11 +57,15 @@ const AddProducScreen = (props: ScreenProps) => {
   const [productMainCat, setProductMainCat] = useState<any>(
     productDetail?.category || null
   );
-  const [catList, setCatList] = useState<any>([...Categories]);
   const [categoryList, setCategoryList] = useState<any>([]);
-  const [selectedCat, setSelectedCat] = useState<any>([]);
+  const [selectedCat, setSelectedCat] = useState<any>(
+    productDetail?.category || ""
+  );
   const [subCatList, setSubCatList] = useState([]);
-  const [selectedSubCat, setSelectedSubCat] = useState<any>();
+  const [selectedSubCat, setSelectedSubCat] = useState<any>(
+    productDetail?.subCat || ""
+  );
+  console.log("productDetail ---- ", productDetail?.subCat?.name);
 
   const [productSubCat, setProductSubCat] = useState<any>(
     productDetail?.subCategory || null
@@ -118,6 +122,18 @@ const AddProducScreen = (props: ScreenProps) => {
       fetchCatListReq((resp: any) => {
         if (resp?.status) {
           setCategoryList(resp?.data);
+          if (productDetail != null) {
+            const matchedCategory = resp?.data?.find(
+              (item: any) => item.category === productDetail?.category?.category
+            );
+            console.log("-----", matchedCategory);
+
+            if (matchedCategory) {
+              setSubCatList(matchedCategory.subCat);
+            } else {
+              setSubCatList([]); // Or handle the case where no match is found
+            }
+          }
         } else {
           dispatch(
             setShowToast({
@@ -202,7 +218,9 @@ const AddProducScreen = (props: ScreenProps) => {
 
     const obj = {
       name: productName,
-      id: CommonDataManager.getSharedInstance()?.makeid(8),
+      id: productDetail?.id
+        ? productDetail?.id
+        : CommonDataManager.getSharedInstance()?.makeid(8),
       price: productPrice,
       description: description,
       createdAt: moment.utc(new Date()).format(fullDate),
@@ -236,7 +254,11 @@ const AddProducScreen = (props: ScreenProps) => {
     });
     await Promise.all(uploadTasks);
     obj["images"] = productImagesList;
+    console.log("productImagesList -----  ", productImagesList);
+    console.log("upload product --->>>", obj);
+
     if (productDetail?.id) {
+      dispatch(setIsLoader(true));
       await updateProduct(obj, (resp: any) => {
         if (resp?.status) {
           dispatch(
@@ -468,7 +490,7 @@ const AddProducScreen = (props: ScreenProps) => {
 
       {openImage ? (
         <AppImagePicker
-          limit={4}
+          limit={10}
           onClose={() => {
             setOpenImage(false);
           }}
