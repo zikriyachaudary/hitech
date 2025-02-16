@@ -347,6 +347,8 @@ export const isEmailAlreadyRegistered = async (
   query = "email",
   onComplete: any
 ) => {
+  console.log("email re ---->>>  ", email);
+
   try {
     const snapshot = await firestore()
       .collection(Collections.CUSTOMERS_COLLECTION)

@@ -37,9 +37,13 @@ export const addAddressReq = async (
   onComplete: (response: any) => void
 ) => {
   try {
+    console.log("params --->>>  ", params);
+
     const userRef = firestore()
       .collection(Collections.CUSTOMERS_COLLECTION)
-      .doc(userId);
+      .doc(userId)
+      .collection(Collections.DELIVERY_ADDRESS)
+      .doc(params?.id);
     const userDoc = await userRef.get();
 
     let existingAddresses = [];

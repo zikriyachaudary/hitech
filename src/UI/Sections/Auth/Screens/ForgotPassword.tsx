@@ -102,8 +102,10 @@ const ForgetPassword = (props: any) => {
       } else {
         await isEmailAlreadyRegistered(
           email?.toLocaleLowerCase(),
-          "phoneNumber",
+          "email",
           async (res: any) => {
+            console.log("resp --->>> ", res);
+
             if (res?.status) {
               const isOtpSend = await sendEmailOtp({
                 recipientEmail: email,

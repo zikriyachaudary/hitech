@@ -14,6 +14,8 @@ const initialState: IReduxState = {
   cartDetail: [],
   adminUsersList: [],
   productCategoryList: [],
+  pushObj: null,
+  showNoti: false,
 };
 
 export const Reducer = createSlice({
@@ -60,6 +62,12 @@ export const Reducer = createSlice({
     setProductCategoryList: (state, action) => {
       state.productCategoryList = action.payload;
     },
+    setPushNotifiObj: (state, action) => {
+      state.pushObj = action.payload;
+    },
+    setIsShowNoti: (state, action) => {
+      state.showNoti = action.payload;
+    },
   },
 });
 
@@ -77,6 +85,8 @@ export const {
   updateCartDetail,
   setAdminUsersList,
   setProductCategoryList,
+  setPushNotifiObj,
+  setIsShowNoti,
 } = Reducer.actions;
 
 export default Reducer.reducer;

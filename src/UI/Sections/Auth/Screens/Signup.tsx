@@ -530,7 +530,7 @@ const SignUpScreen = (props: any) => {
             <View style={styles.line}></View>
           </View>
 
-          <View
+          {/* <View
             style={{
               flexDirection: "row",
               justifyContent:
@@ -556,7 +556,7 @@ const SignUpScreen = (props: any) => {
                 }}
               />
             ) : null}
-          </View>
+          </View> */}
           <View style={styles.lastCont}>
             <Text style={styles.firstText}>
               Already have an account?{" "}

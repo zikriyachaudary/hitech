@@ -31,6 +31,7 @@ const OrderScreen = () => {
     await getUserOrdersList(userData?.userId, (resp: any) => {
       if (resp?.status) {
         setOrdersList(resp?.data);
+        setIsFetched(true);
       } else {
         setIsFetched(true);
       }

@@ -11,4 +11,6 @@ export interface IReduxState {
   cartDetail: any;
   adminUsersList: any;
   productCategoryList: any;
+  pushObj: any;
+  showNoti: boolean;
 }

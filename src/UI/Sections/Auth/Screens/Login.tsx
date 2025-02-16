@@ -41,11 +41,7 @@ import SocialBtnComp from "../../../Components/SocialButton/GoogleButton";
 import SocialAuthManager from "../../../../Hooks/SocialAuthManager";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
-import {
-  detectInputType,
-  formatPhoneNumber,
-  validateInput,
-} from "../../../../Utils/Helper";
+import { formatPhoneNumber, validateInput } from "../../../../Utils/Helper";
 
 const Login = (props: ScreenProps) => {
   const { gmailLoginRequest, appleAuthReq } = SocialAuthManager();
@@ -331,7 +327,7 @@ const Login = (props: ScreenProps) => {
               </TouchableOpacity>
             ) : (
               <>
-                <View style={styles.midCont}>
+                {/* <View style={styles.midCont}>
                   <View style={styles.line}></View>
                   <Text
                     style={{
@@ -342,9 +338,9 @@ const Login = (props: ScreenProps) => {
                     {selector?.isRtl ? " سائن ان کریں" : "Sign In With"}
                   </Text>
                   <View style={styles.line}></View>
-                </View>
+                </View> */}
 
-                <View
+                {/* <View
                   style={{
                     flexDirection: "row",
                     justifyContent:
@@ -383,7 +379,7 @@ const Login = (props: ScreenProps) => {
                       }
                     />
                   ) : null}
-                </View>
+                </View> */}
               </>
             )}
           </ScrollView>

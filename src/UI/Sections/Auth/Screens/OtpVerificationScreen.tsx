@@ -28,6 +28,7 @@ import {
   setUserData,
 } from "../../../../Redux/Reducers/AppReducers";
 import {
+  sendEmailOtp,
   userSignupRequest,
   verifyEmailOtp,
 } from "../../../../Network/Services/AuthServices";
@@ -43,7 +44,7 @@ const OtpVerificationScreen = (props: ScreenProps) => {
   const [emailOtpError, setEmailOtpError] = useState("");
   const [numberOtpError, setNumberOtpError] = useState("");
   const signupObj = props?.route?.params?.obj || null;
-  const phoneVerification = props?.route?.params?.phoneVerification || null;
+  let phoneVerification = props?.route?.params?.phoneVerification || null;
   const isResetPasswordScreen =
     props?.route?.params?.isResetPasswordScreen || false;
   const isEmail = props?.route?.params?.isEmail || false;
@@ -160,6 +161,47 @@ const OtpVerificationScreen = (props: ScreenProps) => {
     }
   };
 
+  const onResendEmailOtp = async (email: any) => {
+    const isOtpSend = await sendEmailOtp({
+      recipientEmail: email,
+    });
+    if (isOtpSend?.status) {
+      dispatch(
+        setShowToast({
+          type: AppStrings.ToastType.success,
+          message: "Otp Send",
+        })
+      );
+    } else {
+      dispatch(
+        setShowToast({
+          type: AppStrings.ToastType.error,
+          message: AppStrings.Network.tryAgainLater,
+        })
+      );
+    }
+  };
+
+  const onResendPhoneOtp = async (number: any) => {
+    const confirmation = await auth().signInWithPhoneNumber(number);
+    if (confirmation) {
+      phoneVerification = confirmation;
+      dispatch(
+        setShowToast({
+          type: AppStrings.ToastType.success,
+          message: "Otp Send",
+        })
+      );
+    } else {
+      dispatch(
+        setShowToast({
+          type: AppStrings.ToastType.error,
+          message: AppStrings.Network.tryAgainLater,
+        })
+      );
+    }
+  };
+
   const dispatch = useDispatch();
 
   return (
@@ -204,12 +246,21 @@ const OtpVerificationScreen = (props: ScreenProps) => {
               }}
               keyboardType={"number-pad"}
             />
-            <View style={styles.txtCont}>
+            {/* <View style={styles.txtCont}>
               <Text>Didn't get a code?</Text>
-              <Text onPress={() => {}} style={styles.resendTxt}>
+              <Text
+                onPress={() => {
+                  if (isEmail) {
+                    onResendEmailOtp(isEmail);
+                  } else {
+                    onResendPhoneOtp();
+                  }
+                }}
+                style={styles.resendTxt}
+              >
                 Resend Otp
               </Text>
-            </View>
+            </View> */}
           </>
         ) : (
           <>
@@ -237,12 +288,12 @@ const OtpVerificationScreen = (props: ScreenProps) => {
               }}
               keyboardType={"number-pad"}
             />
-            <View style={styles.txtCont}>
+            {/* <View style={styles.txtCont}>
               <Text>Didn't get a code?</Text>
               <Text onPress={() => {}} style={styles.resendTxt}>
                 Resend Otp
               </Text>
-            </View>
+            </View> */}
             <View style={{ height: normalized(15) }} />
             <Text style={styles.header}>Phone Number OTP</Text>
             <CodeInput
@@ -268,12 +319,12 @@ const OtpVerificationScreen = (props: ScreenProps) => {
               }}
               keyboardType={"number-pad"}
             />
-            <View style={styles.txtCont}>
+            {/* <View style={styles.txtCont}>
               <Text>Didn't get a code?</Text>
               <Text onPress={() => {}} style={styles.resendTxt}>
                 Resend Otp
               </Text>
-            </View>
+            </View> */}
           </>
         )}
         <FilledButton
