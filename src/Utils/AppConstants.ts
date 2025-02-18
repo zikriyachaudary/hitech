@@ -73,7 +73,7 @@ export const AppColors = {
     pink: "#fbe3e3",
   },
   themeColor: {
-    dark: "#C85D06",
+    dark: "#b00429",
     light: "#FEB851",
     medium: "#fab57d",
   },
