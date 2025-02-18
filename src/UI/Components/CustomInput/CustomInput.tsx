@@ -23,8 +23,7 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
     (state: AppRootStore) => state.SliceReducer
   );
 
-  const isRtl = selector?.isRtl;
-
+  const isRtl = selector?.isRtl || props?.isRtl;
   return (
     <View>
       <View

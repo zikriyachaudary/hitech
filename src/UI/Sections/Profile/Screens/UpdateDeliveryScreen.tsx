@@ -14,7 +14,6 @@ import CustomInput from "../../../Components/CustomInput/CustomInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import { useDispatch, useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
-import { addAddressReq } from "../../../../Network/Services/GeneralServices";
 import {
   setIsLoader,
   setShowToast,
@@ -23,6 +22,7 @@ import {
 import { AppStrings } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
+import { addAddressReq } from "../../../../Network/Services/AddressServices";
 
 const UpdateDeliveryScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -34,10 +34,10 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
   const item = props?.route?.params?.item;
   const [house, setHouse] = useState<any>(item?.house || "");
   const [street, setStreet] = useState<any>(item?.street || "");
-  const [area, setArea] = useState<any>(item?.Area || "");
-  const [city, setCity] = useState<any>(item?.City || "");
+  const [area, setArea] = useState<any>(item?.area || "");
+  const [city, setCity] = useState<any>(item?.city || "");
   const [completeAddress, setCompleteAddress] = useState<any>(
-    item?.general || ""
+    item?.address || ""
   );
 
   ///////  Ref
@@ -104,12 +104,6 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
             })
           );
           console.log("resp --->>>  ", resp);
-          const updateUserData = {
-            userData: userData,
-            address: resp?.address,
-          };
-          setUserDataInAsync(updateUserData);
-          dispatch(setUserData(updateUserData));
           props?.navigation?.goBack();
           dispatch(setIsLoader(false));
         } else {

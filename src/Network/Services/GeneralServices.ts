@@ -30,77 +30,6 @@ export const uploadMedia = async (
   }
 };
 
-export const addAddressReq = async (
-  userId: string,
-  params: any,
-  isUpdate: boolean,
-  onComplete: (response: any) => void
-) => {
-  try {
-    console.log("params --->>>  ", params);
-
-    const userRef = firestore()
-      .collection(Collections.CUSTOMERS_COLLECTION)
-      .doc(userId)
-      .collection(Collections.DELIVERY_ADDRESS)
-      .doc(params?.id);
-    const userDoc = await userRef.get();
-
-    let existingAddresses = [];
-    if (userDoc.exists) {
-      const userData = userDoc.data();
-      existingAddresses = userData?.addresses || [];
-    }
-
-    if (isUpdate) {
-      const addressIndex = existingAddresses.findIndex(
-        (address: any) => address.id === params.id
-      );
-
-      if (addressIndex === -1) {
-        return onComplete({
-          status: false,
-          message: "Address not found for update.",
-        });
-      }
-      existingAddresses[addressIndex] = {
-        ...existingAddresses[addressIndex],
-        ...params,
-      };
-      await userRef.update({ addresses: existingAddresses });
-      return onComplete({
-        status: true,
-        message: "Address updated successfully.",
-        address: existingAddresses,
-      });
-    } else {
-      const isDuplicate = existingAddresses.some((address: any) =>
-        Object.keys(params).every((key) => address[key] === params[key])
-      );
-
-      if (isDuplicate) {
-        return onComplete({
-          status: false,
-          message: "Address already exists.",
-        });
-      }
-      existingAddresses.push(params);
-      await userRef.update({ addresses: existingAddresses });
-      return onComplete({
-        status: true,
-        message: "Address added successfully.",
-        address: existingAddresses,
-      });
-    }
-  } catch (error: any) {
-    console.error("onAddAddressReq Error --->>>", error);
-    onComplete({
-      status: false,
-      message: error.message || "Something went wrong",
-    });
-  }
-};
-
 export const addCategoryReq = async (params: any, onComplete: any) => {
   try {
     firestore()
@@ -110,6 +39,19 @@ export const addCategoryReq = async (params: any, onComplete: any) => {
       .then(() =>
         onComplete({ status: true, message: "Categories Added Successfully" })
       );
+  } catch (error) {
+    console.log("Error while adding categories --->>>   ", error);
+    onComplete({ status: false, message: AppStrings.Network.someThingError });
+  }
+};
+
+export const deleteCatReq = async (id: any, onComplete: any) => {
+  try {
+    firestore()
+      .collection(Collections.CATEGORIES_COLLECTION)
+      .doc(id)
+      .delete()
+      .then(() => onComplete({ status: true, message: "Categories Deleted" }));
   } catch (error) {
     console.log("Error while adding categories --->>>   ", error);
     onComplete({ status: false, message: AppStrings.Network.someThingError });

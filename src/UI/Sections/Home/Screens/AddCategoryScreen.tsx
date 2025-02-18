@@ -23,6 +23,7 @@ import CustomInput from "../../../Components/CustomInput/CustomInput";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import {
   addCategoryReq,
+  deleteCatReq,
   updateCategoryReq,
 } from "../../../../Network/Services/GeneralServices";
 import { useDispatch } from "react-redux";
@@ -42,13 +43,11 @@ const AddCategoryScreen = (props: ScreenProps) => {
     { id: string; name: string }[]
   >(item?.subCat || []);
   const dispatch = useDispatch();
-  console.log("item --- ", item);
 
   const addSubCategory = () => {
-    setSubCategories([
-      ...subCategories,
-      { id: CommonDataManager.getSharedInstance().makeid(6), name: "" },
-    ]);
+    const randId = CommonDataManager.getSharedInstance().makeid(6);
+    setSubCategories([...subCategories, { id: randId, name: "" }]);
+    setRtlSubCategories([...rtlSubCategories, { id: randId, name: "" }]);
   };
 
   const updateSubCategory = (id: string, value: string) => {
@@ -58,30 +57,45 @@ const AddCategoryScreen = (props: ScreenProps) => {
       )
     );
   };
+  const updateRtlSubCategory = (id: string, value: string) => {
+    setRtlSubCategories(
+      rtlSubCategories.map((subCat) =>
+        subCat.id === id ? { ...subCat, name: value } : subCat
+      )
+    );
+  };
 
   const removeSubCategory = (id: string) => {
     setSubCategories(subCategories.filter((subCat) => subCat.id !== id));
+    setRtlSubCategories(rtlSubCategories.filter((subCat) => subCat.id !== id));
   };
 
   const handlePublish = () => {
-    if (
-      (!category && subCategories.every((sub) => sub.name.trim() === "")) ||
-      subCategories?.length == 0
-    ) {
+    let isFormValid = true;
+    if (category?.trimEnd() == "") isFormValid = false;
+    if (subCategories.every((sub) => sub?.name?.trim() == ""))
+      isFormValid = false;
+    if (subCategories?.length == 0) isFormValid = false;
+    if (RtlCategory?.trimEnd() == "") isFormValid = false;
+    if (rtlSubCategories.every((sub) => sub?.name?.trim() == ""))
+      isFormValid = false;
+    if (rtlSubCategories?.length == 0) isFormValid = false;
+    if (!isFormValid) {
       dispatch(
         setIsAlertShow({
           value: true,
-          message: "Please enter a category or at least one sub-category.",
+          message: "Please enter at least one sub-category in English or Urdu.",
         })
       );
-      console.log("Please enter a category or at least one sub-category.");
       return;
     }
 
     const data = {
-      category: category || "No Category",
+      category: category,
       id: item?.id || CommonDataManager.getSharedInstance().makeid(6),
       subCat: subCategories.filter((sub) => sub.name.trim() !== ""),
+      rtlCategory: RtlCategory,
+      rtlSubCat: rtlSubCategories.filter((sub) => sub.name.trim() !== ""),
     };
     dispatch(setIsLoader(true));
     if (item?.category) {
@@ -126,12 +140,45 @@ const AddCategoryScreen = (props: ScreenProps) => {
       });
     }
   };
+  const deleteCat = async () => {
+    await deleteCatReq(item?.id, (resp: any) => {
+      if (resp?.status) {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.success,
+            message: resp?.message,
+          })
+        );
+      } else {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.error,
+            message: AppStrings.Network.tryAgainLater,
+          })
+        );
+      }
+    });
+  };
+
+  ////////////////////////////////////////////////// ---> urdu stats
+
+  const [RtlCategory, setRtlCategory] = useState<string | null>(
+    item?.rtlCategory || null
+  );
+  const [rtlSubCategories, setRtlSubCategories] = useState<
+    { id: string; name: string }[]
+  >(item?.rtlSubCat || []);
+
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
       <CustomHeader
         Text={"Add Category"}
         onPress={() => props?.navigation?.goBack()}
+        {...(item && {
+          icon: [AppImages.Products.delete],
+          onRightIconPress: () => deleteCat(),
+        })}
       />
       <ScrollView
         style={{ marginHorizontal: AppHorizontalMargin }}
@@ -142,8 +189,24 @@ const AddCategoryScreen = (props: ScreenProps) => {
         {/* Category Input */}
         <Text style={styles.heading}>Category Name</Text>
         <CustomInput value={category} setValue={setCategory} />
+        <View style={{ height: normalized(10) }} />
+        <Text
+          style={{
+            ...styles.heading,
+            alignSelf: "flex-end",
+            paddingRight: normalized(15),
+          }}
+        >
+          کیٹگری کا نام
+        </Text>
+        <CustomInput
+          isRtl={true}
+          value={RtlCategory}
+          setValue={setRtlCategory}
+        />
 
         {/* Sub-Category Inputs */}
+
         {subCategories.map((sub, index) => (
           <View key={sub.id} style={{ marginTop: normalized(10) }}>
             <Text style={styles.heading}>Sub-Category {index + 1}</Text>
@@ -164,7 +227,37 @@ const AddCategoryScreen = (props: ScreenProps) => {
           </View>
         ))}
 
-        <TouchableOpacity style={styles.addButton} onPress={addSubCategory}>
+        {rtlSubCategories.map((sub, index) => (
+          <View key={sub.id} style={{ marginTop: normalized(10) }}>
+            <Text style={{ ...styles.heading, alignSelf: "flex-end" }}>
+              سبکیٹگری کا نام {"  "}
+              {index + 1}{" "}
+            </Text>
+            <View
+              style={{ ...styles.subCatCont, flexDirection: "row-reverse" }}
+            >
+              <View style={{ flex: 1 }}>
+                <CustomInput
+                  isRtl={true}
+                  value={sub.name}
+                  setValue={(val: string) => updateRtlSubCategory(sub.id, val)}
+                />
+              </View>
+              <TouchableOpacity
+                style={styles.closeImgCont}
+                onPress={() => removeSubCategory(sub.id)}
+              >
+                <Image source={AppImages.Home.close} style={styles.closeImg} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        ))}
+
+        <TouchableOpacity
+          activeOpacity={0.7}
+          style={styles.addButton}
+          onPress={addSubCategory}
+        >
           <Text style={styles.addButtonText}>+ Add Sub-Category</Text>
         </TouchableOpacity>
 

@@ -19,32 +19,65 @@ import {
 } from "../../../../Utils/AppConstants";
 import AddressItem from "../Components/AddressItem";
 import { Routes } from "../../../../Utils/Routes";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import { useIsFocused } from "@react-navigation/native";
+import {
+  addAddressReq,
+  fetchAddressReq,
+} from "../../../../Network/Services/AddressServices";
+import { setIsLoader } from "../../../../Redux/Reducers/AppReducers";
 
 const DeliveryAddressScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
-  const userData = selector?.userData || null;
+  const userData = selector?.userData;
 
+  const dispatch = useDispatch();
   const [addressList, setAddressList] = useState([]);
-  const changeDefaultAddress = (index: number) => {
+
+  const changeDefaultAddress = async (index: number, item: any) => {
+    dispatch(setIsLoader(true));
+
     const updatedList = addressList.map((item: any, i: any) => ({
       ...item,
       isDefault: i === index,
     }));
+
+    addressList.map(
+      async (item: any, i: any) =>
+        await addAddressReq(
+          userData?.userId,
+          { ...item, isDefault: i == index },
+          true,
+          (resp: any) => {}
+        )
+    );
+
     setAddressList(updatedList);
+    dispatch(setIsLoader(false));
   };
 
   const isFocused = useIsFocused();
 
+  const fetchAddress = async () => {
+    addressList?.length == 0 && dispatch(setIsLoader(true));
+    await fetchAddressReq(userData?.userId, (resp: any) => {
+      console.log("resp --0----- ", resp);
+
+      if (resp?.status) {
+        console.log("address list -->>  ", resp?.data);
+
+        setAddressList(resp?.data);
+      }
+    });
+    dispatch(setIsLoader(false));
+  };
+
   useEffect(() => {
-    if (userData?.addresses) {
-      setAddressList(userData?.addresses);
-    }
-  }, [isFocused || userData]);
+    fetchAddress();
+  }, [isFocused]);
 
   return (
     <View style={AppStyles.MainStyle}>
@@ -83,7 +116,7 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
               <AddressItem
                 item={item}
                 changeDefaultAddress={() => {
-                  changeDefaultAddress(index);
+                  changeDefaultAddress(index, item);
                 }}
                 onEdit={(item: any) => {
                   props?.navigation?.navigate(Routes.Home.UpdateDelivery, {

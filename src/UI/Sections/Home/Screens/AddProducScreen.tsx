@@ -54,9 +54,6 @@ const AddProducScreen = (props: ScreenProps) => {
   const [openImage, setOpenImage] = useState<Boolean>(false);
   const [imageList, setImageList] = useState<any>(productDetail?.images ?? []);
 
-  const [productMainCat, setProductMainCat] = useState<any>(
-    productDetail?.category || null
-  );
   const [categoryList, setCategoryList] = useState<any>([]);
   const [selectedCat, setSelectedCat] = useState<any>(
     productDetail?.category || ""
@@ -64,11 +61,6 @@ const AddProducScreen = (props: ScreenProps) => {
   const [subCatList, setSubCatList] = useState([]);
   const [selectedSubCat, setSelectedSubCat] = useState<any>(
     productDetail?.subCat || ""
-  );
-  console.log("productDetail ---- ", productDetail?.subCat?.name);
-
-  const [productSubCat, setProductSubCat] = useState<any>(
-    productDetail?.subCategory || null
   );
 
   const [imageView, setImageView] = useState({
@@ -92,8 +84,27 @@ const AddProducScreen = (props: ScreenProps) => {
     productDetail?.description ?? ""
   );
 
-  const { isNetConnected, userData } = useSelector(
-    (state: AppRootStore) => state.SliceReducer
+  ///// urdu ----->>>
+
+  const [rtlCategoryList, setRtlCategoryList] = useState<any>([]);
+  const [rtlSelectedCat, setRtlSelectedCat] = useState<any>(
+    productDetail?.rtlCategory || ""
+  );
+  const [rtlSubCatList, setRtlSubCatList] = useState([]);
+  const [rtlSelectedSubCat, setRtlSelectedSubCat] = useState<any>(
+    productDetail?.rtlSubCat || ""
+  );
+
+  const rtlProductNameRef = useRef();
+  const rtlProductPriceRef = useRef();
+  const rtlDescriptionRef = useRef();
+
+  const [rtlProductName, setRtlProductName] = useState<string>(
+    productDetail?.rtlName ?? ""
+  );
+
+  const [rtlDescription, setRtlDescription] = useState<string>(
+    productDetail?.rtlDescription ?? ""
   );
 
   ///error------->
@@ -103,6 +114,11 @@ const AddProducScreen = (props: ScreenProps) => {
   const [productImagesError, setProductImagesError] = useState("");
   const [catError, setCatError] = useState("");
   const [catSubError, setCatSubError] = useState("");
+  //////-----> urdu errors
+  const [rtlProductNameError, setRtlProductNameError] = useState("");
+  const [rtlProductDesError, setRtlProductDesError] = useState("");
+  const [rtlCatError, setRtlCatError] = useState("");
+  const [rtlCatSubError, setRtlCatSubError] = useState<any>("");
 
   const dispatch = useDispatch();
 
@@ -126,7 +142,6 @@ const AddProducScreen = (props: ScreenProps) => {
             const matchedCategory = resp?.data?.find(
               (item: any) => item.category === productDetail?.category?.category
             );
-            console.log("-----", matchedCategory);
 
             if (matchedCategory) {
               setSubCatList(matchedCategory.subCat);
@@ -216,6 +231,25 @@ const AddProducScreen = (props: ScreenProps) => {
       isFormValid = false;
     }
 
+    if (!rtlProductName) {
+      setRtlProductNameError("* لازمی");
+      isFormValid = false;
+    }
+    if (!rtlDescription) {
+      setRtlProductDesError("* لازمی");
+      isFormValid = false;
+    }
+    if (!rtlSelectedCat?.category) {
+      setRtlCatError("* لازمی");
+      isFormValid = false;
+    }
+    if (rtlSelectedCat?.category && !rtlSelectedSubCat?.name) {
+      setRtlCatSubError("* لازمی");
+      isFormValid = false;
+    }
+    if (!isFormValid) {
+      return;
+    }
     const obj = {
       name: productName,
       id: productDetail?.id
@@ -233,6 +267,16 @@ const AddProducScreen = (props: ScreenProps) => {
         id: selectedSubCat?.id,
       },
       images: [],
+      rtlName: rtlProductName,
+      rtlDescription: rtlDescription,
+      rtlCategory: {
+        category: rtlSelectedCat?.category,
+        id: rtlSelectedCat?.id,
+      },
+      rtlSubCat: {
+        name: rtlSelectedSubCat?.name,
+        id: rtlSelectedSubCat?.id,
+      },
     };
     let productImagesList: any = [];
     dispatch(setIsLoader(true));
@@ -349,42 +393,47 @@ const AddProducScreen = (props: ScreenProps) => {
           style={{ flex: 1, paddingHorizontal: AppHorizontalMargin }}
           showsVerticalScrollIndicator={false}
         >
-          <View style={styles.Container}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.label}>{"Product Name"}</Text>
-              <CustomInput
-                placeHold={"Enter Product Name"}
-                placeHolderColor={AppColors.grey.greyLevel4}
-                container={styles.inputContainer}
-                ref={productNameRef}
-                onSubmitEditing={() => focusNextField(productPriceRef)}
-                setValue={(txt: any) => {
-                  setProductName(txt);
-                  setProductNameError("");
-                }}
-                value={productName}
-                errorMsg={productNameError}
-              />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.label}>{"Price"}</Text>
-              <CustomInput
-                placeHold={"Amount"}
-                placeHolderColor={AppColors.grey.greyLevel4}
-                container={styles.inputContainer}
-                ref={productPriceRef}
-                keyboardType="numeric"
-                onSubmitEditing={() => focusNextField(descriptionRef)}
-                setValue={(txt: any) => {
-                  const numeric = txt.replace(/[^\d.]+|(?<=\..*)\./g, "");
-                  setProductPrice(numeric);
-                  setProductPriceError("");
-                }}
-                value={productPrice}
-                errorMsg={productPriceError}
-              />
-            </View>
+          {/* <View style={styles.Container}> */}
+          <View style={{ flex: 1 }}>
+            <Text style={styles.label}>{"Product Name"}</Text>
+            <CustomInput
+              placeHold={"Enter Product Name"}
+              placeHolderColor={AppColors.grey.greyLevel4}
+              container={styles.inputContainer}
+              ref={productNameRef}
+              onSubmitEditing={() => focusNextField(productPriceRef)}
+              setValue={(txt: any) => {
+                setProductName(txt);
+                setProductNameError("");
+              }}
+              value={productName}
+              errorMsg={productNameError}
+            />
           </View>
+          <View style={{ flex: 1 }}>
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <Text style={styles.label}>{"Price"}</Text>
+              <Text style={styles.label}>{"قیمت"}</Text>
+            </View>
+            <CustomInput
+              placeHold={"Amount"}
+              placeHolderColor={AppColors.grey.greyLevel4}
+              container={styles.inputContainer}
+              ref={productPriceRef}
+              keyboardType="numeric"
+              onSubmitEditing={() => focusNextField(descriptionRef)}
+              setValue={(txt: any) => {
+                const numeric = txt.replace(/[^\d.]+|(?<=\..*)\./g, "");
+                setProductPrice(numeric);
+                setProductPriceError("");
+              }}
+              value={productPrice}
+              errorMsg={productPriceError}
+            />
+          </View>
+          {/* </View> */}
 
           <Text style={styles.label}>Description</Text>
           <CustomInput
@@ -438,6 +487,100 @@ const AddProducScreen = (props: ScreenProps) => {
                 selected={selectedSubCat?.name}
                 optionKey={"name"}
                 list={subCatList}
+              />
+              {catSubError && (
+                <Text style={styles.errorMsg}>{catSubError}</Text>
+              )}
+            </>
+          )}
+          <Text style={{ ...styles.label, alignSelf: "center" }}>
+            --------- اردو میں معلومات ------------
+          </Text>
+
+          <View style={{ flex: 1 }}>
+            <Text style={{ ...styles.label, alignSelf: "flex-end" }}>
+              {"مصنوعات کانام"}
+            </Text>
+            <CustomInput
+              isRtl={true}
+              placeHold={"مصنوعات کا نام درج کریں"}
+              placeHolderColor={AppColors.grey.greyLevel4}
+              container={styles.inputContainer}
+              ref={rtlProductNameRef}
+              onSubmitEditing={() => focusNextField(productPriceRef)}
+              setValue={(txt: any) => {
+                setRtlProductName(txt);
+                setRtlProductNameError("");
+              }}
+              value={rtlProductName}
+              errorMsg={rtlProductNameError}
+            />
+          </View>
+          <Text style={{ ...styles.label, alignSelf: "flex-end" }}>تفصیل</Text>
+          <CustomInput
+            isRtl={true}
+            isMultiLine={true}
+            placeHold={"مصنوعات کی تفصیل درج کریں"}
+            placeHolderColor={AppColors.grey.greyLevel4}
+            container={{
+              ...styles.inputContainer,
+              height: hv(100),
+            }}
+            ref={descriptionRef}
+            onFocus={true}
+            setValue={(txt: any) => {
+              setRtlDescription(txt);
+              setRtlProductDesError("");
+            }}
+            value={rtlDescription}
+            maxLength={320}
+            errorMsg={rtlProductDesError}
+          />
+
+          <Text
+            style={{
+              ...styles.label,
+              marginBottom: normalized(7),
+              alignSelf: "flex-end",
+            }}
+          >
+            پروڈکٹ کیٹگری
+          </Text>
+          <CustomDropDown
+            isError={catError?.length > 0}
+            placeHolder={"پروڈکٹ کیٹیگری کا انتخاب کریں"}
+            atSelect={(val: any) => {
+              setRtlCatError("");
+              setRtlSelectedCat(val);
+              setRtlSubCatList(val?.subCat);
+              setRtlSelectedSubCat("");
+            }}
+            selected={rtlSelectedCat?.category}
+            optionKey={"category"}
+            list={rtlCategoryList}
+          />
+          {catError && <Text style={styles.errorMsg}>{catError}</Text>}
+          {rtlSubCatList?.length > 0 && (
+            <>
+              <Text
+                style={{
+                  ...styles.label,
+                  marginBottom: 5,
+                  alignSelf: "flex-end",
+                }}
+              >
+                {"پروڈکت سبکیٹگری"}
+              </Text>
+              <CustomDropDown
+                isError={catSubError?.length > 0}
+                placeHolder={"پروڈکٹ سبکیٹگری کاانتخاب کریں"}
+                atSelect={(val: any) => {
+                  rtlCatSubError("");
+                  setRtlSubCatList(val);
+                }}
+                selected={rtlSelectedSubCat?.name}
+                optionKey={"name"}
+                list={rtlSubCatList}
               />
               {catSubError && (
                 <Text style={styles.errorMsg}>{catSubError}</Text>
@@ -545,7 +688,7 @@ const styles = StyleSheet.create({
   label: {
     marginTop: normalized(10),
     color: AppColors.black.black,
-    fontSize: normalized(12),
+    fontSize: normalized(14),
     fontFamily: AppFonts.PoppinsMedium,
   },
 
