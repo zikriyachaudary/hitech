@@ -23,12 +23,12 @@ import { Routes } from "../../../../Utils/Routes";
 const WelcomeScreen = (props: ScreenProps) => {
   return (
     <LinearGradient
-      colors={["#0900FF", "#0900FF", "#DE8225", "#DE8225"]}
+      colors={["#DE8225", "#0900FF", "#DE8225"]}
       style={AppStyles.MainStyle}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
     >
-      <AppStatusBar backgroundColor="transparent" barStyle="light-content" />
+      {/* <AppStatusBar backgroundColor="transparent" barStyle="light-content" /> */}
       <SafeAreaView style={{ flex: 1 }}>
         <View
           style={{
@@ -40,6 +40,17 @@ const WelcomeScreen = (props: ScreenProps) => {
           <View style={styles.imgCont}>
             <Image source={AppImages.logo} style={styles.logo} />
           </View>
+          <View
+            style={{
+              height: normalized(130),
+              width: ScreenSize.width,
+              position: "absolute",
+              bottom: 0,
+              borderTopLeftRadius: normalized(20),
+              borderTopRightRadius: normalized(20),
+              backgroundColor: "rgba(255,255,255,0.20)",
+            }}
+          />
           <View style={styles.btnCont}>
             <TouchableOpacity
               onPress={() => {
@@ -97,19 +108,22 @@ const styles = StyleSheet.create({
   btn: {
     width: normalized(150),
     height: normalized(55),
-    backgroundColor: "rgba(255,255,255,0.3)",
+    // backgroundColor: "rgba(255,255,255,0.3)",
+    // backgroundColor: AppColors.white.white,
+    backgroundColor: AppColors.themeColor.dark,
     alignItems: "center",
     justifyContent: "center",
     borderRadius: normalized(100),
     marginTop: normalized(20),
-    borderWidth: 2,
+    // borderWidth: 2,
     borderColor: AppColors.themeColor.dark,
   },
   btnTxt: {
     fontSize: normalized(22),
     // color: "#8C4D00",
     // color: "#0900FF",
-    color: AppColors.themeColor.dark,
+    // color: AppColors.themeColor.dark,
+    color: AppColors.white.white,
     fontFamily: AppFonts.PoppinsSemiBold,
   },
 });

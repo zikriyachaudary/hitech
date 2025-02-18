@@ -141,6 +141,7 @@ const AddCategoryScreen = (props: ScreenProps) => {
     }
   };
   const deleteCat = async () => {
+    dispatch(setIsLoader(true));
     await deleteCatReq(item?.id, (resp: any) => {
       if (resp?.status) {
         dispatch(
@@ -149,6 +150,8 @@ const AddCategoryScreen = (props: ScreenProps) => {
             message: resp?.message,
           })
         );
+        props?.navigation?.goBack();
+        dispatch(setIsLoader(false));
       } else {
         dispatch(
           setShowToast({
@@ -156,6 +159,7 @@ const AddCategoryScreen = (props: ScreenProps) => {
             message: AppStrings.Network.tryAgainLater,
           })
         );
+        dispatch(setIsLoader(false));
       }
     });
   };
@@ -175,6 +179,21 @@ const AddCategoryScreen = (props: ScreenProps) => {
       <CustomHeader
         Text={"Add Category"}
         onPress={() => props?.navigation?.goBack()}
+        rightIconCont={{
+          width: normalized(33),
+          height: normalized(33),
+          borderColor: AppColors.red.dark,
+          borderRadius: normalized(40),
+          borderWidth: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: AppColors.white.white,
+        }}
+        rightIconStyle={{
+          width: normalized(20),
+          height: normalized(20),
+          tintColor: AppColors.red.dark,
+        }}
         {...(item && {
           icon: [AppImages.Products.delete],
           onRightIconPress: () => deleteCat(),

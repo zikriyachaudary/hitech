@@ -77,6 +77,8 @@ export const loginRequest = async (
   userInput: any,
   complete: (userObj: any) => void
 ) => {
+  console.log("userInputuserInput  ---00-0-----  ", userInput);
+
   try {
     firestore()
       .collection(

@@ -98,9 +98,9 @@ const OrderScreen = () => {
         <View style={styles.emptyCont}>
           {isFetched && (
             <Text style={styles.emptyTxt}>
-              You have not placed an order yet. Once you make a purchase, your
-              order details will appear here. Start exploring now and find the
-              perfect parts for your vehicle!
+              {userData?.isAdmin
+                ? "We're Working on this Screen"
+                : "You have not placed an order yet. Once you make a purchase, yourorder details will appear here. Start exploring now and find the perfect parts for your vehicle!"}
             </Text>
           )}
         </View>

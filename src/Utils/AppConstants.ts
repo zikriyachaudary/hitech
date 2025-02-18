@@ -175,6 +175,7 @@ export const AppImages = {
     street: require("../UI/assets/Images/Profile/street.png"),
     area: require("../UI/assets/Images/Profile/area.png"),
     city: require("../UI/assets/Images/Profile/city.png"),
+    language: require("../UI/assets/Images/Profile/language.png"),
   },
 };
 
@@ -219,6 +220,11 @@ export const profileBarList = [
     leftIcon: AppImages.Profile.deleteUser,
   },
   {
+    id: 6,
+    text: "Select Language",
+    leftIcon: AppImages.Profile.LogoutIcon,
+  },
+  {
     id: 5,
     text: "Log out",
     leftIcon: AppImages.Profile.LogoutIcon,
@@ -235,6 +241,11 @@ export const adminProfileList = [
     id: 4,
     text: "Delete Account",
     leftIcon: AppImages.Profile.deleteUser,
+  },
+  {
+    id: 6,
+    text: "Select Language",
+    leftIcon: AppImages.Profile.language,
   },
   {
     id: 5,

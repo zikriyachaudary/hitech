@@ -80,7 +80,7 @@ android {
         applicationId "com.hitech_rtl"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
+        versionCode 3
         versionName "1.0.1"
     }
     signingConfigs {

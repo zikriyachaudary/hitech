@@ -30,15 +30,17 @@ import {
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
+import { useIsFocused } from "@react-navigation/native";
 
 const ManageCategories = (props: ScreenProps) => {
   const [categoryList, setCategoryList] = useState<any>([]);
   const [subCategory, setSubCategory] = useState<any>(null);
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     fetchCat();
-  }, []);
+  }, [isFocused]);
 
   const fetchCat = async () => {
     try {
