@@ -16,7 +16,7 @@ const BottomBar = ({ bottomBarList, navigation, tab }: any) => {
     <View
       style={{
         justifyContent: "center",
-        height: normalized(65),
+        height: normalized(35),
         shadowColor: "#000",
         shadowOffset: {
           width: 0,

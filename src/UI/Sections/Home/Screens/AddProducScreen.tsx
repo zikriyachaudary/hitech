@@ -51,6 +51,7 @@ import moment from "moment";
 
 const AddProducScreen = (props: ScreenProps) => {
   const productDetail = props?.route?.params?.item;
+
   const [openImage, setOpenImage] = useState<Boolean>(false);
   const [imageList, setImageList] = useState<any>(productDetail?.images ?? []);
 
@@ -68,7 +69,6 @@ const AddProducScreen = (props: ScreenProps) => {
     imagesList: [],
     value: false,
   });
-
   const productNameRef = useRef();
   const productPriceRef = useRef();
   const descriptionRef = useRef();
@@ -138,6 +138,7 @@ const AddProducScreen = (props: ScreenProps) => {
       fetchCatListReq((resp: any) => {
         if (resp?.status) {
           setCategoryList(resp?.data);
+          setRtlCategoryList(resp?.data);
           if (productDetail != null) {
             const matchedCategory = resp?.data?.find(
               (item: any) => item.category === productDetail?.category?.category
@@ -379,6 +380,21 @@ const AddProducScreen = (props: ScreenProps) => {
       <CustomHeader
         title={productDetail ? "Update Product" : "Add Product"}
         onPress={() => props?.navigation?.goBack()}
+        rightIconCont={{
+          width: normalized(33),
+          height: normalized(33),
+          borderColor: AppColors.red.dark,
+          borderRadius: normalized(40),
+          borderWidth: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: AppColors.white.white,
+        }}
+        rightIconStyle={{
+          width: normalized(20),
+          height: normalized(20),
+          tintColor: AppColors.red.dark,
+        }}
         {...(productDetail && {
           icon: [AppImages.Products.delete],
           onRightIconPress: () => deleteProduct(),
@@ -550,13 +566,15 @@ const AddProducScreen = (props: ScreenProps) => {
             isError={catError?.length > 0}
             placeHolder={"پروڈکٹ کیٹیگری کا انتخاب کریں"}
             atSelect={(val: any) => {
+              console.log(" --0----->>  ", val);
+
               setRtlCatError("");
               setRtlSelectedCat(val);
-              setRtlSubCatList(val?.subCat);
+              setRtlSubCatList(val?.rtlSubCat);
               setRtlSelectedSubCat("");
             }}
-            selected={rtlSelectedCat?.category}
-            optionKey={"category"}
+            selected={rtlSelectedCat?.rtlCategory}
+            optionKey={"rtlCategory"}
             list={rtlCategoryList}
           />
           {catError && <Text style={styles.errorMsg}>{catError}</Text>}
@@ -575,8 +593,8 @@ const AddProducScreen = (props: ScreenProps) => {
                 isError={catSubError?.length > 0}
                 placeHolder={"پروڈکٹ سبکیٹگری کاانتخاب کریں"}
                 atSelect={(val: any) => {
-                  rtlCatSubError("");
-                  setRtlSubCatList(val);
+                  setRtlCatSubError("");
+                  setRtlSelectedSubCat(val);
                 }}
                 selected={rtlSelectedSubCat?.name}
                 optionKey={"name"}
@@ -590,7 +608,7 @@ const AddProducScreen = (props: ScreenProps) => {
 
           <Text style={styles.label}>Attach Product Images</Text>
           <View style={styles.imgWrapper}>
-            {imageList.length > 0 && (
+            {/* {imageList.length > 0 && (
               <View>
                 <FlatList
                   data={imageList}
@@ -600,22 +618,68 @@ const AddProducScreen = (props: ScreenProps) => {
                   contentContainerStyle={styles.flatListContainer}
                 />
               </View>
-            )}
+            )} */}
 
-            {imageList.length < 4 && (
-              <TouchableOpacity
-                style={styles.plusCont}
-                onPress={() => {
-                  setOpenImage(true);
-                  setProductImagesError("");
-                }}
-              >
-                <Image
-                  source={AppImages.Home.PlusBlack}
-                  style={styles.plusImg}
-                />
-              </TouchableOpacity>
-            )}
+            <View
+              style={{
+                marginTop: normalized(20),
+                flexWrap: "wrap",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              {imageList.map((el, index) => {
+                // Determine if `el` is a direct local file path or an object with a URL
+                const imageUri = typeof el === "string" ? el : el?.url;
+
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    activeOpacity={1}
+                    style={styles.singleImageCont}
+                    onPress={() => {
+                      // setImagesViewer({
+                      //   value: true,
+                      //   imagesList: businessImagesList,
+                      //   initialIndex: index,
+                      // });
+                    }}
+                  >
+                    {/* Close Button */}
+                    <TouchableOpacity
+                      style={styles.closeImgCont}
+                      onPress={() => removeImage(index)}
+                    >
+                      <Image
+                        source={AppImages.Home.close}
+                        style={styles.closeImg}
+                      />
+                    </TouchableOpacity>
+
+                    {/* Image Viewer (Handles both Firebase URL & Local File Path) */}
+                    <AppImageViewer
+                      style={styles.singleImageCont}
+                      source={{ uri: imageUri }}
+                    />
+                  </TouchableOpacity>
+                );
+              })}
+
+              {imageList.length < 10 && (
+                <TouchableOpacity
+                  style={styles.plusCont}
+                  onPress={() => {
+                    setOpenImage(true);
+                    setProductImagesError("");
+                  }}
+                >
+                  <Image
+                    source={AppImages.Home.PlusBlack}
+                    style={styles.plusImg}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
           {productImagesError && (
             <Text style={styles.errorMsg}>{productImagesError}</Text>
@@ -633,7 +697,7 @@ const AddProducScreen = (props: ScreenProps) => {
 
       {openImage ? (
         <AppImagePicker
-          limit={10}
+          limit={10 - imageList?.length}
           onClose={() => {
             setOpenImage(false);
           }}
@@ -647,7 +711,7 @@ const AddProducScreen = (props: ScreenProps) => {
                 imagesArr.push(userSelectedImages);
               }
               setImageList(
-                imagesArr?.length > 4 ? imagesArr.slice(0, 4) : imagesArr
+                imagesArr?.length > 4 ? imagesArr.slice(0, 10) : imagesArr
               );
             }
           }}
@@ -713,6 +777,7 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     margin: 10,
+    flexWrap: "wrap",
   },
   crossContainer: {
     position: "absolute",
@@ -741,6 +806,7 @@ const styles = StyleSheet.create({
   imgWrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
+    flex: 1,
     alignItems: "center",
     paddingVertical: 10,
   },
@@ -768,5 +834,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: normalized(15),
     borderRadius: normalized(10),
     justifyContent: "center",
+  },
+  singleImageCont: {
+    height: normalized(70),
+    width: normalized(70),
+    margin: normalized(5),
+    borderRadius: normalized(10),
+    borderWidth: 1,
+    borderColor: AppColors.themeColor.dark,
+    justifyContent: "center",
+    alignItems: "center",
+    // flexWrap: "wrap",
+  },
+  closeImg: {
+    resizeMode: "contain",
+    width: normalized(10),
+    height: normalized(10),
+  },
+  closeImgCont: {
+    position: "absolute",
+    backgroundColor: AppColors.white.white,
+    zIndex: 20,
+    borderRadius: normalized(10),
+    padding: normalized(3),
+    top: 3,
+    right: 3,
   },
 });

@@ -61,6 +61,21 @@ const AddAdminScreen = (props: ScreenProps) => {
         title={"Admins"}
         icon={[AppImages.Home.PlusBlack]}
         onRightIconPress={() => props?.navigation?.navigate(Routes.OtpScreen)}
+        rightIconCont={{
+          width: normalized(33),
+          height: normalized(33),
+          borderColor: AppColors.themeColor.dark,
+          borderRadius: normalized(40),
+          borderWidth: 1,
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: AppColors.themeColor.dark,
+        }}
+        rightIconStyle={{
+          width: normalized(20),
+          height: normalized(20),
+          tintColor: AppColors.white.white,
+        }}
       />
       {adminList?.length > 0 ? (
         <FlatList
