@@ -50,6 +50,11 @@ import {
 import moment from "moment";
 
 const AddProducScreen = (props: ScreenProps) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
+
   const productDetail = props?.route?.params?.item;
 
   const [openImage, setOpenImage] = useState<Boolean>(false);
@@ -209,7 +214,9 @@ const AddProducScreen = (props: ScreenProps) => {
   const onAddProduct = async () => {
     let isFormValid = true;
     if (imageList?.length == 0) {
-      setProductImagesError("Attach Product Pictures");
+      setProductImagesError(
+        isRtl ? "مصنوعات کی تصاویر منسلک کریں" : "Attach Product Pictures"
+      );
     }
     if (!productName) {
       setProductNameError("* Required");
@@ -378,7 +385,15 @@ const AddProducScreen = (props: ScreenProps) => {
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
       <CustomHeader
-        title={productDetail ? "Update Product" : "Add Product"}
+        title={
+          isRtl
+            ? productDetail
+              ? "پروڈکٹ کو اپ ڈیٹ کریں"
+              : "پروڈکٹ شامل کریں"
+            : productDetail
+            ? "Update Product"
+            : "Add Product"
+        }
         onPress={() => props?.navigation?.goBack()}
         rightIconCont={{
           width: normalized(33),
@@ -577,7 +592,7 @@ const AddProducScreen = (props: ScreenProps) => {
             optionKey={"rtlCategory"}
             list={rtlCategoryList}
           />
-          {catError && <Text style={styles.errorMsg}>{catError}</Text>}
+          {catError && <Text style={styles.errorMsg}>{rtlCatError}</Text>}
           {rtlSubCatList?.length > 0 && (
             <>
               <Text
@@ -606,7 +621,9 @@ const AddProducScreen = (props: ScreenProps) => {
             </>
           )}
 
-          <Text style={styles.label}>Attach Product Images</Text>
+          <Text style={styles.label}>
+            {isRtl ? "مصنوعات کی تصاویر منسلک کریں" : "Attach Product Images"}
+          </Text>
           <View style={styles.imgWrapper}>
             {/* {imageList.length > 0 && (
               <View>
@@ -624,7 +641,7 @@ const AddProducScreen = (props: ScreenProps) => {
               style={{
                 marginTop: normalized(20),
                 flexWrap: "wrap",
-                flexDirection: "row",
+                flexDirection: isRtl ? "row-reverse" : "row",
                 alignItems: "center",
               }}
             >

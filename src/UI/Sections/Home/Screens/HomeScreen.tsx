@@ -39,6 +39,7 @@ const HomeScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const isRtl = selector?.isRtl;
   const [productsList, setProductsList] = useState([]);
   const dispatch = useDispatch();
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
@@ -103,7 +104,10 @@ const HomeScreen = (props: ScreenProps) => {
             return (
               <TouchableOpacity
                 activeOpacity={0.7}
-                style={styles.cont}
+                style={{
+                  ...styles.cont,
+                  flexDirection: isRtl ? "row-reverse" : "row",
+                }}
                 onPress={() => {
                   if (item?.id == 1) {
                     props?.navigation?.navigate(Routes.Admin.ManageCategories);
@@ -118,8 +122,18 @@ const HomeScreen = (props: ScreenProps) => {
                   }
                 }}
               >
-                <Image source={item?.icon} style={styles.adminIcon} />
-                <Text style={styles.txt}>{item?.title}</Text>
+                <Image
+                  source={item?.icon}
+                  style={{
+                    ...styles.adminIcon,
+                    marginLeft: isRtl ? normalized(10) : 0,
+                  }}
+                />
+                <Text
+                  style={{ ...styles.txt, textAlign: isRtl ? "right" : "left" }}
+                >
+                  {isRtl ? item?.rtlTitle : item?.title}
+                </Text>
               </TouchableOpacity>
             );
           }}
@@ -198,7 +212,6 @@ const styles = StyleSheet.create({
     borderRadius: normalized(10),
     marginTop: normalized(10),
     alignItems: "center",
-    flexDirection: "row",
     padding: normalized(10),
     borderColor: AppColors.themeColor.dark,
     borderWidth: 2,
@@ -208,7 +221,6 @@ const styles = StyleSheet.create({
     color: AppColors.themeColor.dark,
     fontFamily: AppFonts.PoppinsSemiBold,
     marginLeft: normalized(10),
-    textAlign: "justify",
     width: normalized(270),
   },
 });

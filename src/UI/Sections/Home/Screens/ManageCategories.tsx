@@ -24,19 +24,24 @@ import {
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import { Routes } from "../../../../Utils/Routes";
 import { fetchCatListReq } from "../../../../Network/Services/GeneralServices";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setIsLoader,
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
 import { useIsFocused } from "@react-navigation/native";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const ManageCategories = (props: ScreenProps) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
   const [categoryList, setCategoryList] = useState<any>([]);
   const [subCategory, setSubCategory] = useState<any>(null);
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+  const isRtl = selector?.isRtl;
 
   useEffect(() => {
     fetchCat();
@@ -68,7 +73,7 @@ const ManageCategories = (props: ScreenProps) => {
       <SafeAreaView />
       <CustomHeader
         onPress={() => props?.navigation?.goBack()}
-        title={"Categories"}
+        title={isRtl ? "کیٹگری" : "Categories"}
         titleStyle={styles.heading}
         icon={[AppImages.Home.PlusBlack]}
         rightIconCont={{
@@ -110,10 +115,22 @@ const ManageCategories = (props: ScreenProps) => {
           )}
         />
       ) : (
-        <View style={styles.emptyListCont}>
-          <Text style={styles.emptyTxt}>
-            No Category added yet. Tap the button in the top right corner to add
-            a new Category List.
+        <View
+          style={{
+            ...styles.emptyListCont,
+            flexDirection: "row",
+            justifyContent: isRtl ? "flex-start" : "flex-end",
+          }}
+        >
+          <Text
+            style={{
+              ...styles.emptyTxt,
+              fontSize: isRtl ? normalized(18) : normalized(14),
+            }}
+          >
+            {isRtl
+              ? "ابھی تک کوئی کیٹگری شامل نہیں کی گئی۔ نئی کیٹگری لسٹ شامل کرنے کے لیے بائیں کونے میں بٹن پر ٹیپ کریں۔"
+              : "No Category added yet. Tap the button in the top right corner to add a new Category List."}
           </Text>
         </View>
       )}
@@ -138,7 +155,6 @@ const styles = StyleSheet.create({
   },
   emptyTxt: {
     textAlign: "center",
-    fontSize: normalized(14),
     fontFamily: AppFonts.PoppinsMedium,
     color: AppColors.black.black,
   },

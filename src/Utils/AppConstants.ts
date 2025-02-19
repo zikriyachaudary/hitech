@@ -176,6 +176,8 @@ export const AppImages = {
     area: require("../UI/assets/Images/Profile/area.png"),
     city: require("../UI/assets/Images/Profile/city.png"),
     language: require("../UI/assets/Images/Profile/language.png"),
+    usa: require("../UI/assets/Images/Profile/usa.png"),
+    pk: require("../UI/assets/Images/Profile/pk.png"),
   },
 };
 
@@ -202,31 +204,37 @@ export const profileBarList = [
   {
     id: 1,
     text: "Edit Your Profile",
+    rtlTxt: "اپنی پروفائل میں ترمیم کریں",
     leftIcon: AppImages.Profile.ProfileIcon,
   },
   {
     id: 2,
     text: "Delivery Address",
+    rtlTxt: "ترسیل کا پتہ",
     leftIcon: AppImages.Profile.delivery,
   },
   {
     id: 3,
     text: "My Cart",
+    rtlTxt: "میری ٹوکری",
     leftIcon: AppImages.Profile.cart,
   },
   {
     id: 4,
     text: "Delete Account",
+    rtlTxt: "اکاؤنٹ حذف کریں",
     leftIcon: AppImages.Profile.deleteUser,
   },
   {
     id: 6,
     text: "Select Language",
+    rtlTxt: "زبان منتخب کریں",
     leftIcon: AppImages.Profile.LogoutIcon,
   },
   {
     id: 5,
     text: "Log out",
+    rtlTxt: "لاگ آؤٹ",
     leftIcon: AppImages.Profile.LogoutIcon,
   },
 ];
@@ -235,21 +243,25 @@ export const adminProfileList = [
   {
     id: 1,
     text: "Edit Your Profile",
+    rtlTxt: "اپنی پروفائل میں ترمیم کریں",
     leftIcon: AppImages.Profile.ProfileIcon,
   },
   {
     id: 4,
     text: "Delete Account",
+    rtlTxt: "اکاؤنٹ حذف کریں",
     leftIcon: AppImages.Profile.deleteUser,
   },
   {
     id: 6,
     text: "Select Language",
+    rtlTxt: "زبان منتخب کریں",
     leftIcon: AppImages.Profile.language,
   },
   {
     id: 5,
     text: "Log out",
+    rtlTxt: "لاگ آؤٹ",
     leftIcon: AppImages.Profile.LogoutIcon,
   },
 ];
@@ -258,26 +270,31 @@ export const adminHomeBarItems = [
   {
     icon: AppImages.Products.category,
     title: "Manage Categories & Sub-Categories",
+    rtlTitle: "کیٹگری اور سبکیٹگری کا انتظام کریں",
     id: 1,
   },
   {
     icon: AppImages.Products.addProduct,
     title: "Add New Products",
+    rtlTitle: "نئے پروڈکٹس شامل کریں",
     id: 2,
   },
   {
     icon: AppImages.Products.updateProduct,
     title: "Update & Delete Existing Products",
+    rtlTitle: "موجودہ پروڈکٹس کو اپ ڈیٹ اور حذف کریں",
     id: 3,
   },
   {
     icon: AppImages.Home.Admin,
     title: "Manage Multiple Admins",
+    rtlTitle: "متعدد ایڈمنز کا انتظام کریں",
     id: 4,
   },
   {
     icon: AppImages.Home.Admin,
     title: "Add Category & Sub-Category",
+    rtlTitle: "کیٹگری اور سبکیٹگری شامل کریں",
     id: 5,
   },
 ];

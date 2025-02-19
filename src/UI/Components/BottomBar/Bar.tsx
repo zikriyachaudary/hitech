@@ -12,8 +12,15 @@ import {
   hv,
   normalized,
 } from "../../../Utils/AppConstants";
+import { useSelector } from "react-redux";
+import { AppRootStore } from "../../../Redux/store/AppStore";
 
 const Bar = ({ obj, onPress, index, tab }: any) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
+
   return (
     <TouchableWithoutFeedback key={obj.title} onPress={() => onPress()}>
       <View
@@ -42,8 +49,11 @@ const Bar = ({ obj, onPress, index, tab }: any) => {
               tab == index
                 ? AppColors.themeColor.dark
                 : AppColors.grey.greyLevel9,
-            fontSize: normalized(12),
-            fontFamily: AppFonts.PoppinsMedium,
+            fontSize: isRtl ? normalized(14) : normalized(12),
+            fontFamily: isRtl
+              ? AppFonts.PoppinsSemiBold
+              : AppFonts.PoppinsMedium,
+            marginTop: isRtl ? normalized(5) : 0,
           }}
         >
           {obj?.title}

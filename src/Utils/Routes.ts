@@ -22,6 +22,7 @@ export const Routes = {
     DeliveryAddress: "DeliveryAddress",
     UpdateDelivery: "UpdateDelivery",
     EditProfile: "EditProfile",
+    Language: "Language",
   },
   Admin: {
     ManageCategories: "ManageCategories",

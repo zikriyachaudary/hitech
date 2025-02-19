@@ -47,6 +47,7 @@ const EditProfileScreen = (props: ScreenProps) => {
     (state: AppRootStore) => state.SliceReducer
   );
   const userData = selector?.userData || null;
+  const isRtl = selector?.isRtl;
 
   const [email, setEmail] = useState<string>(userData?.email || "");
   const [firstName, setFirstName] = useState<string>(userData?.firstName || "");
@@ -238,9 +239,10 @@ const EditProfileScreen = (props: ScreenProps) => {
         keyboardVerticalOffset={Platform.OS === "ios" ? hv(10) : hv(20)}
       >
         <CustomHeader
-          Text={"Edit Profile"}
+          Text={isRtl ? "پروفائل میں ترمیم کریں" : "Edit Profile"}
           onPress={() => props?.navigation?.goBack()}
         />
+
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={{
@@ -292,13 +294,21 @@ const EditProfileScreen = (props: ScreenProps) => {
               {selectedImageError}
             </Text>
           )}
-          <View style={styles.topContainer}>
+
+          <View
+            style={{
+              ...styles.topContainer,
+              flexDirection: isRtl ? "row-reverse" : "row",
+            }}
+          >
             <View style={styles.inputCont}>
-              <Text style={styles.inputText}>{"First Name"}</Text>
+              <Text style={styles.inputText}>
+                {isRtl ? "پہلا نام" : "First Name"}
+              </Text>
               <CustomInput
                 ref={firstNameRef}
                 onSubmitEditing={() => focusNextField(lastNameRef)}
-                placeHold={"First Name"}
+                placeHold={isRtl ? "پہلا نام درج کریں" : "First Name"}
                 placeHolderColor={AppColors.grey.greyLevel4}
                 value={firstName}
                 setValue={(val: string) => {
@@ -310,11 +320,13 @@ const EditProfileScreen = (props: ScreenProps) => {
               />
             </View>
             <View style={styles.inputCont}>
-              <Text style={styles.inputText}>{"Last Name"}</Text>
+              <Text style={styles.inputText}>
+                {isRtl ? "آخری نام" : "Last Name"}
+              </Text>
               <CustomInput
                 ref={lastNameRef}
                 onSubmitEditing={() => focusNextField(dobRef)}
-                placeHold={"Last Name"}
+                placeHold={isRtl ? "آخری نام درج کریں" : "Last Name"}
                 placeHolderColor={AppColors.grey.greyLevel4}
                 value={lastName}
                 setValue={(val: string) => {
@@ -329,11 +341,11 @@ const EditProfileScreen = (props: ScreenProps) => {
 
           <View style={styles.topContainerChild}>
             <View style={styles.inputCont}>
-              <Text style={styles.inputText}>{"Email"}</Text>
+              <Text style={styles.inputText}>{isRtl ? "ای میل" : "Email"}</Text>
               <CustomInput
                 ref={emailRef}
                 onSubmitEditing={() => focusNextField(passwordRef)}
-                placeHold={"Enter Email Address"}
+                placeHold={isRtl ? "ای میل درج کریں" : "Enter Email Address"}
                 placeHolderColor={AppColors.grey.greyLevel4}
                 value={email}
                 keyboardType={"email-address"}
@@ -349,7 +361,7 @@ const EditProfileScreen = (props: ScreenProps) => {
           </View>
 
           <Text style={{ ...styles.inputText, marginTop: normalized(20) }}>
-            {"Phone Number"}
+            {isRtl ? "فون نمبر" : "Phone Number"}
           </Text>
 
           <View
@@ -358,6 +370,7 @@ const EditProfileScreen = (props: ScreenProps) => {
               borderColor: phoneError
                 ? AppColors.red.dark
                 : AppColors.grey.greyLevel9,
+              flexDirection: isRtl ? "row-reverse" : "row",
             }}
           >
             <View
@@ -376,7 +389,7 @@ const EditProfileScreen = (props: ScreenProps) => {
             >
               <TextInput
                 onSubmitEditing={() => focusNextField(emailRef)}
-                placeholder={"3XXXXXXXX"}
+                placeholder={isRtl ? "3XXXXXXXX" : "3XXXXXXXX"}
                 placeholderTextColor={AppColors.grey.greyLevel9}
                 keyboardType="number-pad"
                 maxLength={10}
@@ -387,6 +400,7 @@ const EditProfileScreen = (props: ScreenProps) => {
                     ? AppColors.black.black
                     : AppColors.grey.greyLevel9,
                   fontFamily: AppFonts.PoppinsRegular,
+                  textAlign: isRtl ? "right" : "left",
                 }}
                 onChangeText={(txt: any) => {
                   const nonnumericValue = txt.replace(/[^0-9]/g, "");
@@ -400,7 +414,7 @@ const EditProfileScreen = (props: ScreenProps) => {
           {phoneError && <Text style={styles.errorMsg}>{phoneError}</Text>}
 
           <FilledButton
-            label={"Update Profile"}
+            label={isRtl ? "پروفائل اپ ڈیٹ کریں" : "Update Profile"}
             onPress={() => {
               onUpdateProfile();
             }}

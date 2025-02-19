@@ -1,5 +1,6 @@
 import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useSelector } from "react-redux";
 import {
   AppColors,
   AppFonts,
@@ -7,8 +8,14 @@ import {
   hv,
   normalized,
 } from "../../../../Utils/AppConstants";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const ProfileBar = ({ List, setValue }: any) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
+
   return (
     <View style={{ marginVertical: hv(10), marginHorizontal: normalized(20) }}>
       {List.map((item: any, index: number) => (
@@ -22,7 +29,7 @@ const ProfileBar = ({ List, setValue }: any) => {
             paddingHorizontal: normalized(20),
             borderRadius: normalized(5),
             marginTop: normalized(10),
-            flexDirection: "row",
+            flexDirection: isRtl ? "row-reverse" : "row",
             alignItems: "center",
           }}
         >
@@ -34,12 +41,22 @@ const ProfileBar = ({ List, setValue }: any) => {
               resizeMode: "contain",
             }}
           />
-          <Text style={styles.barTxt}>{item.text}</Text>
+          <Text
+            style={[
+              styles.barTxt,
+              {
+                marginLeft: isRtl ? 0 : normalized(25),
+                marginRight: isRtl ? normalized(25) : 0,
+              },
+            ]}
+          >
+            {isRtl ? item?.rtlTxt : item.text}
+          </Text>
 
           <View
             style={{
               flex: 1,
-              alignItems: "flex-end",
+              alignItems: isRtl ? "flex-start" : "flex-end",
             }}
           >
             <Image
@@ -48,6 +65,7 @@ const ProfileBar = ({ List, setValue }: any) => {
                 height: normalized(16),
                 width: normalized(26),
                 resizeMode: "contain",
+                transform: [{ scaleX: isRtl ? -1 : 1 }],
               }}
             />
           </View>
@@ -62,7 +80,6 @@ const styles = StyleSheet.create({
     fontFamily: AppFonts.PoppinsMedium,
     fontSize: normalized(14),
     color: "#343A40",
-    marginLeft: normalized(25),
     fontWeight: "500",
   },
 });

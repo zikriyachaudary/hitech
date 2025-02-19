@@ -32,9 +32,12 @@ import {
 } from "../../../../Network/Services/AdminGeneralServices";
 
 const AddAdminScreen = (props: ScreenProps) => {
+  const selector = useSelector((state: AppRootStore) => state.SliceReducer);
+
+  const isRtl = selector?.isRtl;
+
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
-  const selector = useSelector((state: AppRootStore) => state.SliceReducer);
   const [adminList, setAdminList] = useState([]);
 
   useEffect(() => {
@@ -58,7 +61,7 @@ const AddAdminScreen = (props: ScreenProps) => {
         onPress={() => {
           props?.navigation?.goBack();
         }}
-        title={"Admins"}
+        title={isRtl ? "ایڈمنز" : "Admins"}
         icon={[AppImages.Home.PlusBlack]}
         onRightIconPress={() => props?.navigation?.navigate(Routes.OtpScreen)}
         rightIconCont={{
@@ -127,7 +130,9 @@ const AddAdminScreen = (props: ScreenProps) => {
                       });
                     }}
                   >
-                    <Text style={styles.btnTxt}>Edit</Text>
+                    <Text style={styles.btnTxt}>
+                      {isRtl ? "ترمیم کریں" : "Edit"}
+                    </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     activeOpacity={0.7}
@@ -142,7 +147,9 @@ const AddAdminScreen = (props: ScreenProps) => {
                       dispatch(setIsLoader(false));
                     }}
                   >
-                    <Text style={styles.btnTxt}>Remove</Text>
+                    <Text style={styles.btnTxt}>
+                      {isRtl ? "ہٹائیں" : "Remove"}
+                    </Text>
                   </TouchableOpacity>
                 </View>
               </TouchableOpacity>

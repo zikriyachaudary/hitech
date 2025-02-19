@@ -77,6 +77,8 @@ const ProfileScreen = (props: ScreenProps) => {
               value: true,
               type: Modal_Type.logout,
             });
+          } else if (id == 6) {
+            props?.navigation?.navigate(Routes.Home.Language);
           }
         }}
       />

@@ -16,6 +16,7 @@ import AddAdminScreen from "../UI/Sections/Home/Screens/AddAdminScreen";
 import OTPScreen from "../UI/Sections/Home/Screens/OTPScreen";
 import AddCategoryScreen from "../UI/Sections/Home/Screens/AddCategoryScreen";
 import EditProfileScreen from "../UI/Sections/Profile/Screens/EditProfileScreen";
+import LanguageScreen from "../UI/Sections/Profile/Screens/LanguageScreen";
 
 const MainStack = createStackNavigator();
 
@@ -67,6 +68,10 @@ const MainNavigation = () => {
       <MainStack.Screen
         name={Routes.Home.EditProfile}
         component={EditProfileScreen}
+      />
+      <MainStack.Screen
+        name={Routes.Home.Language}
+        component={LanguageScreen}
       />
     </MainStack.Navigator>
   );

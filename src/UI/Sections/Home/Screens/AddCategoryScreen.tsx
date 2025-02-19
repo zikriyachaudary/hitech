@@ -26,15 +26,21 @@ import {
   deleteCatReq,
   updateCategoryReq,
 } from "../../../../Network/Services/GeneralServices";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setIsAlertShow,
   setIsLoader,
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const AddCategoryScreen = (props: ScreenProps) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
+
   const item = props?.route?.params?.item;
   const [category, setCategory] = useState<string | null>(
     item?.category || null
@@ -84,9 +90,12 @@ const AddCategoryScreen = (props: ScreenProps) => {
       dispatch(
         setIsAlertShow({
           value: true,
-          message: "Please enter at least one sub-category in English or Urdu.",
+          message: isRtl
+            ? "براہ کرم کم از کم ایک سبکیٹگری انگریزی یا اردو میں درج کریں۔"
+            : "Please enter at least one sub-category in English or Urdu.",
         })
       );
+
       return;
     }
 
@@ -177,7 +186,7 @@ const AddCategoryScreen = (props: ScreenProps) => {
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
       <CustomHeader
-        Text={"Add Category"}
+        Text={isRtl ? "کیٹگری شامل کریں" : "Add Category"}
         onPress={() => props?.navigation?.goBack()}
         rightIconCont={{
           width: normalized(33),
@@ -277,11 +286,21 @@ const AddCategoryScreen = (props: ScreenProps) => {
           style={styles.addButton}
           onPress={addSubCategory}
         >
-          <Text style={styles.addButtonText}>+ Add Sub-Category</Text>
+          <Text style={styles.addButtonText}>
+            {isRtl ? "+ سبکیٹگری شامل کریں" : "+ Add Sub-Category"}
+          </Text>
         </TouchableOpacity>
 
         <FilledButton
-          label={item ? "Update " : "Publish"}
+          label={
+            isRtl
+              ? item
+                ? "اپ ڈیٹ کریں"
+                : "شائع کریں"
+              : item
+              ? "Update"
+              : "Publish"
+          }
           onPress={handlePublish}
         />
       </ScrollView>

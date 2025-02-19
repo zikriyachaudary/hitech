@@ -7,16 +7,38 @@ import {
   AppImages,
   normalized,
 } from "../../../Utils/AppConstants";
+import { useSelector } from "react-redux";
+import { AppRootStore } from "../../../Redux/store/AppStore";
 
 const CustomHeader = (props: any) => {
   const icons = props?.icon;
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
   return (
-    <View style={[styles.container, { ...props?.containerStyle }]}>
-      <View style={{ flexDirection: "row", alignItems: "center" }}>
+    <View
+      style={[
+        styles.container,
+        {
+          ...props?.containerStyle,
+          flexDirection: isRtl ? "row-reverse" : "row",
+        },
+      ]}
+    >
+      <View
+        style={{
+          flexDirection: isRtl ? "row-reverse" : "row",
+          alignItems: "center",
+        }}
+      >
         {props?.onPress && (
           <TouchableOpacity onPress={props?.onPress} activeOpacity={0.7}>
             <Image
-              style={styles.arrowImage}
+              style={[
+                styles.arrowImage,
+                { transform: [{ scaleX: isRtl ? -1 : 1 }] },
+              ]}
               source={AppImages.Auth.backArrow}
               tintColor={AppColors.themeColor.dark}
             />
@@ -29,9 +51,10 @@ const CustomHeader = (props: any) => {
       </View>
       <View
         style={{
-          flexDirection: "row",
+          flexDirection: isRtl ? "row-reverse" : "row",
           gap: normalized(15),
-          paddingRight: normalized(5),
+          paddingLeft: isRtl ? normalized(5) : 0,
+          paddingRight: isRtl ? 0 : normalized(5),
         }}
       >
         {props?.icon
@@ -61,7 +84,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: normalized(50),
     alignItems: "center",
-    flexDirection: "row",
     justifyContent: "space-between",
     marginHorizontal: AppHorizontalMargin,
     borderWidth: 1,
@@ -75,9 +97,11 @@ const styles = StyleSheet.create({
       height: 2,
       width: 0,
     },
-    elevation: 3,
+    elevation: 5,
     shadowOpacity: 0.3,
+    shadowRadius: normalized(50),
     backgroundColor: AppColors.white.white,
+    paddingHorizontal: normalized(3),
   },
   imageCont: {
     width: normalized(47),
