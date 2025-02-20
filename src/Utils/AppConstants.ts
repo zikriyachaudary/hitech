@@ -247,12 +247,6 @@ export const adminProfileList = [
     leftIcon: AppImages.Profile.ProfileIcon,
   },
   {
-    id: 4,
-    text: "Delete Account",
-    rtlTxt: "اکاؤنٹ حذف کریں",
-    leftIcon: AppImages.Profile.deleteUser,
-  },
-  {
     id: 6,
     text: "Select Language",
     rtlTxt: "زبان منتخب کریں",

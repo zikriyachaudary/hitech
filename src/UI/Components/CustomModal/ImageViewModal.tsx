@@ -7,16 +7,26 @@ import {
   BackHandler,
   Modal,
   SafeAreaView,
+  TouchableOpacity,
+  Image,
+  StatusBar,
 } from "react-native";
 import ImageViewer from "react-native-image-zoom-viewer";
-import { AppColors, hv, normalized } from "../../../Utils/AppConstants";
-import CustomHeader from "../CustomHeader/CustomHeader";
+import {
+  AppColors,
+  AppImages,
+  hv,
+  normalized,
+  ScreenSize,
+} from "../../../Utils/AppConstants";
 import { useSelector } from "react-redux";
+import { AppRootStore } from "../../../Redux/store/AppStore";
 
 const ImageViewModal = (props: any) => {
-  const selector = useSelector((state: any) => state.SliceReducer);
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
   const [reload, setReload] = useState(false);
-
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -27,7 +37,6 @@ const ImageViewModal = (props: any) => {
     );
     return () => backHandler.remove();
   }, []);
-
   useEffect(() => {
     Dimensions.addEventListener("change", ({ window: { width, height } }) => {
       setReload(true);
@@ -37,58 +46,86 @@ const ImageViewModal = (props: any) => {
     });
   }, []);
 
+  // Convert image list to the required format
+  const imagesList = props.imagesList.map((image: any) => ({
+    url: image?.url ?? image,
+    // height: ScreenSize.height,
+    width: ScreenSize.width,
+  }));
+
   return (
     <Modal
-      animationType={"slide"}
+      animationType={"fade"}
       visible={true}
       transparent={true}
       supportedOrientations={["landscape", "portrait"]}
     >
-      <View
-        style={{
-          ...StyleSheet.absoluteFill,
-          backgroundColor: AppColors.white.white,
-        }}
-      >
-        <View
-          style={{
-            marginTop: selector?.isNotchBar ? hv(20) : hv(10),
-            backgroundColor: AppColors.white.white,
-          }}
-        />
-        <SafeAreaView />
-
-        <CustomHeader onPress={() => props?.onClose()} />
-
-        <View style={ImageViewModalStyle.container}>
-          {reload ? (
-            <View />
-          ) : (
-            <ImageViewer
-              imageUrls={props?.imagesList}
-              index={props?.initialIndex}
-              loadingRender={() => {
-                return (
-                  <View style={ImageViewModalStyle.indicatorCont}>
-                    <ActivityIndicator
-                      size={"large"}
-                      color={AppColors.white.white}
-                    />
-                  </View>
-                );
-              }}
-            />
-          )}
-        </View>
+      <StatusBar
+        backgroundColor={AppColors.black.black}
+        barStyle={"light-content"}
+        animated={true}
+      />
+      <SafeAreaView />
+      <View style={styles.container}>
+        {reload ? (
+          <View />
+        ) : (
+          <ImageViewer
+            style={{
+              width: ScreenSize.width,
+              // height: ScreenSize.height,
+            }}
+            renderHeader={() => {
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    props?.onClose();
+                  }}
+                  style={{
+                    backgroundColor: AppColors.themeColor.dark,
+                    height: normalized(40),
+                    width: normalized(40),
+                    borderRadius: normalized(40 / 2),
+                    position: "absolute",
+                    marginTop: normalized(5),
+                    left: normalized(15),
+                    zIndex: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Image
+                    source={AppImages.Home.close}
+                    style={{ height: normalized(20), width: normalized(20) }}
+                    tintColor={AppColors.white.white}
+                  />
+                </TouchableOpacity>
+              );
+            }}
+            imageUrls={imagesList}
+            saveToLocalByLongPress={false}
+            index={props?.initialIndex}
+            loadingRender={() => {
+              return (
+                <View style={styles.indicatorCont}>
+                  <ActivityIndicator
+                    size={"large"}
+                    color={AppColors.themeColor.dark}
+                  />
+                </View>
+              );
+            }}
+          />
+        )}
       </View>
     </Modal>
   );
 };
-const ImageViewModalStyle = StyleSheet.create({
+const styles = StyleSheet.create({
   mainView: {
     height: Dimensions.get("screen").height,
     width: Dimensions.get("screen").width,
-    backgroundColor: "rgba(0,0,0,0.55)",
+    backgroundColor: AppColors.black.Level9,
   },
   backButton: {
     marginLeft: 20,
@@ -100,12 +137,14 @@ const ImageViewModalStyle = StyleSheet.create({
     alignItems: "center",
   },
   indicatorCont: {
-    flex: 1,
+    height: ScreenSize.height,
+    width: ScreenSize.width,
     justifyContent: "center",
     alignItems: "center",
   },
   container: {
-    flex: 1,
+    height: ScreenSize.height,
+    width: ScreenSize.width,
   },
 });
 export default ImageViewModal;

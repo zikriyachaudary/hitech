@@ -165,7 +165,6 @@ const OTPScreen = (props: ScreenProps) => {
     let findAdmin = await findAdminByEmail(params);
     if (findAdmin?.adminId) {
       let userObj = { ...findAdmin, isAdmin: true };
-      props?.navigation?.goBack();
       await setUserDataInAsync(userObj);
       dispatch(setUserData(userObj));
     } else {

@@ -320,7 +320,7 @@ const Login = (props: ScreenProps) => {
                 activeOpacity={1}
                 style={styles.unfilledBtn}
                 onPress={() => {
-                  props?.navigation?.navigate(Routes.OtpScreen, {
+                  props?.navigation?.navigate(Routes.Auth.subAdmin, {
                     fromAuth: true,
                   });
                 }}

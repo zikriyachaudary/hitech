@@ -34,7 +34,7 @@ const AuthStack = () => {
         name={Routes.Auth.socialAuthScreen}
         component={SocialAuthScreen}
       />
-      <Stack.Screen name={Routes.OtpScreen} component={OTPScreen} />
+      <Stack.Screen name={Routes.Auth.subAdmin} component={OTPScreen} />
       <Stack.Screen
         name={Routes.Auth.otpVerificationScreen}
         component={OtpVerificationScreen}

@@ -20,6 +20,7 @@ import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import { useDispatch, useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import { setIsRtl } from "../../../../Redux/Reducers/AppReducers";
+import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 
 const LanguageScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -46,6 +47,11 @@ const LanguageScreen = (props: ScreenProps) => {
     ]).start();
   }, [isRtl]);
 
+  const handleRtl = ({ isRtl }: any) => {
+    dispatch(setIsRtl(isRtl));
+    setUserDataInAsync({ ...selector?.userData, isRtl: isRtl });
+  };
+
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
@@ -56,7 +62,7 @@ const LanguageScreen = (props: ScreenProps) => {
       <View style={styles.mainCont}>
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => dispatch(setIsRtl(false))}
+          onPress={() => handleRtl({ isRtl: false })}
         >
           <Animated.View
             style={{
@@ -75,7 +81,7 @@ const LanguageScreen = (props: ScreenProps) => {
 
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => dispatch(setIsRtl(true))}
+          onPress={() => handleRtl({ isRtl: true })}
         >
           <Animated.View
             style={{

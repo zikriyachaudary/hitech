@@ -8,6 +8,7 @@ export const Routes = {
     socialAuthScreen: "SocicalAuthScreen",
     otpVerificationScreen: "otpVerificationScreen",
     newPasswordScreen: "newPasswordScreen",
+    subAdmin: "subAdmin",
   },
   Main: {
     container: "Container",

@@ -101,8 +101,6 @@ const AddProducScreen = (props: ScreenProps) => {
   );
 
   const rtlProductNameRef = useRef();
-  const rtlProductPriceRef = useRef();
-  const rtlDescriptionRef = useRef();
 
   const [rtlProductName, setRtlProductName] = useState<string>(
     productDetail?.rtlName ?? ""
@@ -150,7 +148,10 @@ const AddProducScreen = (props: ScreenProps) => {
             );
 
             if (matchedCategory) {
+              console.log("matchedCategory -0-----  ", matchedCategory);
+
               setSubCatList(matchedCategory.subCat);
+              setRtlSubCatList(matchedCategory?.rtlSubCat);
             } else {
               setSubCatList([]); // Or handle the case where no match is found
             }
@@ -278,7 +279,7 @@ const AddProducScreen = (props: ScreenProps) => {
       rtlName: rtlProductName,
       rtlDescription: rtlDescription,
       rtlCategory: {
-        category: rtlSelectedCat?.category,
+        category: rtlSelectedCat?.rtlCategory,
         id: rtlSelectedCat?.id,
       },
       rtlSubCat: {
@@ -593,7 +594,7 @@ const AddProducScreen = (props: ScreenProps) => {
             list={rtlCategoryList}
           />
           {catError && <Text style={styles.errorMsg}>{rtlCatError}</Text>}
-          {rtlSubCatList?.length > 0 && (
+          {(rtlSubCatList?.length > 0 || rtlSelectedCat) && (
             <>
               <Text
                 style={{
@@ -608,6 +609,8 @@ const AddProducScreen = (props: ScreenProps) => {
                 isError={catSubError?.length > 0}
                 placeHolder={"پروڈکٹ سبکیٹگری کاانتخاب کریں"}
                 atSelect={(val: any) => {
+                  console.log("sub valu ----  ", val);
+
                   setRtlCatSubError("");
                   setRtlSelectedSubCat(val);
                 }}
@@ -625,18 +628,6 @@ const AddProducScreen = (props: ScreenProps) => {
             {isRtl ? "مصنوعات کی تصاویر منسلک کریں" : "Attach Product Images"}
           </Text>
           <View style={styles.imgWrapper}>
-            {/* {imageList.length > 0 && (
-              <View>
-                <FlatList
-                  data={imageList}
-                  horizontal
-                  renderItem={renderImageItem}
-                  keyExtractor={(item, index) => index.toString()}
-                  contentContainerStyle={styles.flatListContainer}
-                />
-              </View>
-            )} */}
-
             <View
               style={{
                 marginTop: normalized(20),
@@ -646,7 +637,6 @@ const AddProducScreen = (props: ScreenProps) => {
               }}
             >
               {imageList.map((el, index) => {
-                // Determine if `el` is a direct local file path or an object with a URL
                 const imageUri = typeof el === "string" ? el : el?.url;
 
                 return (
@@ -655,11 +645,11 @@ const AddProducScreen = (props: ScreenProps) => {
                     activeOpacity={1}
                     style={styles.singleImageCont}
                     onPress={() => {
-                      // setImagesViewer({
-                      //   value: true,
-                      //   imagesList: businessImagesList,
-                      //   initialIndex: index,
-                      // });
+                      setImageView({
+                        value: true,
+                        imagesList: imageList,
+                        initialIndex: index,
+                      });
                     }}
                   >
                     {/* Close Button */}
