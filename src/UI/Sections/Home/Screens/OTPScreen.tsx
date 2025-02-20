@@ -41,14 +41,14 @@ import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 import { Routes } from "../../../../Utils/Routes";
 
 const OTPScreen = (props: ScreenProps) => {
+  const selector = useSelector((state: AppRootStore) => state.SliceReducer);
+  const isRtl = selector?.isRtl;
+
   const params = props?.route?.params;
   const isFromAuth = params?.fromAuth;
   const adminObj = params?.adminObj;
 
   const dispatch = useDispatch();
-  const selector: any = useSelector(
-    (state: AppRootStore) => state.SliceReducer
-  );
 
   const [otp, setOtp] = useState<any>(adminObj?.pinCode ?? "");
   const [firstName, setFirstName] = useState<any>(adminObj?.firstName ?? "");
@@ -74,17 +74,22 @@ const OTPScreen = (props: ScreenProps) => {
   const onAddAdminFunc = async () => {
     let isFormValid = true;
     if (!firstName) {
-      setFirstNameError("Please Enter first Name");
+      setFirstNameError(
+        isRtl ? "براہ کرم پہلا نام درج کریں" : "Please Enter First Name"
+      );
       isFormValid = false;
     }
     if (!lastName) {
-      setLastNameError("Please Enter last Name");
+      setLastNameError(
+        isRtl ? "براہ کرم آخری نام درج کریں" : "Please Enter Last Name"
+      );
       isFormValid = false;
     }
     if (otp?.length < 6) {
-      setOTPerror("Please Enter OTP");
+      setOTPerror(isRtl ? "براہ کرم OTP درج کریں" : "Please Enter OTP");
       isFormValid = false;
     }
+
     if (!isFormValid) {
       return;
     }
@@ -99,10 +104,10 @@ const OTPScreen = (props: ScreenProps) => {
     }
     dispatch(setIsLoader(true));
     let payload: any = {
-      firstName: firstName.toLocaleLowerCase(),
-      lastName: lastName.toLocaleLowerCase(),
+      firstName: firstName,
+      lastName: lastName,
       pinCode: otp,
-      email: email,
+      email: email?.toLowerCase(),
       userId: selector?.userData?.userId,
       adminType: ADMN_TYPE.Admin,
       profile: selector?.userData?.profileImage || "",
@@ -140,21 +145,27 @@ const OTPScreen = (props: ScreenProps) => {
 
   const simpleAdminLogin = async () => {
     if (!email) {
-      setEmailError("Email Required*");
+      setEmailError(isRtl ? "ای میل درکار ہے*" : "Email Required*");
     }
+
     if (!otp) {
-      setOTPerror("Please Enter PIN");
+      setOTPerror(isRtl ? "براہ کرم پن درج کریں" : "Please Enter PIN");
       return;
     }
+
     if (otp?.length < 6) {
-      setOTPerror("Please Complete PIN Code");
+      setOTPerror(
+        isRtl ? "براہ کرم مکمل پن کوڈ درج کریں" : "Please Complete PIN Code"
+      );
       return;
     }
+
     dispatch(setIsLoader(true));
     const params = { email: email, otp: otp };
     let findAdmin = await findAdminByEmail(params);
     if (findAdmin?.adminId) {
       let userObj = { ...findAdmin, isAdmin: true };
+      props?.navigation?.goBack();
       await setUserDataInAsync(userObj);
       dispatch(setUserData(userObj));
     } else {
@@ -183,9 +194,15 @@ const OTPScreen = (props: ScreenProps) => {
         }}
         title={
           isFromAuth
-            ? "Login Sub-Admin"
+            ? isRtl
+              ? "لاگ ان سب ایڈمن"
+              : "Login Sub-Admin"
             : adminObj?.adminId
-            ? "Update Admin"
+            ? isRtl
+              ? "ایڈمن کو اپ ڈیٹ کریں"
+              : "Update Admin"
+            : isRtl
+            ? "ایڈمن شامل کریں"
             : "Add Admin"
         }
       />
@@ -199,12 +216,19 @@ const OTPScreen = (props: ScreenProps) => {
               marginHorizontal: AppHorizontalMargin,
             }}
           >
-            <View style={styles.topContainer}>
+            <View
+              style={{
+                ...styles.topContainer,
+                flexDirection: isRtl ? "row-reverse" : "row",
+              }}
+            >
               <View style={styles.inputCont}>
-                <Text style={styles.inputText}>{"First Name"}</Text>
+                <Text style={styles.inputText}>
+                  {isRtl ? "پہلا نام" : "First Name"}
+                </Text>
                 <CustomInput
                   onSubmitEditing={() => focusNextField(lastNameRef)}
-                  placeHold={"First name"}
+                  placeHold={isRtl ? "پہلا نام" : "First Name"}
                   value={firstName}
                   errorMsg={firstNameError}
                   setValue={(val: string) => {
@@ -214,11 +238,14 @@ const OTPScreen = (props: ScreenProps) => {
                   keyboardType={"default"}
                 />
               </View>
+
               <View style={styles.inputCont}>
-                <Text style={styles.inputText}>{"Last Name"}</Text>
+                <Text style={styles.inputText}>
+                  {isRtl ? "آخری نام" : "Last Name"}
+                </Text>
                 <CustomInput
                   ref={lastNameRef}
-                  placeHold={"Last name"}
+                  placeHold={isRtl ? "آخری نام" : "Last Name"}
                   value={lastName}
                   setValue={(val: string) => {
                     setLastName(val);
@@ -230,11 +257,11 @@ const OTPScreen = (props: ScreenProps) => {
               </View>
             </View>
             <Text style={{ ...styles.inputText, marginTop: normalized(15) }}>
-              {"Email"}
+              {isRtl ? "ای میل" : "Email"}
             </Text>
             <CustomInput
               ref={lastNameRef}
-              placeHold={"Email Address"}
+              placeHold={isRtl ? "ای میل ایڈریس" : "Email Address"}
               value={email}
               setValue={(val: string) => {
                 setEmail(val);
@@ -250,18 +277,29 @@ const OTPScreen = (props: ScreenProps) => {
               style={{
                 fontSize: normalized(14),
                 fontFamily: AppFonts.PoppinsRegular,
-                color: AppColors.grey.greyLevel4,
-                marginTop: 5,
+                color: AppColors.grey.greyLevel9,
+                marginTop: normalized(15),
+                textAlign: isRtl ? "right" : "left",
               }}
             >
-              Please login your account using PinCode!
+              {isRtl
+                ? "براہ کرم پن کوڈ استعمال کرکے اپنے اکاؤنٹ میں لاگ ان کریں!"
+                : "Please login your account using PinCode!"}
             </Text>
-            <Text style={{ ...styles.inputText, marginTop: normalized(15) }}>
-              {"Email"}
+            <Text
+              style={{
+                ...styles.inputText,
+                marginTop: normalized(15),
+                textAlign: isRtl ? "right" : "left",
+              }}
+            >
+              {isRtl ? "ای میل" : "Email"}
             </Text>
             <CustomInput
               ref={lastNameRef}
-              placeHold={"Enter Email Address"}
+              placeHold={
+                isRtl ? "ای میل ایڈریس درج کریں" : "Enter Email Address"
+              }
               value={email}
               setValue={(val: string) => {
                 setEmail(val);
@@ -273,7 +311,11 @@ const OTPScreen = (props: ScreenProps) => {
           </View>
         )}
         <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-          <Text style={styles.pinTxt}>Secret PIN Code</Text>
+          <Text
+            style={[styles.pinTxt, { textAlign: isRtl ? "right" : "left" }]}
+          >
+            {isRtl ? "خفیہ پن کوڈ" : "Secret PIN Code"}
+          </Text>
 
           <CodeInput
             codeLength={6}
@@ -302,7 +344,17 @@ const OTPScreen = (props: ScreenProps) => {
       </KeyboardAvoidingView>
       <FilledButton
         label={
-          isFromAuth ? "Login Admin" : adminObj?.adminId ? "Update" : "Save"
+          isFromAuth
+            ? isRtl
+              ? "ایڈمن لاگ ان کریں"
+              : "Login Admin"
+            : adminObj?.adminId
+            ? isRtl
+              ? "اپ ڈیٹ کریں"
+              : "Update"
+            : isRtl
+            ? "محفوظ کریں"
+            : "Save"
         }
         onPress={() => {
           if (isFromAuth) {

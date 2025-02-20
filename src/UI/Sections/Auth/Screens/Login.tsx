@@ -52,6 +52,8 @@ const Login = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const isRtl = selector?.isRtl;
+
   const isAdmin = props?.route?.params?.isAdmin;
   const [password, setPassword] = useState<string>("");
   const emailRef = useRef();
@@ -138,7 +140,7 @@ const Login = (props: ScreenProps) => {
               }
             );
           }
-          setUserDataInAsync(userUpdatedData);
+          setUserDataInAsync({ ...userUpdatedData, isRtl: true });
           dispatch(setUserData(userUpdatedData));
         } else {
           showToast(AppStrings.ToastType.error, "Invalid Credentials");

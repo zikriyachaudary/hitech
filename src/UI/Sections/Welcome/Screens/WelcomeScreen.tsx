@@ -23,7 +23,6 @@ import { Routes } from "../../../../Utils/Routes";
 const WelcomeScreen = (props: ScreenProps) => {
   return (
     <LinearGradient
-      // colors={["#DE8225", "#0900FF", "#DE8225"]}
       colors={["#85031f", "#000"]}
       style={AppStyles.MainStyle}
       start={{ x: 0, y: 0 }}
@@ -109,7 +108,7 @@ const styles = StyleSheet.create({
   },
   btn: {
     width: normalized(150),
-    height: normalized(55),
+    height: normalized(40),
     // backgroundColor: "rgba(255,255,255,0.3)",
     // backgroundColor: AppColors.white.white,
     backgroundColor: AppColors.themeColor.dark,
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
     borderColor: AppColors.themeColor.dark,
   },
   btnTxt: {
-    fontSize: normalized(22),
+    fontSize: normalized(18),
     // color: "#8C4D00",
     // color: "#0900FF",
     // color: AppColors.themeColor.dark,

@@ -11,6 +11,7 @@ import Geocoder from "react-native-geocoding";
 import { getUserDataAsync } from "./src/Utils/AsyncStorage";
 import {
   setIsNotchBar,
+  setIsRtl,
   setNetState,
   setUserData,
 } from "./src/Redux/Reducers/AppReducers";
@@ -44,8 +45,11 @@ const App = () => {
 
   const fetchUser = async () => {
     let userDataa = await getUserDataAsync();
-    if (userDataa) {
+    if (userDataa?.userId) {
       dispatch(setUserData(userDataa));
+    }
+    if (userDataa?.isRtl) {
+      dispatch(setIsRtl(true));
     }
   };
 

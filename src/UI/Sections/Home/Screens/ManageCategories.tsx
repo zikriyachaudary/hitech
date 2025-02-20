@@ -111,6 +111,8 @@ const ManageCategories = (props: ScreenProps) => {
               }}
             >
               <Text style={styles.itemTxt}>{item?.category}</Text>
+              <View style={styles.divider} />
+              <Text style={styles.itemTxt}>{item?.rtlCategory}</Text>
             </TouchableOpacity>
           )}
         />
@@ -162,10 +164,11 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: AppColors.themeColor.dark,
     borderRadius: normalized(8),
-    height: normalized(40),
-    width: ScreenSize.width - normalized(20),
+    // height: normalized(40),
+    width: ScreenSize.width - normalized(15),
     justifyContent: "center",
     paddingHorizontal: normalized(10),
+    paddingVertical: normalized(5),
   },
   itemTxt: {
     color: AppColors.black.black,
@@ -177,5 +180,12 @@ const styles = StyleSheet.create({
     marginTop: normalized(20),
     alignItems: "center",
     gap: normalized(15),
+  },
+  divider: {
+    width: normalized(100),
+    height: 0.8,
+    backgroundColor: AppColors.grey.greyLevel3,
+    alignSelf: "center",
+    marginVertical: normalized(5),
   },
 });

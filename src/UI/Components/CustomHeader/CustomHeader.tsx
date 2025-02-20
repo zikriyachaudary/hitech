@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     height: normalized(50),
     alignItems: "center",
     justifyContent: "space-between",
-    marginHorizontal: AppHorizontalMargin,
+    marginHorizontal: normalized(15),
     borderWidth: 1,
     borderBottomColor: "transparent",
     borderTopColor: "transparent",

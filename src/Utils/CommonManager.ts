@@ -35,6 +35,14 @@ export default class CommonDataManager {
     return firstChar.toUpperCase() + str.slice(1);
   };
 
+  capitalizeEachWord = (str: any) => {
+    if (!str) return "";
+    return str
+      .split(" ")
+      .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   makeid = (length: any) => {
     const timestamp = Date.now().toString(36); // Convert timestamp to base36 for compact representation
     const characters =

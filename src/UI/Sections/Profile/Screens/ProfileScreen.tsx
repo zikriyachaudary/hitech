@@ -27,6 +27,7 @@ import { AppRootStore } from "../../../../Redux/store/AppStore";
 import ProfileBar from "../Components/ProfileBar";
 import LogoutModal from "../Components/LogoutModal";
 import { Routes } from "../../../../Utils/Routes";
+import CommonDataManager from "../../../../Utils/CommonManager";
 
 const ProfileScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -42,7 +43,7 @@ const ProfileScreen = (props: ScreenProps) => {
   const onLogoutPress = () => {
     dispatch(setUserData(null));
     dispatch(setTab(0));
-    setUserDataInAsync(null);
+    setUserDataInAsync({ isRtl: true });
   };
   const dispatch = useDispatch();
   return (
@@ -57,7 +58,11 @@ const ProfileScreen = (props: ScreenProps) => {
         style={styles.profileImg}
         resizeMode="cover"
       />
-      <Text style={styles.username}>{userData?.fullName}</Text>
+      <Text style={styles.username}>
+        {CommonDataManager?.getSharedInstance()?.capitalizeEachWord(
+          userData?.fullName || userData?.firstName + " " + userData?.lastName
+        )}
+      </Text>
       <ProfileBar
         List={isAdmin ? adminProfileList : profileBarList}
         setValue={(id: any) => {

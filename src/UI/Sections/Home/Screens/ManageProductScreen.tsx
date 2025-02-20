@@ -10,15 +10,21 @@ import ProductItem from "../Components/ProductItem";
 import { Routes } from "../../../../Utils/Routes";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import { fetchAllProducts } from "../../../../Network/Services/ProductServices";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setIsLoader,
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
 import { useIsFocused } from "@react-navigation/native";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const ManageProductScreen = (props: ScreenProps) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
+
   const [productsList, setProductsList] = useState([]);
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
@@ -52,7 +58,7 @@ const ManageProductScreen = (props: ScreenProps) => {
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
       <CustomHeader
-        title={"All Products"}
+        title={isRtl ? "تمام مصنوعات" : "All Products"}
         onPress={() => props?.navigation?.goBack()}
       />
       <FlatList
