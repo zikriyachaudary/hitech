@@ -392,7 +392,6 @@ const EditProfileScreen = (props: ScreenProps) => {
                 placeholder={isRtl ? "3XXXXXXXX" : "3XXXXXXXX"}
                 placeholderTextColor={AppColors.grey.greyLevel9}
                 keyboardType="number-pad"
-                maxLength={10}
                 editable={userData?.isAdmin ? true : false}
                 style={{
                   includeFontPadding: false,

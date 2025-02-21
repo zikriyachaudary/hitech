@@ -35,12 +35,16 @@ import {
 import { placeOrderReq } from "../../../../Network/Services/ProductServices";
 import { AppStrings } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const CartScreen = (props: ScreenProps) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
   const { updateProductList, removeProductFromCart, getProductsTotalPrice } =
     CartManager();
   const dispatch = useDispatch();
-  const selector = useSelector((state: any) => state.SliceReducer);
   const [locationError, setLocationError] = useState("");
 
   const address = {
@@ -94,7 +98,10 @@ const CartScreen = (props: ScreenProps) => {
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
-      <CustomHeader onPress={() => props?.navigation?.goBack()} Text={"Cart"} />
+      <CustomHeader
+        onPress={() => props?.navigation?.goBack()}
+        Text={isRtl ? "کارٹ" : "Cart"}
+      />
       {selector?.cartDetail?.length > 0 ? (
         <>
           <FlatList
@@ -118,7 +125,14 @@ const CartScreen = (props: ScreenProps) => {
                         flex: 1,
                       }}
                     >
-                      <Text style={styles.title}>Delivery Address</Text>
+                      <Text
+                        style={{
+                          ...styles.title,
+                          marginRight: isRtl ? normalized(10) : 0,
+                        }}
+                      >
+                        {isRtl ? "ڈلیوری کا پتہ" : "Delivery Address"}
+                      </Text>
                       <Text numberOfLines={2} style={styles.addressTxt}>
                         {address?.general || "Select Delivery Address"}
                       </Text>
@@ -181,12 +195,16 @@ const CartScreen = (props: ScreenProps) => {
                               }}
                             >
                               <Text style={styles.nameTxt} numberOfLines={1}>
-                                {item?.name}
+                                {isRtl ? item?.rtlName : item?.name}
                               </Text>
                               <View style={styles.priceCont}>
-                                <Text style={styles.priceTxt}>{`$ ${Number(
-                                  item?.price * item?.count
-                                ).toFixed(2)}`}</Text>
+                                <Text style={styles.priceTxt}>
+                                  {isRtl
+                                    ? `${item?.price} روپے`
+                                    : `Rs. ${Number(
+                                        item?.price * item?.count
+                                      ).toFixed(2)}`}
+                                </Text>
                                 <ProductCounterComp
                                   count={item?.count}
                                   atIncreaseCount={() => {
@@ -211,7 +229,9 @@ const CartScreen = (props: ScreenProps) => {
                     }}
                     ListHeaderComponent={() => {
                       return (
-                        <Text style={styles.headerTxt}>Order Details</Text>
+                        <Text style={styles.headerTxt}>
+                          {isRtl ? "آرڈر کی تفصیلات" : "Order Details"}
+                        </Text>
                       );
                     }}
                   />
@@ -398,7 +418,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: AppColors.black.black,
     fontFamily: AppFonts.PoppinsRegular,
-    marginTop: 10,
+    marginTop: normalized(10),
   },
   des: {
     fontSize: normalized(14),
@@ -475,16 +495,23 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
+    gap: normalized(10),
     width: normalized(210),
   },
   priceTxt: {
     fontSize: normalized(15),
     color: AppColors.black.black,
     fontWeight: "600",
+    borderWidth: 1,
+    borderColor: AppColors.themeColor.dark,
+    borderRadius: normalized(5),
+    paddingHorizontal: normalized(15),
+    paddingVertical: normalized(3),
   },
   headerTxt: {
     color: AppColors.black.black,
-    fontSize: normalized(12),
+    fontSize: normalized(14),
+    paddingRight: 10,
     fontWeight: "700",
     marginVertical: hv(10),
   },

@@ -34,10 +34,18 @@ const ProductSliderComp = (props: any) => {
             renderItem={(item: any, i: number) => {
               let image = item.item;
               return (
-                <AppImageViewer
-                  source={{ uri: image?.url }}
-                  style={styles.productPic}
-                />
+                <TouchableOpacity
+                  activeOpacity={1}
+                  onPress={() => {
+                    console.log("something happended -----");
+                  }}
+                >
+                  <AppImageViewer
+                    source={{ uri: image?.url }}
+                    style={styles.productPic}
+                    resizeMode={"contain"}
+                  />
+                </TouchableOpacity>
               );
             }}
             sliderWidth={SLIDER_WIDTH}
@@ -85,6 +93,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: normalized(10),
     marginTop: normalized(5),
+    overflow: "hidden",
   },
   childProductPic: {
     resizeMode: "contain",

@@ -145,6 +145,7 @@ export const AppImages = {
     star: require("../UI/assets/Images/Home/star.png"),
     PlusBlack: require("../UI/assets/Images/Home/plus.png"),
     Admin: require("../UI/assets/Images/Home/admin.png"),
+    search: require("../UI/assets/Images/Home/Search.png"),
   },
   Products: {
     editIcon: require("../UI/assets/Images/products/editIcon.png"),
@@ -220,17 +221,18 @@ export const profileBarList = [
     leftIcon: AppImages.Profile.cart,
   },
   {
+    id: 6,
+    text: "Select Language",
+    rtlTxt: "زبان منتخب کریں",
+    leftIcon: AppImages.Profile.language,
+  },
+  {
     id: 4,
     text: "Delete Account",
     rtlTxt: "اکاؤنٹ حذف کریں",
     leftIcon: AppImages.Profile.deleteUser,
   },
-  {
-    id: 6,
-    text: "Select Language",
-    rtlTxt: "زبان منتخب کریں",
-    leftIcon: AppImages.Profile.LogoutIcon,
-  },
+
   {
     id: 5,
     text: "Log out",

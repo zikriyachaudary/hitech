@@ -48,7 +48,7 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>HiTech app uses your camera to capture photos for profile pictures or to upload content. We do not use these photos for any other purposes</string>
-		<key>NSPhotoLibraryUsageDescription</key>
+	<key>NSPhotoLibraryUsageDescription</key>
 	<string>HiTech app uses your gallery to capture photos for profile pictures or to upload content. We do not use these photos for any other purposes</string>
 	<key>UIAppFonts</key>
 	<array>
@@ -82,6 +82,8 @@
 		<string>Poppins-SemiBoldItalic.ttf</string>
 		<string>Poppins-Thin.ttf</string>
 		<string>Poppins-ThinItalic.ttf</string>
+		<string>jameelNoori.ttf</string>
+		<string>urdu.ttf</string>
 	</array>
 	<key>UIBackgroundModes</key>
 	<array>
@@ -89,19 +91,7 @@
 		<string>remote-notification</string>
 	</array>
 	<key>UIDev
-	<key>UILaunchStoryboardName</key>
-	<string>LaunchScreen</string>
-	<key>UIRequiredDeviceCapabilities</key>
-	<array>
-		<string>armv7</string>
-	</array>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UIViewControllerBasedStatusBarAppearance</key>
-	<false/>
+	</key>
+	<string/>
 </dict>
 </plist>

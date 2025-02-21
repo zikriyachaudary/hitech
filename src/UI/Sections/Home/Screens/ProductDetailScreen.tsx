@@ -13,7 +13,6 @@ import ProductHeader from "../Components/ProductHeader";
 import {
   AppColors,
   AppFonts,
-  AppHorizontalMargin,
   AppImages,
   normalized,
   ScreenProps,
@@ -25,8 +24,14 @@ import ProductCounterComp from "../Components/ProductCounterComp";
 import { useSelector } from "react-redux";
 import CartManager from "../../../../Hooks/CartManager";
 import { Routes } from "../../../../Utils/Routes";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const ProductDetailScreen = (props: ScreenProps) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
+
   const item = props?.route?.params?.item;
   const [count, setCount] = useState(1);
   const cartDetail = useSelector((state: any) => state.SliceReducer.cartDetail);
@@ -37,7 +42,7 @@ const ProductDetailScreen = (props: ScreenProps) => {
       <ProductHeader
         leftIcon={AppImages.Auth.backArrow}
         onBackPress={() => props?.navigation?.goBack()}
-        title={"Product Details"}
+        title={isRtl ? "پروڈکٹ کی تفصیلات" : "Product Details"}
         rightIcon={AppImages.Home.cart}
         onRightIconPress={() => {
           props?.navigation?.navigate(Routes.Home.cartScreen);
@@ -55,15 +60,25 @@ const ProductDetailScreen = (props: ScreenProps) => {
       </View>
       <ScrollView contentContainerStyle={styles.scrollView}>
         <View style={styles.headingCont}>
-          <Text style={styles.itemName}>{item?.name}</Text>
+          <Text
+            style={{ ...styles.itemName, textAlign: isRtl ? "right" : "left" }}
+          >
+            {isRtl ? item?.rtlName : item?.name}
+          </Text>
           {/* <View style={styles.ratingCont}>
             <Text style={styles.ratingTxt}>{"5.0"}</Text>
             <Image source={AppImages.Home.star} style={styles.star} />
           </View> */}
         </View>
-        <Text style={styles.priceTxt}>{`Rs. ${item?.price}`}</Text>
-        <Text style={styles.desc}>Description:</Text>
-        <Text style={styles.descTxt}>{item?.description}</Text>
+        <Text style={styles.priceTxt}>
+          {isRtl ? `${item?.price} روپے` : `Rs. ${item?.price}`}
+        </Text>
+        <Text style={styles.desc}>{isRtl ? "تفصیل:" : "Description:"}</Text>
+        <Text
+          style={{ ...styles.descTxt, textAlign: isRtl ? "right" : "left" }}
+        >
+          {isRtl ? item?.rtlDescription : item?.description}
+        </Text>
       </ScrollView>
 
       <View style={styles.bottomCont}>
@@ -77,12 +92,12 @@ const ProductDetailScreen = (props: ScreenProps) => {
           }}
         />
         <FilledButton
-          label={"Add To Cart"}
+          label={isRtl ? "کارٹ میں شامل کریں" : "Add To Cart"}
           onPress={async () => {
             const updateItem = { ...item, count: count };
             updateProductList(updateItem);
           }}
-          mainContainer={{ width: normalized(150) }}
+          mainContainer={{ width: normalized(150), height: normalized(40) }}
         />
       </View>
     </View>
@@ -95,8 +110,10 @@ const styles = StyleSheet.create({
   itemName: {
     color: AppColors.black.black,
     fontSize: normalized(17),
-    fontFamily: AppFonts.PoppinsMedium,
+    fontFamily: AppFonts.PoppinsSemiBold,
     marginTop: normalized(10),
+    width: ScreenSize.width - normalized(30),
+    paddingHorizontal: normalized(10),
   },
   scrollView: {
     flex: 1,
@@ -137,14 +154,13 @@ const styles = StyleSheet.create({
   desc: {
     fontSize: normalized(14),
     color: AppColors.black.black,
-    fontFamily: AppFonts.PoppinsMedium,
+    fontFamily: AppFonts.PoppinsSemiBold,
     marginTop: normalized(10),
   },
   descTxt: {
     fontFamily: AppFonts.PoppinsRegular,
     fontSize: normalized(12),
     color: AppColors.black.Level5,
-    textAlign: "justify",
     marginTop: normalized(5),
   },
   bottomCont: {

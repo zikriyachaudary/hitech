@@ -2,12 +2,14 @@ import {
   FlatList,
   Image,
   KeyboardAvoidingView,
+  LayoutAnimation,
   Platform,
   SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
@@ -54,12 +56,9 @@ const AddProducScreen = (props: ScreenProps) => {
     (state: AppRootStore) => state.SliceReducer
   );
   const isRtl = selector?.isRtl;
-
   const productDetail = props?.route?.params?.item;
-
   const [openImage, setOpenImage] = useState<Boolean>(false);
   const [imageList, setImageList] = useState<any>(productDetail?.images ?? []);
-
   const [categoryList, setCategoryList] = useState<any>([]);
   const [selectedCat, setSelectedCat] = useState<any>(
     productDetail?.category || ""
@@ -68,7 +67,6 @@ const AddProducScreen = (props: ScreenProps) => {
   const [selectedSubCat, setSelectedSubCat] = useState<any>(
     productDetail?.subCat || ""
   );
-
   const [imageView, setImageView] = useState({
     initialIndex: 0,
     imagesList: [],
@@ -77,17 +75,17 @@ const AddProducScreen = (props: ScreenProps) => {
   const productNameRef = useRef();
   const productPriceRef = useRef();
   const descriptionRef = useRef();
-
   const [productName, setProductName] = useState<string>(
     productDetail?.name ?? ""
   );
   const [productPrice, setProductPrice] = useState<any>(
     productDetail?.price ?? ""
   );
-
   const [description, setDescription] = useState<string>(
     productDetail?.description ?? ""
   );
+  const [isChecked, setIsChecked] = useState(false);
+  const [errors, setErrors] = useState<any>({});
 
   ///// urdu ----->>>
 
@@ -99,16 +97,15 @@ const AddProducScreen = (props: ScreenProps) => {
   const [rtlSelectedSubCat, setRtlSelectedSubCat] = useState<any>(
     productDetail?.rtlSubCat || ""
   );
-
   const rtlProductNameRef = useRef();
-
   const [rtlProductName, setRtlProductName] = useState<string>(
     productDetail?.rtlName ?? ""
   );
-
   const [rtlDescription, setRtlDescription] = useState<string>(
     productDetail?.rtlDescription ?? ""
   );
+  const [numSizes, setNumSizes] = useState("");
+  const [sizes, setSizes] = useState<any>([]);
 
   ///error------->
   const [productNameError, setProductNameError] = useState("");
@@ -122,6 +119,8 @@ const AddProducScreen = (props: ScreenProps) => {
   const [rtlProductDesError, setRtlProductDesError] = useState("");
   const [rtlCatError, setRtlCatError] = useState("");
   const [rtlCatSubError, setRtlCatSubError] = useState<any>("");
+  const [checkError, setCheckError] = useState<any>("");
+  const [numSizeError, setNumSizeError] = useState("");
 
   const dispatch = useDispatch();
 
@@ -129,6 +128,33 @@ const AddProducScreen = (props: ScreenProps) => {
     if (inputRef?.current) {
       inputRef?.current?.focus();
     }
+  };
+
+  const handleNumSizesChange = (txt: any) => {
+    const numericValue = txt.replace(/[^\d]/g, "");
+    setNumSizes(numericValue);
+
+    const sizeCount = Number(numericValue) || 0;
+    setSizes(
+      new Array(sizeCount).fill({ price: "", size: "", goldenPrice: "" })
+    );
+    setErrors({});
+  };
+
+  const handleSizeChange = (index: any, key: any, value: any) => {
+    const updatedSizes = [...sizes];
+    updatedSizes[index] = { ...updatedSizes[index], [key]: value };
+    setSizes(updatedSizes);
+
+    setErrors((prevErrors: any) => {
+      const newErrors: any = { ...prevErrors };
+      if (value.trim() === "") {
+        newErrors[`${key}-${index}`] = "* Required";
+      } else {
+        delete newErrors[`${key}-${index}`];
+      }
+      return newErrors;
+    });
   };
 
   useEffect(() => {
@@ -148,12 +174,10 @@ const AddProducScreen = (props: ScreenProps) => {
             );
 
             if (matchedCategory) {
-              console.log("matchedCategory -0-----  ", matchedCategory);
-
               setSubCatList(matchedCategory.subCat);
               setRtlSubCatList(matchedCategory?.rtlSubCat);
             } else {
-              setSubCatList([]); // Or handle the case where no match is found
+              setSubCatList([]);
             }
           }
         } else {
@@ -177,43 +201,10 @@ const AddProducScreen = (props: ScreenProps) => {
     );
   };
 
-  const renderImageItem = ({ item, index }: { item: any; index: number }) => (
-    <View style={styles.imageContainer}>
-      <TouchableOpacity
-        activeOpacity={0.7}
-        onPress={() => {
-          let imagesArr: any = [];
-          for (let i = 0; i < imageList.length; i++) {
-            const element = imageList[i];
-            let url = element?.url ?? element;
-            imagesArr.push({
-              url: url,
-            });
-          }
-          setImageView({
-            initialIndex: index,
-            imagesList: imagesArr,
-            value: true,
-          });
-        }}
-      >
-        <AppImageViewer
-          resizeMode={"cover"}
-          source={{ uri: item?.url ?? item }}
-          style={styles.image}
-        />
-      </TouchableOpacity>
-      <TouchableOpacity
-        onPress={() => removeImage(index)}
-        style={styles.crossContainer}
-      >
-        <Image source={AppImages.Home.close} style={styles.crossIcon} />
-      </TouchableOpacity>
-    </View>
-  );
-
   const onAddProduct = async () => {
     let isFormValid = true;
+    let newErrors: any = {};
+
     if (imageList?.length == 0) {
       setProductImagesError(
         isRtl ? "مصنوعات کی تصاویر منسلک کریں" : "Attach Product Pictures"
@@ -223,9 +214,29 @@ const AddProducScreen = (props: ScreenProps) => {
       setProductNameError("* Required");
       isFormValid = false;
     }
-    if (!productPrice) {
-      setProductPriceError("* Required");
-      isFormValid = false;
+    if (isChecked) {
+      sizes.forEach((item: any, index: any) => {
+        if (!item.price) {
+          newErrors[`price-${index}`] = isRtl ? "* لازمی" : "* Required";
+          isFormValid = false;
+        }
+        if (!item.size) {
+          newErrors[`size-${index}`] = isRtl ? "* لازمی" : "* Required";
+          isFormValid = false;
+        }
+        if (!item.goldenPrice) {
+          newErrors[`goldenPrice-${index}`] = isRtl ? "* لازمی" : "* Required";
+          isFormValid = false;
+        }
+      });
+      if (numSizes == "") {
+        setNumSizeError(isRtl ? "* لازمی" : "* Required");
+      }
+    } else {
+      if (!productPrice) {
+        newErrors["productPrice"] = isRtl ? "* لازمی" : "* Required";
+        isFormValid = false;
+      }
     }
     if (!description) {
       setProductDesError("* Required");
@@ -248,15 +259,27 @@ const AddProducScreen = (props: ScreenProps) => {
       setRtlProductDesError("* لازمی");
       isFormValid = false;
     }
-    if (!rtlSelectedCat?.category) {
+    if (!rtlSelectedCat?.rtlCategory && !rtlSelectedCat?.category) {
+      console.log("here is console ----");
       setRtlCatError("* لازمی");
       isFormValid = false;
     }
+
     if (rtlSelectedCat?.category && !rtlSelectedSubCat?.name) {
       setRtlCatSubError("* لازمی");
       isFormValid = false;
     }
+    if (imageList?.length == 0) {
+      setProductImagesError(
+        isRtl
+          ? "براہ کرم پروڈکٹ کی تصاویر منسلک کریں"
+          : "Please Attach Product Images"
+      );
+      isFormValid = false;
+    }
+
     if (!isFormValid) {
+      setErrors(newErrors);
       return;
     }
     const obj = {
@@ -266,7 +289,9 @@ const AddProducScreen = (props: ScreenProps) => {
         : CommonDataManager.getSharedInstance()?.makeid(8),
       price: productPrice,
       description: description,
-      createdAt: moment.utc(new Date()).format(fullDate),
+      createdAt: productDetail?.createdAt
+        ? productDetail?.createdAt
+        : moment.utc(new Date()).format(fullDate),
       category: {
         category: selectedCat?.category,
         id: selectedCat?.id,
@@ -279,13 +304,15 @@ const AddProducScreen = (props: ScreenProps) => {
       rtlName: rtlProductName,
       rtlDescription: rtlDescription,
       rtlCategory: {
-        category: rtlSelectedCat?.rtlCategory,
+        category: rtlSelectedCat?.rtlCategory || rtlSelectedCat?.category,
         id: rtlSelectedCat?.id,
       },
       rtlSubCat: {
         name: rtlSelectedSubCat?.name,
         id: rtlSelectedSubCat?.id,
       },
+      isMultipleSizes: isChecked,
+      sizeNPrice: sizes,
     };
     let productImagesList: any = [];
     dispatch(setIsLoader(true));
@@ -419,7 +446,7 @@ const AddProducScreen = (props: ScreenProps) => {
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        keyboardVerticalOffset={5}
+        keyboardVerticalOffset={Platform.OS === "ios" ? hv(35) : hv(10)}
       >
         <ScrollView
           style={{ flex: 1, paddingHorizontal: AppHorizontalMargin }}
@@ -442,30 +469,161 @@ const AddProducScreen = (props: ScreenProps) => {
               errorMsg={productNameError}
             />
           </View>
-          <View style={{ flex: 1 }}>
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              <Text style={styles.label}>{"Price"}</Text>
-              <Text style={styles.label}>{"قیمت"}</Text>
-            </View>
-            <CustomInput
-              placeHold={"Amount"}
-              placeHolderColor={AppColors.grey.greyLevel4}
-              container={styles.inputContainer}
-              ref={productPriceRef}
-              keyboardType="numeric"
-              onSubmitEditing={() => focusNextField(descriptionRef)}
-              setValue={(txt: any) => {
-                const numeric = txt.replace(/[^\d.]+|(?<=\..*)\./g, "");
-                setProductPrice(numeric);
-                setProductPriceError("");
+
+          <View
+            style={{
+              ...styles.checkMainCont,
+              flexDirection: "row",
+            }}
+          >
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setIsChecked(!isChecked);
+                setCheckError("");
+                LayoutAnimation.configureNext(
+                  LayoutAnimation.Presets.easeInEaseOut
+                );
               }}
-              value={productPrice}
-              errorMsg={productPriceError}
-            />
+            >
+              <View
+                style={{
+                  ...styles.checkCont,
+                  borderColor: AppColors.themeColor.dark,
+                  backgroundColor: checkError
+                    ? AppColors.red.pink
+                    : AppColors.white.white,
+                }}
+              >
+                {isChecked && (
+                  <Image
+                    source={AppImages.Home.tick}
+                    resizeMode="contain"
+                    style={{
+                      height: normalized(12),
+                      width: normalized(12),
+                    }}
+                  />
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+            <Text style={styles.checkTxt}>Multiple Sizes</Text>
+            {isChecked && (
+              <CustomInput
+                container={{ width: normalized(140) }}
+                placeHold={"No. of Sizes"}
+                placeHolderColor={AppColors.grey.greyLevel4}
+                ref={productPriceRef}
+                keyboardType="numeric"
+                onSubmitEditing={() => {}}
+                setValue={(txt: any) => {
+                  handleNumSizesChange(txt);
+                  LayoutAnimation.configureNext(
+                    LayoutAnimation.Presets.easeInEaseOut
+                  );
+                }}
+                value={numSizes}
+                errorMsg={numSizeError}
+              />
+            )}
           </View>
-          {/* </View> */}
+
+          {/*----------------------- Multiple Sizes Price here ----------------------- */}
+          {isChecked &&
+            sizes.length > 0 &&
+            sizes.map((item: any, index: any) => (
+              <View
+                key={index}
+                style={{
+                  borderWidth: 1,
+                  borderColor: AppColors.themeColor.dark,
+                  borderRadius: normalized(10),
+                  paddingHorizontal: normalized(10),
+                  marginTop: normalized(10),
+                  paddingBottom: normalized(10),
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: normalized(10),
+                  }}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.label}>{isRtl ? "قیمت" : "Price"}</Text>
+                    <CustomInput
+                      placeHold={isRtl ? "قیمت" : "Amount"}
+                      placeHolderColor={AppColors.grey.greyLevel4}
+                      container={styles.inputContainer}
+                      keyboardType="numeric"
+                      onSubmitEditing={() => {}}
+                      setValue={(txt: any) =>
+                        handleSizeChange(index, "price", txt)
+                      }
+                      value={item.price}
+                      errorMsg={errors[`price-${index}`] || ""}
+                    />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.label}>{isRtl ? "سائز" : "Size"}</Text>
+                    <CustomInput
+                      placeHold={"Size"}
+                      placeHolderColor={AppColors.grey.greyLevel4}
+                      container={styles.inputContainer}
+                      onSubmitEditing={() => {}}
+                      setValue={(txt: any) =>
+                        handleSizeChange(index, "size", txt)
+                      }
+                      value={item.size}
+                      errorMsg={errors[`size-${index}`] || ""}
+                    />
+                  </View>
+                </View>
+                <View style={{ flex: 1, marginTop: 10 }}>
+                  <Text style={styles.label}>Price for Golden Customers</Text>
+                  <CustomInput
+                    placeHold={"Amount"}
+                    placeHolderColor={AppColors.grey.greyLevel4}
+                    container={styles.inputContainer}
+                    keyboardType="numeric"
+                    onSubmitEditing={() => {}}
+                    setValue={(txt: any) =>
+                      handleSizeChange(index, "goldenPrice", txt)
+                    }
+                    value={item.goldenPrice}
+                    errorMsg={errors[`goldenPrice-${index}`] || ""}
+                  />
+                </View>
+              </View>
+            ))}
+
+          {!isChecked && (
+            <View style={{ flex: 1 }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={styles.label}>{"Price"}</Text>
+                <Text style={styles.label}>{"قیمت"}</Text>
+              </View>
+              <CustomInput
+                placeHold={"Amount"}
+                placeHolderColor={AppColors.grey.greyLevel4}
+                container={styles.inputContainer}
+                ref={productPriceRef}
+                keyboardType="numeric"
+                onSubmitEditing={() => focusNextField(descriptionRef)}
+                setValue={(txt: any) => {
+                  const numeric = txt.replace(/[^\d.]+|(?<=\..*)\./g, "");
+                  setProductPrice(numeric);
+                  setProductPriceError("");
+                }}
+                value={productPrice}
+                errorMsg={productPriceError}
+              />
+            </View>
+          )}
 
           <Text style={styles.label}>Description</Text>
           <CustomInput
@@ -589,7 +747,7 @@ const AddProducScreen = (props: ScreenProps) => {
               setRtlSubCatList(val?.rtlSubCat);
               setRtlSelectedSubCat("");
             }}
-            selected={rtlSelectedCat?.rtlCategory}
+            selected={rtlSelectedCat?.rtlCategory || rtlSelectedCat?.category}
             optionKey={"rtlCategory"}
             list={rtlCategoryList}
           />
@@ -636,7 +794,7 @@ const AddProducScreen = (props: ScreenProps) => {
                 alignItems: "center",
               }}
             >
-              {imageList.map((el, index) => {
+              {imageList.map((el: any, index: any) => {
                 const imageUri = typeof el === "string" ? el : el?.url;
 
                 return (
@@ -866,5 +1024,23 @@ const styles = StyleSheet.create({
     padding: normalized(3),
     top: 3,
     right: 3,
+  },
+  checkCont: {
+    borderRadius: normalized(5),
+    height: normalized(20),
+    width: normalized(20),
+    borderWidth: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  checkTxt: {
+    fontSize: normalized(13),
+    fontFamily: AppFonts.PoppinsMedium,
+    color: AppColors.black.black,
+  },
+  checkMainCont: {
+    gap: normalized(15),
+    alignItems: "center",
+    marginTop: normalized(15),
   },
 });

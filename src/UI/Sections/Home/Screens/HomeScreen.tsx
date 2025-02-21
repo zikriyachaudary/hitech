@@ -142,7 +142,7 @@ const HomeScreen = (props: ScreenProps) => {
         <>
           <ProfileHeader
             profileImage={dummyProfile}
-            title={"Zikriya Chaudary"}
+            title={selector?.userData?.fullName}
             rightIcon={AppImages.Home.filter}
             onRightIconPress={() => {
               setCategoryModal(true);

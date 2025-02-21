@@ -25,6 +25,7 @@ const CategorySelectionModal = (props: any) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const isRtl = selector?.isRtl;
 
   const [selectedCat, setSelectedCat] = useState<any>(null);
   const [selectedSubCat, setSelectedSubCat] = useState<any>([]);
