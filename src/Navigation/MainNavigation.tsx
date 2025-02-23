@@ -17,6 +17,7 @@ import OTPScreen from "../UI/Sections/Home/Screens/OTPScreen";
 import AddCategoryScreen from "../UI/Sections/Home/Screens/AddCategoryScreen";
 import EditProfileScreen from "../UI/Sections/Profile/Screens/EditProfileScreen";
 import LanguageScreen from "../UI/Sections/Profile/Screens/LanguageScreen";
+import GoldNSilverScreen from "../UI/Sections/Home/Screens/GoldNSilverScreen";
 
 const MainStack = createStackNavigator();
 
@@ -72,6 +73,10 @@ const MainNavigation = () => {
       <MainStack.Screen
         name={Routes.Home.Language}
         component={LanguageScreen}
+      />
+      <MainStack.Screen
+        name={Routes.Admin.GoldNSilverScreen}
+        component={GoldNSilverScreen}
       />
     </MainStack.Navigator>
   );

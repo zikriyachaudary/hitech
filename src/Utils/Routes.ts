@@ -31,5 +31,6 @@ export const Routes = {
     AddProducts: "AddProducts",
     AddAdmins: "AddAdmins",
     AddCategory: "AddCategory",
+    GoldNSilverScreen: "GoldNSilverScreen",
   },
 };

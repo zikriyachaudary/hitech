@@ -84,7 +84,9 @@ const AddProducScreen = (props: ScreenProps) => {
   const [description, setDescription] = useState<string>(
     productDetail?.description ?? ""
   );
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(
+    productDetail?.isMultipleSizes || false
+  );
   const [errors, setErrors] = useState<any>({});
 
   ///// urdu ----->>>
@@ -104,8 +106,11 @@ const AddProducScreen = (props: ScreenProps) => {
   const [rtlDescription, setRtlDescription] = useState<string>(
     productDetail?.rtlDescription ?? ""
   );
-  const [numSizes, setNumSizes] = useState("");
-  const [sizes, setSizes] = useState<any>([]);
+  const [numSizes, setNumSizes] = useState(productDetail?.totalSizes || "");
+  const [sizes, setSizes] = useState<any>(productDetail?.sizeNPrice || []);
+  const [goldenPrice, setGoldenPrice] = useState<any>(
+    productDetail?.goldenPrice || ""
+  );
 
   ///error------->
   const [productNameError, setProductNameError] = useState("");
@@ -121,6 +126,7 @@ const AddProducScreen = (props: ScreenProps) => {
   const [rtlCatSubError, setRtlCatSubError] = useState<any>("");
   const [checkError, setCheckError] = useState<any>("");
   const [numSizeError, setNumSizeError] = useState("");
+  const [goldenPriceError, setGoldenPriceError] = useState("");
 
   const dispatch = useDispatch();
 
@@ -237,17 +243,21 @@ const AddProducScreen = (props: ScreenProps) => {
         newErrors["productPrice"] = isRtl ? "* لازمی" : "* Required";
         isFormValid = false;
       }
+      if (!goldenPrice) {
+        setGoldenPriceError(isRtl ? "* لازمی" : "* Required");
+        isFormValid = false;
+      }
     }
     if (!description) {
-      setProductDesError("* Required");
+      setProductDesError(isRtl ? "* لازمی" : "* Required");
       isFormValid = false;
     }
     if (!selectedCat?.category) {
-      setCatError("* Required");
+      setCatError(isRtl ? "* لازمی" : "* Required");
       isFormValid = false;
     }
     if (selectedCat?.category && !selectedSubCat?.name) {
-      setCatSubError("* Required");
+      setCatSubError(isRtl ? "* لازمی" : "* Required");
       isFormValid = false;
     }
 
@@ -260,7 +270,6 @@ const AddProducScreen = (props: ScreenProps) => {
       isFormValid = false;
     }
     if (!rtlSelectedCat?.rtlCategory && !rtlSelectedCat?.category) {
-      console.log("here is console ----");
       setRtlCatError("* لازمی");
       isFormValid = false;
     }
@@ -288,6 +297,7 @@ const AddProducScreen = (props: ScreenProps) => {
         ? productDetail?.id
         : CommonDataManager.getSharedInstance()?.makeid(8),
       price: productPrice,
+      goldenPrice: goldenPrice,
       description: description,
       createdAt: productDetail?.createdAt
         ? productDetail?.createdAt
@@ -313,6 +323,7 @@ const AddProducScreen = (props: ScreenProps) => {
       },
       isMultipleSizes: isChecked,
       sizeNPrice: sizes,
+      totalSizes: numSizes,
     };
     let productImagesList: any = [];
     dispatch(setIsLoader(true));
@@ -334,8 +345,6 @@ const AddProducScreen = (props: ScreenProps) => {
     });
     await Promise.all(uploadTasks);
     obj["images"] = productImagesList;
-    console.log("productImagesList -----  ", productImagesList);
-    console.log("upload product --->>>", obj);
 
     if (productDetail?.id) {
       dispatch(setIsLoader(true));
@@ -517,6 +526,7 @@ const AddProducScreen = (props: ScreenProps) => {
                 onSubmitEditing={() => {}}
                 setValue={(txt: any) => {
                   handleNumSizesChange(txt);
+                  setNumSizeError("");
                   LayoutAnimation.configureNext(
                     LayoutAnimation.Presets.easeInEaseOut
                   );
@@ -528,8 +538,7 @@ const AddProducScreen = (props: ScreenProps) => {
           </View>
 
           {/*----------------------- Multiple Sizes Price here ----------------------- */}
-          {isChecked &&
-            sizes.length > 0 &&
+          {isChecked ? (
             sizes.map((item: any, index: any) => (
               <View
                 key={index}
@@ -566,7 +575,7 @@ const AddProducScreen = (props: ScreenProps) => {
                   <View style={{ flex: 1 }}>
                     <Text style={styles.label}>{isRtl ? "سائز" : "Size"}</Text>
                     <CustomInput
-                      placeHold={"Size"}
+                      placeHold={isRtl ? "سائز" : "Size"}
                       placeHolderColor={AppColors.grey.greyLevel4}
                       container={styles.inputContainer}
                       onSubmitEditing={() => {}}
@@ -579,9 +588,14 @@ const AddProducScreen = (props: ScreenProps) => {
                   </View>
                 </View>
                 <View style={{ flex: 1, marginTop: 10 }}>
-                  <Text style={styles.label}>Price for Golden Customers</Text>
+                  <Text style={styles.label}>
+                    {isRtl
+                      ? "گولڈن کسٹمرز کے لیے قیمت"
+                      : "Price for Golden Customers"}
+                  </Text>
+
                   <CustomInput
-                    placeHold={"Amount"}
+                    placeHold={isRtl ? "قیمت" : "Amount"}
                     placeHolderColor={AppColors.grey.greyLevel4}
                     container={styles.inputContainer}
                     keyboardType="numeric"
@@ -594,9 +608,8 @@ const AddProducScreen = (props: ScreenProps) => {
                   />
                 </View>
               </View>
-            ))}
-
-          {!isChecked && (
+            ))
+          ) : (
             <View style={{ flex: 1 }}>
               <View
                 style={{
@@ -608,7 +621,7 @@ const AddProducScreen = (props: ScreenProps) => {
                 <Text style={styles.label}>{"قیمت"}</Text>
               </View>
               <CustomInput
-                placeHold={"Amount"}
+                placeHold={isRtl ? "قیمت" : "Amount"}
                 placeHolderColor={AppColors.grey.greyLevel4}
                 container={styles.inputContainer}
                 ref={productPriceRef}
@@ -621,6 +634,25 @@ const AddProducScreen = (props: ScreenProps) => {
                 }}
                 value={productPrice}
                 errorMsg={productPriceError}
+              />
+
+              <Text style={styles.label}>
+                {isRtl
+                  ? "گولڈن کسٹمرز کے لیے قیمت"
+                  : "Price for Golden Customers"}
+              </Text>
+              <CustomInput
+                placeHold={isRtl ? "قیمت" : "Amount"}
+                placeHolderColor={AppColors.grey.greyLevel4}
+                container={styles.inputContainer}
+                keyboardType="numeric"
+                setValue={(txt: any) => {
+                  const numeric = txt.replace(/[^\d.]+|(?<=\..*)\./g, "");
+                  setGoldenPrice(numeric);
+                  setGoldenPriceError("");
+                }}
+                value={goldenPrice}
+                errorMsg={goldenPriceError}
               />
             </View>
           )}

@@ -119,6 +119,8 @@ const HomeScreen = (props: ScreenProps) => {
                     props?.navigation?.navigate(Routes.Admin.AddAdmins);
                   } else if (item?.id == 5) {
                     props?.navigation?.navigate(Routes.Admin.AddCategory);
+                  } else if (item?.id == 6) {
+                    props?.navigation?.navigate(Routes.Admin.GoldNSilverScreen);
                   }
                 }}
               >

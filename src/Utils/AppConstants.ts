@@ -146,6 +146,9 @@ export const AppImages = {
     PlusBlack: require("../UI/assets/Images/Home/plus.png"),
     Admin: require("../UI/assets/Images/Home/admin.png"),
     search: require("../UI/assets/Images/Home/Search.png"),
+    silverBadge: require("../UI/assets/Images/Home/silver.png"),
+    goldBadge: require("../UI/assets/Images/Home/gold.png"),
+    badge: require("../UI/assets/Images/Home/badge.png"),
   },
   Products: {
     editIcon: require("../UI/assets/Images/products/editIcon.png"),
@@ -292,6 +295,12 @@ export const adminHomeBarItems = [
     title: "Add Category & Sub-Category",
     rtlTitle: "کیٹگری اور سبکیٹگری شامل کریں",
     id: 5,
+  },
+  {
+    icon: AppImages.Home.badge,
+    title: "Gold & Silver Customers",
+    rtlTitle: "گولڈ اور سلور کسٹمرز",
+    id: 6,
   },
 ];
 

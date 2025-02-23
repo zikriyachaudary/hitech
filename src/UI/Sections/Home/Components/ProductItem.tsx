@@ -49,7 +49,9 @@ const ProductItem = (props: any) => {
         </Text>
         <View style={styles.priceCont}>
           <Text style={styles.priceTxt}>
-            {isRtl ? `${item?.price} روپے` : `Rs. ${item?.price}`}
+            {isRtl
+              ? `${item?.price || item?.sizeNPrice[0]?.price} روپے`
+              : `Rs. ${item?.price || item?.sizeNPrice[0]?.price}`}
           </Text>
         </View>
       </View>

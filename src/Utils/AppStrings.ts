@@ -77,3 +77,8 @@ export const ADMN_TYPE = {
   superAdmin: "Super Admin",
   Admin: "Admin",
 };
+
+export const USER_TYPE = {
+  Silver: "Silver",
+  Gold: "Gold",
+};

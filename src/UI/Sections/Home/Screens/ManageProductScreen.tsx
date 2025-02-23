@@ -76,7 +76,8 @@ const ManageProductScreen = (props: ScreenProps) => {
         item?.category?.category.toLowerCase().includes(searchTerm) ||
         item?.subCat?.name.toLowerCase().includes(searchTerm) ||
         item?.rtlCategory?.category.toLowerCase().includes(searchTerm) ||
-        item?.rtlSubCat?.name.toLowerCase().includes(searchTerm)
+        item?.rtlSubCat?.name.toLowerCase().includes(searchTerm) ||
+        item?.rtlName.toLowerCase().includes(searchTerm)
       );
     });
   }
@@ -109,7 +110,7 @@ const ManageProductScreen = (props: ScreenProps) => {
       {isShowSearch && (
         <CustomInput
           leftIcon={AppImages.Home.search}
-          placeHold={"Search Vendor"}
+          placeHold={isRtl ? "پروڈکت ڈھونڈیں" : "Search Product"}
           container={styles.inputContainer}
           textInputStyle={styles.inputStyle}
           leftIconStyle={styles.leftIcon}
