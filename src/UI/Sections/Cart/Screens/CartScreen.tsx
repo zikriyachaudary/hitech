@@ -496,7 +496,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: normalized(10),
-    width: normalized(210),
+    maxWidth: normalized(210),
+    flexWrap: "wrap",
   },
   priceTxt: {
     fontSize: normalized(15),

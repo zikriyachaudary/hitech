@@ -95,11 +95,11 @@ const styles = StyleSheet.create({
     shadowColor: AppColors.black.black,
     shadowOffset: {
       height: 2,
-      width: 0,
+      width: 2,
     },
     elevation: 5,
     shadowOpacity: 0.3,
-    shadowRadius: normalized(50),
+    shadowRadius: normalized(3),
     backgroundColor: AppColors.white.white,
     paddingHorizontal: normalized(3),
   },

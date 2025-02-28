@@ -18,6 +18,7 @@ import AddCategoryScreen from "../UI/Sections/Home/Screens/AddCategoryScreen";
 import EditProfileScreen from "../UI/Sections/Profile/Screens/EditProfileScreen";
 import LanguageScreen from "../UI/Sections/Profile/Screens/LanguageScreen";
 import GoldNSilverScreen from "../UI/Sections/Home/Screens/GoldNSilverScreen";
+import UserOrderDetailScreen from "../UI/Sections/Home/Screens/UserOrderDetailScreen";
 
 const MainStack = createStackNavigator();
 
@@ -77,6 +78,10 @@ const MainNavigation = () => {
       <MainStack.Screen
         name={Routes.Admin.GoldNSilverScreen}
         component={GoldNSilverScreen}
+      />
+      <MainStack.Screen
+        name={Routes.Admin.UserOrderDetail}
+        component={UserOrderDetailScreen}
       />
     </MainStack.Navigator>
   );

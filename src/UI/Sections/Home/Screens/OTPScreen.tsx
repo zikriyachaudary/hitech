@@ -161,7 +161,7 @@ const OTPScreen = (props: ScreenProps) => {
     }
 
     dispatch(setIsLoader(true));
-    const params = { email: email, otp: otp };
+    const params = { email: email?.toLowerCase(), otp: otp };
     let findAdmin = await findAdminByEmail(params);
     if (findAdmin?.adminId) {
       let userObj = { ...findAdmin, isAdmin: true };

@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
@@ -17,7 +17,6 @@ const UserItem = (props: any) => {
   );
   const isRtl = selector?.isRtl;
   const item = props?.item;
-  console.log("user item --0---   ", item);
 
   const [totalPrice, setTotalPrice] = useState("0");
 
@@ -37,7 +36,9 @@ const UserItem = (props: any) => {
   }, []);
 
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={0.7}
+      onPress={() => props?.onPress(item)}
       style={{
         ...styles.itemCont,
         flexDirection: isRtl ? "row-reverse" : "row",
@@ -49,9 +50,14 @@ const UserItem = (props: any) => {
       />
       <View>
         <Text style={styles.nameTxt}>{item?.fullName}</Text>
-        <Text style={styles.nameTxt}>{`Total: ${totalPrice}`}</Text>
+        <Text
+          style={styles.nameTxt}
+        >{`Total Purchase Amount : ${totalPrice}`}</Text>
+        <Text
+          style={styles.nameTxt}
+        >{`Total Orders : ${item?.orders?.length}`}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

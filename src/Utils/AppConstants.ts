@@ -183,6 +183,13 @@ export const AppImages = {
     usa: require("../UI/assets/Images/Profile/usa.png"),
     pk: require("../UI/assets/Images/Profile/pk.png"),
   },
+  User: {
+    user: require("../UI/assets/Images/User/user.png"),
+    phone: require("../UI/assets/Images/User/phone.png"),
+    email: require("../UI/assets/Images/User/email.png"),
+    orders: require("../UI/assets/Images/User/orders.png"),
+    amount: require("../UI/assets/Images/User/amount.png"),
+  },
 };
 
 export const lottieAnimation = {

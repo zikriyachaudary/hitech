@@ -32,5 +32,6 @@ export const Routes = {
     AddAdmins: "AddAdmins",
     AddCategory: "AddCategory",
     GoldNSilverScreen: "GoldNSilverScreen",
+    UserOrderDetail: "UserOrderDetail",
   },
 };

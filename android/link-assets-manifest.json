@@ -124,14 +124,6 @@
     {
       "path": "src/UI/assets/fonts/Poppins-ThinItalic.ttf",
       "sha1": "fb8fccca21550e71135f92bbaf8a2e8a12c90465"
-    },
-    {
-      "path": "src/UI/assets/fonts/jameelNoori.ttf",
-      "sha1": "0e1b5f7e76b67f91f0d780399d72a24e72356e89"
-    },
-    {
-      "path": "src/UI/assets/fonts/urdu.ttf",
-      "sha1": "d65900524be6524ed17f232c3d5bbc88095a3bdf"
     }
   ]
 }

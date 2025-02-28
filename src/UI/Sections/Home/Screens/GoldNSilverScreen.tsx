@@ -1,4 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
@@ -49,7 +56,7 @@ const GoldNSilverScreen = (props: ScreenProps) => {
         const silver = usersWithOrders.filter(
           (user) => user.userType === USER_TYPE.Silver
         );
-        setGoldUsers(JSON.stringify(gold));
+        setGoldUsers(gold);
         setSilverUsers(silver);
         dispatch(setIsLoader(false));
       } else {
@@ -63,6 +70,7 @@ const GoldNSilverScreen = (props: ScreenProps) => {
   }, []);
   return (
     <View style={AppStyles.MainStyle}>
+      <SafeAreaView />
       <View
         style={{
           ...styles.headerCont,
@@ -129,7 +137,7 @@ const styles = StyleSheet.create({
     },
     elevation: 5,
     shadowOpacity: 0.3,
-    shadowRadius: normalized(50),
+    shadowRadius: normalized(3),
     backgroundColor: AppColors.white.white,
     paddingHorizontal: normalized(3),
   },
