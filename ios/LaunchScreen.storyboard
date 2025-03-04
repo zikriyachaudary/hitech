@@ -5,7 +5,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23506"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -21,7 +20,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="430" height="932"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <viewLayoutGuide key="safeArea" id="a6Q-4v-aXS"/>
-                                <color key="backgroundColor" systemColor="tertiarySystemBackgroundColor"/>
+                                <color key="backgroundColor" red="0.062745101750000004" green="0.062745101750000004" blue="0.062745101750000004" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="58Z-mn-yKR">
                                 <rect key="frame" x="7" y="197.33333333333334" width="400" height="341.33333333333326"/>
@@ -51,8 +50,5 @@
     </scenes>
     <resources>
         <image name="AppLogo" width="341.33334350585938" height="341.33334350585938"/>
-        <systemColor name="tertiarySystemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
     </resources>
 </document>
