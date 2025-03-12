@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Routes } from "../../../../Utils/Routes";
 import {
   AppColors,
+  hv,
   normalized,
   ScreenSize,
 } from "../../../../Utils/AppConstants";
@@ -16,32 +17,42 @@ const GoldScreen = (props: any) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
-  const isRtl = selector?.isRtl;
   const [goldUsers, setGoldUsers] = useState<any>(props?.goldUsers || []);
   const navigation: any = useNavigation();
 
   return (
     <View style={AppStyles.MainStyle}>
-      <FlatList
-        data={props?.goldUsers}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item, index }) => (
-          <>
-            <UserItem
-              item={item}
-              onPress={() =>
-                navigation?.navigate(Routes.Admin.UserOrderDetail, {
-                  item: item,
-                })
-              }
-            />
-            {index !== goldUsers?.length - 1 && (
-              <View style={styles.horiDivider} />
-            )}
-          </>
-        )}
-        keyExtractor={(item) => item?.id}
-      />
+      {
+        <FlatList
+          data={props?.goldUsers}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item, index }) => (
+            <>
+              <UserItem
+                item={item}
+                onPress={() =>
+                  navigation?.navigate(Routes.Admin.UserOrderDetail, {
+                    item: item,
+                  })
+                }
+              />
+              {index !== goldUsers?.length - 1 && (
+                <View style={styles.horiDivider} />
+              )}
+            </>
+          )}
+          keyExtractor={(item) => item?.id}
+          ListEmptyComponent={() => {
+            return (
+              !selector?.isLoaderStart && (
+                <View style={styles.emptyListCont}>
+                  <Text style={styles.emptyList}>{"No User Found!"}</Text>
+                </View>
+              )
+            );
+          }}
+        />
+      }
     </View>
   );
 };
@@ -55,5 +66,17 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.grey.greyLevel3,
     alignSelf: "center",
     marginVertical: normalized(5),
+  },
+  emptyList: {
+    fontSize: normalized(15),
+    fontWeight: "400",
+    color: AppColors.black.black,
+    lineHeight: hv(25),
+    textAlign: "center",
+  },
+  emptyListCont: {
+    height: ScreenSize.height - 300,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

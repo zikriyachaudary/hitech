@@ -25,6 +25,7 @@ import {
 } from "../../../../Network/Services/UserServices";
 import { USER_TYPE } from "../../../../Utils/AppStrings";
 import { setIsLoader } from "../../../../Redux/Reducers/AppReducers";
+import { useIsFocused } from "@react-navigation/native";
 
 const GoldNSilverScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -35,6 +36,7 @@ const GoldNSilverScreen = (props: ScreenProps) => {
   const [goldUsers, setGoldUsers] = useState<any>([]);
   const [silverUsers, setSilverUsers] = useState<any>([]);
   const dispatch = useDispatch();
+  const isFocused = useIsFocused();
 
   const fetchUsers = async () => {
     dispatch(setIsLoader(true));
@@ -67,7 +69,7 @@ const GoldNSilverScreen = (props: ScreenProps) => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [isFocused]);
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />

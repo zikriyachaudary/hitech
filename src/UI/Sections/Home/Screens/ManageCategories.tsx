@@ -112,7 +112,9 @@ const ManageCategories = (props: ScreenProps) => {
             >
               <Text style={styles.itemTxt}>{item?.category}</Text>
               <View style={styles.divider} />
-              <Text style={styles.itemTxt}>{item?.rtlCategory}</Text>
+              <Text style={{ ...styles.itemTxt, textAlign: "right" }}>
+                {item?.rtlCategory}
+              </Text>
             </TouchableOpacity>
           )}
         />
@@ -184,7 +186,7 @@ const styles = StyleSheet.create({
   divider: {
     width: normalized(100),
     height: 0.8,
-    backgroundColor: AppColors.grey.greyLevel3,
+    // backgroundColor: AppColors.grey.greyLevel3,
     alignSelf: "center",
     marginVertical: normalized(5),
   },

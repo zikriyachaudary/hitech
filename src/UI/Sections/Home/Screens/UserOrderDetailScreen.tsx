@@ -71,6 +71,7 @@ const UserOrderDetailScreen = (props: ScreenProps) => {
             })
           );
           dispatch(setIsLoader(false));
+          props?.navigation?.goBack();
         } else {
           dispatch(
             setShowToast({

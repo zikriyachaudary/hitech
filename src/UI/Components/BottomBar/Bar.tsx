@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   Text,
+  Platform,
 } from "react-native";
 import {
   AppColors,
@@ -27,7 +28,7 @@ const Bar = ({ obj, onPress, index, tab }: any) => {
         style={{
           justifyContent: "center",
           alignItems: "center",
-          height: normalized(50),
+          height: Platform.OS == "ios" ? normalized(40) : normalized(50),
         }}
       >
         <Image
