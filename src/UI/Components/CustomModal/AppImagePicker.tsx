@@ -28,11 +28,13 @@ import {
   isSmallDevice,
   normalized,
 } from "../../../Utils/AppConstants";
+import ImagePicker from "react-native-image-crop-picker";
 
 interface Props {
   onClose: () => void;
   onImageSelect: (uriList: any) => void;
   limit: number;
+  mediaType: string;
 }
 
 const AppImagePicker = (props: Props) => {
@@ -85,70 +87,87 @@ const AppImagePicker = (props: Props) => {
   const handleSelectPhotoFromCamera = async () => {
     if (Platform.OS === "android") {
       await handlePermissionCheck(PERMISSIONS.ANDROID.CAMERA, () => {
-        launchCamera(
-          {
-            mediaType: "photo",
-            cameraType: "back",
-            quality: 0.5,
-            maxWidth: width,
-            maxHeight: 400,
-          },
-          (response: any) => {
-            if (response.didCancel) {
-              console.log("User cancelled image picker");
-            } else if (response.errorCode) {
-              console.log("ImagePicker Error: ", response.errorMessage);
-            } else {
-              const selectedImage = response.assets[0].uri;
-              if (selectedImage) {
-                props?.onImageSelect(selectedImage);
+        if (props?.mediaType == "Profile") {
+          ImagePicker.openCamera({
+            width: 400,
+            height: 400,
+            cropping: true,
+          }).then((image) => {
+            props?.onImageSelect(image.path);
+          });
+        } else {
+          launchCamera(
+            {
+              mediaType: "photo",
+              cameraType: "back",
+              quality: 1,
+            },
+            (response: any) => {
+              if (response.didCancel) {
+                console.log("User cancelled image picker");
+              } else if (response.errorCode) {
+                console.log("ImagePicker Error: ", response.errorMessage);
+              } else {
+                const selectedImage = response.assets[0].uri;
+                if (selectedImage) {
+                  props?.onImageSelect(selectedImage);
+                }
               }
             }
-          }
-        );
+          );
+        }
       });
     } else {
       await handlePermissionCheck(PERMISSIONS.IOS.CAMERA, () => {
-        launchCamera(
-          {
-            mediaType: "photo",
-            cameraType: "back",
-            quality: 0.5,
-            maxWidth: width,
-            maxHeight: 400,
-          },
-          (response: any) => {
-            if (response.didCancel) {
-              console.log("User cancelled image picker");
-            } else if (response.errorCode) {
-              console.log("ImagePicker Error: ", response.errorMessage);
-            } else {
-              const selectedImage = response.assets[0].uri;
-              if (selectedImage) {
-                props?.onImageSelect(selectedImage);
+        if (props?.mediaType == "Profile") {
+          ImagePicker.openCamera({
+            width: 400,
+            height: 400,
+            cropping: true,
+          }).then((image) => {
+            props?.onImageSelect(image.path);
+          });
+        } else {
+          launchCamera(
+            {
+              mediaType: "photo",
+              cameraType: "back",
+              quality: 1,
+            },
+            (response: any) => {
+              if (response.didCancel) {
+                console.log("User cancelled image picker");
+              } else if (response.errorCode) {
+                console.log("ImagePicker Error: ", response.errorMessage);
+              } else {
+                const selectedImage = response.assets[0].uri;
+                if (selectedImage) {
+                  props?.onImageSelect(selectedImage);
+                }
               }
             }
-          }
-        );
+          );
+        }
       });
     }
   };
 
   const handleSelectPhotoFromGallery = async () => {
     if (Platform.OS === "android") {
-      const permission =
-        Platform.Version >= 33
-          ? PERMISSIONS.ANDROID.READ_MEDIA_IMAGES
-          : PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE;
-
-      await handlePermissionCheck(permission, () => {
+      if (props?.mediaType == "Profile") {
+        ImagePicker.openPicker({
+          width: 400,
+          height: 400,
+          cropping: true,
+        }).then((image) => {
+          props?.onImageSelect(image?.path);
+        });
+      } else {
         launchImageLibrary(
           {
             mediaType: "photo",
             selectionLimit: props?.limit || 1,
-            quality: 0.5,
-            maxWidth: width,
-            maxHeight: 400,
+            quality: 1,
           },
           (response: any) => {
             if (response.didCancel) {
@@ -165,32 +184,40 @@ const AppImagePicker = (props: Props) => {
             }
           }
         );
-      });
+      }
     } else {
       await handlePermissionCheck(PERMISSIONS.IOS.PHOTO_LIBRARY, () => {
-        launchImageLibrary(
-          {
-            mediaType: "photo",
-            selectionLimit: props?.limit || 1,
-            quality: 0.5,
-            maxWidth: width,
-            maxHeight: 400,
-          },
-          (response: any) => {
-            if (response.didCancel) {
-              console.log("User cancelled image picker");
-            } else if (response.errorCode) {
-              console.log("ImagePicker Error: ", response.errorMessage);
-            } else {
-              const selectedImages = response.assets.map(
-                (asset: any) => asset.uri
-              );
-              if (selectedImages.length > 0) {
-                props?.onImageSelect(selectedImages);
+        if (props?.mediaType == "Profile") {
+          ImagePicker.openPicker({
+            width: 400,
+            height: 400,
+            cropping: true,
+          }).then((image) => {
+            props?.onImageSelect(image?.path);
+          });
+        } else {
+          launchImageLibrary(
+            {
+              mediaType: "photo",
+              selectionLimit: props?.limit || 1,
+              quality: 1,
+            },
+            (response: any) => {
+              if (response.didCancel) {
+                console.log("User cancelled image picker");
+              } else if (response.errorCode) {
+                console.log("ImagePicker Error: ", response.errorMessage);
+              } else {
+                const selectedImages = response.assets.map(
+                  (asset: any) => asset.uri
+                );
+                if (selectedImages.length > 0) {
+                  props?.onImageSelect(selectedImages);
+                }
               }
             }
-          }
-        );
+          );
+        }
       });
     }
   };
@@ -297,7 +324,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: normalized(20),
     borderWidth: 3,
-    borderColor: AppColors.grey.greyLevel9,
+    borderColor: AppColors.grey.greyLevel8,
     borderStyle: "dashed",
   },
   pickerImg: {

@@ -19,41 +19,53 @@ const ProductItem = (props: any) => {
 
   return (
     <TouchableOpacity
-      style={{
-        ...styles.mainCont,
-        flexDirection: isRtl ? "row-reverse" : "row",
-      }}
       activeOpacity={0.7}
+      style={{
+        padding: normalized(6),
+        borderWidth: 1,
+        borderColor: AppColors.grey.greyLevel2,
+        borderRadius: normalized(8),
+        flex: 0.5,
+        marginTop: normalized(10),
+      }}
       onPress={() => props?.onItemPress(item)}
     >
-      <AppImageViewer
-        source={{ uri: item?.images[0]?.url }}
-        style={styles.img}
-      />
       <View
         style={{
-          marginLeft: isRtl ? 0 : normalized(10),
-          marginRight: isRtl ? normalized(10) : 0,
+          flex: 1,
+          aspectRatio: 1,
+          borderRadius: normalized(6),
+          overflow: "hidden",
         }}
       >
-        <Text
-          style={{ ...styles.nameTxt, textAlign: isRtl ? "right" : "justify" }}
-        >
-          {isRtl ? item?.rtlName : item?.name}
+        <AppImageViewer
+          source={{ uri: item?.images[0]?.url }}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+          resizeMode="cover"
+        />
+      </View>
+
+      <Text
+        numberOfLines={1}
+        style={{ ...styles.nameTxt, textAlign: isRtl ? "right" : "left" }}
+      >
+        {isRtl ? item?.rtlName : item?.name}
+      </Text>
+      <Text
+        numberOfLines={2}
+        style={{ ...styles.descTxt, textAlign: isRtl ? "right" : "justify" }}
+      >
+        {isRtl ? item?.rtlDescription : item?.description}
+      </Text>
+      <View style={styles.priceCont}>
+        <Text style={styles.priceTxt}>
+          {isRtl
+            ? `${item?.price || item?.sizeNPrice[0]?.price} روپے`
+            : `Rs. ${item?.price || item?.sizeNPrice[0]?.price}`}
         </Text>
-        <Text
-          numberOfLines={2}
-          style={{ ...styles.descTxt, textAlign: isRtl ? "right" : "justify" }}
-        >
-          {isRtl ? item?.rtlDescription : item?.description}
-        </Text>
-        <View style={styles.priceCont}>
-          <Text style={styles.priceTxt}>
-            {isRtl
-              ? `${item?.price || item?.sizeNPrice[0]?.price} روپے`
-              : `Rs. ${item?.price || item?.sizeNPrice[0]?.price}`}
-          </Text>
-        </View>
       </View>
     </TouchableOpacity>
   );
@@ -62,42 +74,19 @@ const ProductItem = (props: any) => {
 export default ProductItem;
 
 const styles = StyleSheet.create({
-  mainCont: {
-    width: "100%",
-    backgroundColor: AppColors.white.white,
-    // backgroundColor: "red",
-    height: normalized(100),
-    marginTop: normalized(20),
-    borderRadius: normalized(10),
-    alignItems: "center",
-    shadowColor: AppColors.black.black,
-    shadowOffset: {
-      width: 2,
-      height: 2,
-    },
-    shadowOpacity: 0.3,
-    elevation: 3,
-    paddingHorizontal: normalized(10),
-    borderWidth: 0.5,
-    borderColor: AppColors.themeColor.dark,
-  },
-  img: {
-    width: normalized(80),
-    height: normalized(80),
-    borderRadius: normalized(10),
-    resizeMode: "contain",
-  },
   nameTxt: {
-    fontSize: normalized(16),
+    fontSize: normalized(14),
     color: AppColors.black.black,
     fontFamily: AppFonts.PoppinsMedium,
+    marginTop: normalized(5),
   },
 
   descTxt: {
     fontSize: normalized(11),
     color: AppColors.grey.greyLevel5,
     fontFamily: AppFonts.PoppinsRegular,
-    width: normalized(220),
+    width: "100%",
+    height: normalized(35),
   },
   priceCont: {
     height: normalized(25),
@@ -109,6 +98,7 @@ const styles = StyleSheet.create({
     width: normalized(110),
     marginTop: normalized(5),
     borderRadius: normalized(5),
+    alignSelf: "center",
   },
   priceTxt: {
     color: AppColors.themeColor.dark,
@@ -116,3 +106,4 @@ const styles = StyleSheet.create({
     fontFamily: AppFonts.PoppinsSemiBold,
   },
 });
+//

@@ -1,4 +1,5 @@
 import {
+  Animated,
   Image,
   SafeAreaView,
   ScrollView,
@@ -7,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import ProductHeader from "../Components/ProductHeader";
 import {
@@ -36,6 +37,11 @@ const ProductDetailScreen = (props: ScreenProps) => {
   const [count, setCount] = useState(1);
   const cartDetail = useSelector((state: any) => state.SliceReducer.cartDetail);
   const { updateProductList } = CartManager();
+  const [price, setPrice] = useState(item?.price || item?.sizeNPrice[0]?.price);
+  const [selectedSize, setSelectedSize] = useState(
+    item?.price || item?.sizeNPrice[0]?.size || ""
+  );
+
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
@@ -49,7 +55,6 @@ const ProductDetailScreen = (props: ScreenProps) => {
         }}
         cartDetail={cartDetail}
       />
-
       <View>
         <ProductSliderComp
           productImagesList={item?.images}
@@ -71,8 +76,41 @@ const ProductDetailScreen = (props: ScreenProps) => {
           </View> */}
         </View>
         <Text style={styles.priceTxt}>
-          {isRtl ? `${item?.price} روپے` : `Rs. ${item?.price}`}
+          {isRtl ? `${price} روپے` : `Rs. ${price}`}
         </Text>
+        <Text style={styles.desc}>Available Sizes:</Text>
+
+        <View style={styles.sizeWrapper}>
+          {item?.sizeNPrice.map((item: any, index: any) => {
+            const scaleAnim = useRef(new Animated.Value(1)).current;
+
+            useEffect(() => {
+              Animated.timing(scaleAnim, {
+                toValue: item?.size == selectedSize ? 1.1 : 1,
+                duration: 200,
+                useNativeDriver: true,
+              }).start();
+            }, [selectedSize]);
+            return (
+              <TouchableOpacity
+                activeOpacity={0.7}
+                style={{
+                  ...styles.sizeCont,
+                  borderWidth: item?.size == selectedSize ? 1 : 0,
+                  borderColor: AppColors.themeColor.dark,
+                  transform: [{ scale: scaleAnim }],
+                }}
+                onPress={() => {
+                  setSelectedSize(item?.size);
+                  setPrice(item?.price);
+                }}
+              >
+                <Text style={styles.sizeTxt}>{item?.size}</Text>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
         <Text style={styles.desc}>{isRtl ? "تفصیل:" : "Description:"}</Text>
         <Text
           style={{ ...styles.descTxt, textAlign: isRtl ? "right" : "left" }}
@@ -97,7 +135,10 @@ const ProductDetailScreen = (props: ScreenProps) => {
             const updateItem = { ...item, count: count };
             updateProductList(updateItem);
           }}
-          mainContainer={{ width: normalized(150), height: normalized(40) }}
+          mainContainer={{
+            width: normalized(150),
+            height: normalized(40),
+          }}
         />
       </View>
     </View>
@@ -113,7 +154,6 @@ const styles = StyleSheet.create({
     fontFamily: AppFonts.PoppinsSemiBold,
     marginTop: normalized(10),
     width: ScreenSize.width - normalized(30),
-    paddingHorizontal: normalized(10),
   },
   scrollView: {
     flex: 1,
@@ -171,5 +211,25 @@ const styles = StyleSheet.create({
     marginLeft: normalized(20),
     position: "absolute",
     bottom: normalized(10),
+  },
+  sizeCont: {
+    height: normalized(30),
+    width: normalized(80),
+    backgroundColor: AppColors.grey.greyLevel0,
+    borderRadius: normalized(5),
+    marginRight: normalized(10),
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  sizeTxt: {
+    fontSize: normalized(13),
+    color: AppColors.black.black,
+    fontFamily: AppFonts.PoppinsSemiBold,
+  },
+  sizeWrapper: {
+    flexDirection: "row",
+    gap: normalized(5),
+    flexWrap: "wrap",
+    marginTop: normalized(8),
   },
 });

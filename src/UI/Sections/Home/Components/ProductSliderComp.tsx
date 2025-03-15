@@ -43,7 +43,8 @@ const ProductSliderComp = (props: any) => {
                   <AppImageViewer
                     source={{ uri: image?.url }}
                     style={styles.productPic}
-                    resizeMode={"contain"}
+                    resizeMode={"cover"}
+                    // resizeMode={"contain"}
                   />
                 </TouchableOpacity>
               );
@@ -88,7 +89,7 @@ const ProductSliderComp = (props: any) => {
 const styles = StyleSheet.create({
   productPic: {
     resizeMode: "contain",
-    height: normalized(300),
+    height: ScreenSize.width - normalized(20),
     width: ScreenSize.width - normalized(20),
     alignSelf: "center",
     borderRadius: normalized(10),

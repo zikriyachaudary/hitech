@@ -895,6 +895,7 @@ const AddProducScreen = (props: ScreenProps) => {
       {openImage ? (
         <AppImagePicker
           limit={10 - imageList?.length}
+          mediaType="Profile"
           onClose={() => {
             setOpenImage(false);
           }}

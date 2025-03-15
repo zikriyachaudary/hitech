@@ -20,7 +20,6 @@ import {
   ScreenProps,
 } from "../../../../Utils/AppConstants";
 import ProfileHeader from "../Components/ProfileHeader";
-import CategoryModal from "../Components/CategoryModal";
 import ProductItem from "../Components/ProductItem";
 import { Routes } from "../../../../Utils/Routes";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,7 +34,6 @@ import { AppStrings } from "../../../../Utils/AppStrings";
 import CategorySelectionModal from "../../../Components/CustomModal/CategorySelectionModal";
 
 const HomeScreen = (props: ScreenProps) => {
-  const [isShowCategoryModal, setIsShowCategoryModal] = useState<any>(false);
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
@@ -161,7 +159,14 @@ const HomeScreen = (props: ScreenProps) => {
             contentContainerStyle={{
               paddingHorizontal: normalized(15),
             }}
-            ListFooterComponent={<View style={{ height: normalized(30) }} />}
+            numColumns={2}
+            columnWrapperStyle={{
+              gap: normalized(10),
+              flex: 1,
+              // alignItems: "center",
+              // justifyContent: "center",
+            }}
+            ListFooterComponent={<View style={{ height: normalized(50) }} />}
             renderItem={({ item }) => {
               return (
                 <ProductItem
