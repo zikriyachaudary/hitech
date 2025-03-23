@@ -34,4 +34,8 @@ export const Routes = {
     GoldNSilverScreen: "GoldNSilverScreen",
     UserOrderDetail: "UserOrderDetail",
   },
+  Chat: {
+    ChatListing: "ChatListingScreen",
+    ChatScreen: "ChatScreen",
+  },
 };

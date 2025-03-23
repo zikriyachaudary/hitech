@@ -13,4 +13,5 @@ export interface IReduxState {
   productCategoryList: any;
   pushObj: any;
   showNoti: boolean;
+  threadList: any;
 }

@@ -26,6 +26,10 @@ const Container = ({ navigation }: any) => {
       icon: AppImages.bottomBar.profile,
       title: selector?.isRtl ? "پروفائل" : "Profile",
     },
+    {
+      icon: AppImages.bottomBar.profile,
+      title: selector?.isRtl ? "پروفائل" : "Chat",
+    },
   ];
 
   return (

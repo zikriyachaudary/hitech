@@ -82,3 +82,11 @@ export const USER_TYPE = {
   Silver: "Silver",
   Gold: "Gold",
 };
+
+export const Chat_Message_Type = {
+  text: "text",
+  audio: "audio",
+  video: "video",
+  image: "image",
+  document: "document",
+};

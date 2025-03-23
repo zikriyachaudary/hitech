@@ -109,3 +109,38 @@ export const getUserOrdersList = async (userId: any, onComplete: any) => {
     onComplete({ status: false, error: error.message });
   }
 };
+
+export const getUserCompleteListReq = async (
+  onComplete: (list: any, lastVisible: any) => void,
+  lastVisible: any = null,
+  limit: number = 10
+) => {
+  let userList: any = [];
+  try {
+    let query = firestore()
+      .collection(Collections.CUSTOMERS_COLLECTION)
+      // .orderBy("createdAt")
+      .limit(limit);
+
+    if (lastVisible) {
+      query = query.startAfter(lastVisible);
+    }
+
+    const querySnapshot = await query.get();
+
+    querySnapshot.forEach((doc) => {
+      let completeObj = {
+        ...doc.data(),
+      };
+      if (completeObj?.isEmailVerified) {
+        userList.push(completeObj);
+      }
+    });
+
+    const lastDoc = querySnapshot.docs[querySnapshot.docs.length - 1];
+
+    onComplete(userList, lastDoc);
+  } catch (error) {
+    console.error("Error fetching users with pagination:", error);
+  }
+};

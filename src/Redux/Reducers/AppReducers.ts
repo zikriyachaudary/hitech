@@ -16,6 +16,7 @@ const initialState: IReduxState = {
   productCategoryList: [],
   pushObj: null,
   showNoti: false,
+  threadList: [],
 };
 
 export const Reducer = createSlice({
@@ -68,6 +69,9 @@ export const Reducer = createSlice({
     setIsShowNoti: (state, action) => {
       state.showNoti = action.payload;
     },
+    setThreadList: (state, action) => {
+      state.threadList = action.payload;
+    },
   },
 });
 
@@ -87,6 +91,7 @@ export const {
   setProductCategoryList,
   setPushNotifiObj,
   setIsShowNoti,
+  setThreadList,
 } = Reducer.actions;
 
 export default Reducer.reducer;

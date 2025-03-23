@@ -8,7 +8,12 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
-import { setTab, setUserData } from "../../../../Redux/Reducers/AppReducers";
+import {
+  setIsAlertShow,
+  setIsLoader,
+  setTab,
+  setUserData,
+} from "../../../../Redux/Reducers/AppReducers";
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -28,6 +33,8 @@ import ProfileBar from "../Components/ProfileBar";
 import LogoutModal from "../Components/LogoutModal";
 import { Routes } from "../../../../Utils/Routes";
 import CommonDataManager from "../../../../Utils/CommonManager";
+import { AppStrings } from "../../../../Utils/AppStrings";
+import ThreadManager from "../../../../ChatModule/ThreadManger";
 
 const ProfileScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -46,6 +53,69 @@ const ProfileScreen = (props: ScreenProps) => {
     setUserDataInAsync({ isRtl: true });
   };
   const dispatch = useDispatch();
+
+  /////////////////////////////
+
+  const goToChat = async (otherUserData: any) => {
+    if (!selector?.isNetConnected) {
+      dispatch(
+        setIsAlertShow({
+          value: true,
+          message: AppStrings.Network.internetError,
+        })
+      );
+      return;
+    }
+    let threadObj = null;
+    ThreadManager.instance.checkIsConnectionExist(
+      selector?.userData?.userId,
+      otherUserData?.userId,
+      (threadData: any) => {
+        threadObj = threadData;
+      }
+    );
+    if (threadObj) {
+      props?.navigation.navigate(Routes.Chat.ChatScreen, {
+        thread: threadObj,
+      });
+    } else {
+      let senderObj: any = {
+        id: selector?.userData?.userId?.toString(),
+        _id: selector?.userData?.userId?.toString(),
+        image: selector?.userData?.profile_Image,
+        username: selector?.userData?.fullName,
+      };
+      let reciverObj: any = {
+        id: otherUserData?.userId,
+        _id: otherUserData?.userId,
+        image: otherUserData?.profileImage,
+        username: otherUserData?.fullName,
+      };
+
+      dispatch(setIsLoader(true));
+      let msg = "";
+      let docId = ThreadManager.instance.makeId(7);
+      await ThreadManager.instance.onSendCall(
+        senderObj,
+        reciverObj,
+        docId,
+        msg,
+        async (data: any) => {
+          dispatch(setIsLoader(false));
+          if (data != "error") {
+            dispatch(setIsLoader(true));
+            dispatch(setIsLoader(false));
+            props?.navigation.push(Routes.Chat.ChatScreen, {
+              thread: data,
+            });
+          } else {
+            alert(JSON.stringify(data));
+          }
+        }
+      );
+    }
+  };
+
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
@@ -67,7 +137,20 @@ const ProfileScreen = (props: ScreenProps) => {
         List={isAdmin ? adminProfileList : profileBarList}
         setValue={(id: any) => {
           if (id == 1) {
-            props?.navigation?.navigate(Routes.Home.EditProfile);
+            let obj = {
+              email: "testing@yopmail.com",
+              fullName: "Testing User",
+              phoneNumber: "+923244701915",
+              profileImage:
+                "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/KPXaHR9D96ED07-63BE-4F4D-846B-7895376E50C3.jpg?alt=media&token=32340295-3a0d-41a7-abc5-9a744cdf9802",
+              secretId: "12345678",
+              userId: "mF6Mz23i",
+              userType: "Silver",
+            };
+
+            goToChat(obj);
+
+            // props?.navigation?.navigate(Routes.Home.EditProfile);
           } else if (id == 2) {
             props?.navigation?.navigate(Routes.Home.DeliveryAddress);
           } else if (id == 3) {

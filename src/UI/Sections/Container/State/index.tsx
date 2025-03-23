@@ -1,4 +1,7 @@
-import { NotificationStack } from "../../../../Navigation/InnerStack";
+import {
+  ChatStack,
+  NotificationStack,
+} from "../../../../Navigation/InnerStack";
 import { ProfileStack } from "../../../../Navigation/InnerStack";
 import { OrderStack } from "../../../../Navigation/InnerStack";
 import { HomeStack } from "../../../../Navigation/InnerStack";
@@ -12,5 +15,7 @@ export const setContainerStack = (index: any) => {
     return <NotificationStack />;
   } else if (index == 3) {
     return <ProfileStack />;
+  } else if (index == 4) {
+    return <ChatStack />;
   }
 };

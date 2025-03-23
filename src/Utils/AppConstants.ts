@@ -190,12 +190,35 @@ export const AppImages = {
     orders: require("../UI/assets/Images/User/orders.png"),
     amount: require("../UI/assets/Images/User/amount.png"),
   },
+  Chat: {
+    sendIcon: require("../UI/assets/Images/Chat/sendIcon.png"),
+    emptyChat: require("../UI/assets/Images/Chat/emptyChat.png"),
+    attachment: require("../UI/assets/Images/Chat/attachment.png"),
+    smile: require("../UI/assets/Images/Chat/smile.png"),
+    singleTick: require("../UI/assets/Images/Chat/singleTick.png"),
+    doubleTick: require("../UI/assets/Images/Chat/doubleTick.png"),
+    CloseIcon: require("../UI/assets/Images/Chat/CloseIcon.png"),
+    Voice: require("../UI/assets/Images/Chat/Voice.png"),
+    Camera: require("../UI/assets/Images/Chat/Camera.png"),
+    Gallery: require("../UI/assets/Images/Chat/Gallery.png"),
+    Video: require("../UI/assets/Images/Chat/Video.png"),
+    Document: require("../UI/assets/Images/Chat/Document.png"),
+    msgSeen: require("../UI/assets/Images/Chat/msgSeen.png"),
+    chatListing: require("../UI/assets/Images/Chat/chatListing.png"),
+    chatIcon: require("../UI/assets/Images/Chat/chatIcon.png"),
+    plus: require("../UI/assets/Images/Chat/plus.png"),
+    mic: require("../UI/assets/Images/Chat/mic.png"),
+    doc: require("../UI/assets/Images/Chat/doc.png"),
+    phone: require("../UI/assets/Images/Chat/phone.png"),
+    chat: require("../UI/assets/Images/Chat/chat.png"),
+  },
 };
 
 export const lottieAnimation = {
   tickAnimation: require("../UI/assets/animation/TickAnim.json"),
   closeAnimation: require("../UI/assets/animation/CloseAnim.json"),
   waringAnimation: require("../UI/assets/animation/warningAnim.json"),
+  recordingAnimation: require("../UI/assets/animation/recording.json"),
 };
 
 export const imagePickerConstants = [
@@ -208,6 +231,19 @@ export const imagePickerConstants = [
     id: 1,
     image: AppImages.Modal.Camera,
     text: "Take a photo from Camera",
+  },
+];
+
+export const mediaSelectionConstants = [
+  {
+    id: 1,
+    image: AppImages.Chat.Gallery,
+    text: "upload image",
+  },
+  {
+    id: 2,
+    image: AppImages.Chat.Document,
+    text: "Upload document",
   },
 ];
 

@@ -5,6 +5,8 @@ import HomeScreen from "../UI/Sections/Home/Screens/HomeScreen";
 import OrderScreen from "../UI/Sections/Orders/Screens/OrderScreen";
 import NotificationScreen from "../UI/Sections/Notifications/Screens/NotificationScreen";
 import ProfileScreen from "../UI/Sections/Profile/Screens/ProfileScreen";
+import ChatScreen from "../UI/Sections/Chat/Screens/ChatScreen";
+import ChatListing from "../UI/Sections/Chat/Screens/ChatListing";
 const Stack = createNativeStackNavigator();
 
 export const HomeStack = () => {
@@ -61,6 +63,19 @@ export const ProfileStack = () => {
         name={Routes.Home.ProfileScreen}
         component={ProfileScreen}
       />
+    </Stack.Navigator>
+  );
+};
+
+export const ChatStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName={"ChatListing"}
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name={"ChatListing"} component={ChatListing} />
     </Stack.Navigator>
   );
 };

@@ -19,6 +19,7 @@ import EditProfileScreen from "../UI/Sections/Profile/Screens/EditProfileScreen"
 import LanguageScreen from "../UI/Sections/Profile/Screens/LanguageScreen";
 import GoldNSilverScreen from "../UI/Sections/Home/Screens/GoldNSilverScreen";
 import UserOrderDetailScreen from "../UI/Sections/Home/Screens/UserOrderDetailScreen";
+import ChatScreen from "../UI/Sections/Chat/Screens/ChatScreen";
 
 const MainStack = createStackNavigator();
 
@@ -83,6 +84,7 @@ const MainNavigation = () => {
         name={Routes.Admin.UserOrderDetail}
         component={UserOrderDetailScreen}
       />
+      <MainStack.Screen name={Routes.Chat.ChatScreen} component={ChatScreen} />
     </MainStack.Navigator>
   );
 };

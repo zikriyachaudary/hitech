@@ -22,6 +22,8 @@ import {
 import { notifications } from "react-native-firebase-push-notifications";
 import LocalNotification from "./UI/Components/LocalNotification";
 import { updateFCMTokenReq } from "./Network/Services/AuthServices";
+import ThreadManager from "./ChatModule/ThreadManger";
+import { setUpChat } from "./Utils/Helper";
 
 const AppContainer = () => {
   const selector: any = useSelector(
@@ -44,6 +46,7 @@ const AppContainer = () => {
   useEffect(() => {
     if (selector?.userData) {
       registerDevice();
+      setChat();
     }
   }, [selector?.userData]);
 
@@ -180,6 +183,18 @@ const AppContainer = () => {
   };
 
   /////////////////
+
+  const setChat = async () => {
+    if (selector?.userData?.userId) {
+      ThreadManager.instance.setupRedux(selector, dispatch);
+      await setUpChat(async (result: any) => {
+        await registerDevice();
+        setTimeout(async () => {
+          ThreadManager.instance.setAppLoaded();
+        }, 3000);
+      });
+    }
+  };
 
   return (
     <View style={AppStyles.MainStyle}>
