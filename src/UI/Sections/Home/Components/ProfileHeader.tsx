@@ -1,4 +1,11 @@
-import { Image, StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 import React from "react";
 import {
   AppColors,
@@ -10,17 +17,27 @@ import AppImageViewer from "../../../Components/AppImageView";
 const ProfileHeader = (props: any) => {
   return (
     <View style={styles.mainCont}>
-      <AppImageViewer
-        source={{ uri: props?.profileImage }}
+      <View
         style={{
+          flex: 1,
+          borderWidth: 1,
+          borderRadius: normalized(80),
           height: normalized(40),
-          width: normalized(40),
-          borderRadius: normalized(20),
-          // borderWidth: 1,
-          // borderColor: AppColors.themeColor.dark,
+          marginRight: normalized(10),
+          borderColor: AppColors.grey.greyLevel1,
+          paddingHorizontal: normalized(10),
         }}
-      />
-      <Text style={styles.titleTxt}>{props?.title}</Text>
+      >
+        <TextInput
+          placeholder="Search"
+          placeholderTextColor={AppColors.grey.greyLevel6}
+          style={{
+            flex: 1,
+          }}
+          value={props?.search}
+          onChangeText={(e) => props?.atSearch(e)}
+        />
+      </View>
       {props?.rightIcon ? (
         <TouchableOpacity activeOpacity={0.7} onPress={props?.onRightIconPress}>
           <Image
@@ -29,6 +46,7 @@ const ProfileHeader = (props: any) => {
               width: normalized(25),
               height: normalized(25),
               resizeMode: "contain",
+              marginHorizontal: normalized(8),
             }}
           />
         </TouchableOpacity>
@@ -48,23 +66,11 @@ export default ProfileHeader;
 const styles = StyleSheet.create({
   mainCont: {
     height: normalized(60),
-    width: "92%",
-    // borderBottomLeftRadius: normalized(10),
-    // borderBottomRightRadius: normalized(10),
-    borderRadius: normalized(10),
-    shadowColor: AppColors.black.black,
-    shadowOpacity: 0.3,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    elevation: 3,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: AppColors.white.white,
-    paddingHorizontal: normalized(10),
-    marginHorizontal: normalized(15),
+    marginHorizontal: normalized(10),
     zIndex: 99,
   },
   titleTxt: {

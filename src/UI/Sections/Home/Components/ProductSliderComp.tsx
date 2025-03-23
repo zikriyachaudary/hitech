@@ -118,6 +118,7 @@ const styles = StyleSheet.create({
     height: normalized(10),
     borderRadius: normalized(10 / 2),
     marginHorizontal: normalized(-5),
+    marginBottom: normalized(-8),
   },
   noImgAttCont: {
     borderColor: AppColors.grey.greyLevel1,

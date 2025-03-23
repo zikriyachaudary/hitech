@@ -26,20 +26,27 @@ import { useSelector } from "react-redux";
 import CartManager from "../../../../Hooks/CartManager";
 import { Routes } from "../../../../Utils/Routes";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
+import { USER_TYPE } from "../../../../Utils/AppStrings";
 
 const ProductDetailScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
   const isRtl = selector?.isRtl;
-
+  const isGolderUser = selector?.userData?.userType == USER_TYPE.Gold;
   const item = props?.route?.params?.item;
+
   const [count, setCount] = useState(1);
   const cartDetail = useSelector((state: any) => state.SliceReducer.cartDetail);
   const { updateProductList } = CartManager();
-  const [price, setPrice] = useState(item?.price || item?.sizeNPrice[0]?.price);
+  const [price, setPrice] = useState(
+    isGolderUser
+      ? item?.goldenPrice || item?.sizeNPrice[0]?.goldenPrice
+      : item?.price || item?.sizeNPrice[0]?.price
+  );
+
   const [selectedSize, setSelectedSize] = useState(
-    item?.price || item?.sizeNPrice[0]?.size || ""
+    item?.sizeNPrice[0]?.size || ""
   );
 
   return (
@@ -78,38 +85,42 @@ const ProductDetailScreen = (props: ScreenProps) => {
         <Text style={styles.priceTxt}>
           {isRtl ? `${price} روپے` : `Rs. ${price}`}
         </Text>
-        <Text style={styles.desc}>Available Sizes:</Text>
+        {item?.sizeNPrice?.length > 0 && (
+          <Text style={styles.desc}>Available Sizes:</Text>
+        )}
 
-        <View style={styles.sizeWrapper}>
-          {item?.sizeNPrice.map((item: any, index: any) => {
-            const scaleAnim = useRef(new Animated.Value(1)).current;
+        {item?.sizeNPrice?.length > 0 && (
+          <View style={styles.sizeWrapper}>
+            {item?.sizeNPrice.map((item: any, index: any) => {
+              const scaleAnim = useRef(new Animated.Value(1)).current;
 
-            useEffect(() => {
-              Animated.timing(scaleAnim, {
-                toValue: item?.size == selectedSize ? 1.1 : 1,
-                duration: 200,
-                useNativeDriver: true,
-              }).start();
-            }, [selectedSize]);
-            return (
-              <TouchableOpacity
-                activeOpacity={0.7}
-                style={{
-                  ...styles.sizeCont,
-                  borderWidth: item?.size == selectedSize ? 1 : 0,
-                  borderColor: AppColors.themeColor.dark,
-                  transform: [{ scale: scaleAnim }],
-                }}
-                onPress={() => {
-                  setSelectedSize(item?.size);
-                  setPrice(item?.price);
-                }}
-              >
-                <Text style={styles.sizeTxt}>{item?.size}</Text>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+              useEffect(() => {
+                Animated.timing(scaleAnim, {
+                  toValue: item?.size == selectedSize ? 1.1 : 1,
+                  duration: 200,
+                  useNativeDriver: true,
+                }).start();
+              }, [selectedSize]);
+              return (
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={{
+                    ...styles.sizeCont,
+                    borderWidth: item?.size == selectedSize ? 1 : 0,
+                    borderColor: AppColors.themeColor.dark,
+                    transform: [{ scale: scaleAnim }],
+                  }}
+                  onPress={() => {
+                    setSelectedSize(item?.size);
+                    setPrice(isGolderUser ? item?.goldenPrice : item?.price);
+                  }}
+                >
+                  <Text style={styles.sizeTxt}>{item?.size}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
 
         <Text style={styles.desc}>{isRtl ? "تفصیل:" : "Description:"}</Text>
         <Text
@@ -132,7 +143,15 @@ const ProductDetailScreen = (props: ScreenProps) => {
         <FilledButton
           label={isRtl ? "کارٹ میں شامل کریں" : "Add To Cart"}
           onPress={async () => {
-            const updateItem = { ...item, count: count };
+            let tempItem = { ...item };
+            delete tempItem.sizeNPrice;
+            const updateItem = {
+              ...tempItem,
+              count,
+              price,
+              size: selectedSize,
+            };
+            console.log("item --0----   ", updateItem);
             updateProductList(updateItem);
           }}
           mainContainer={{

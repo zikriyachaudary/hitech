@@ -1,6 +1,8 @@
 import {
   FlatList,
   Image,
+  KeyboardAvoidingView,
+  Platform,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -16,6 +18,7 @@ import {
   AppImages,
   dummyList,
   dummyProfile,
+  hv,
   normalized,
   ScreenProps,
 } from "../../../../Utils/AppConstants";
@@ -44,6 +47,7 @@ const HomeScreen = (props: ScreenProps) => {
   const [selectedSubCategory, setSelectedSubCategory] = useState<any>([]);
   const [categoryModal, setCategoryModal] = useState(false);
   const [filterProductList, setFilterProductList] = useState([]);
+  const [search, setSearch] = useState("");
 
   const isFocused = useIsFocused();
 
@@ -83,6 +87,35 @@ const HomeScreen = (props: ScreenProps) => {
       return false;
     });
     setFilterProductList(updatedFilterList);
+  };
+
+  const searchProduct = (value: any) => {
+    if (!value) {
+      return;
+    }
+
+    const lowerValue = value.toLowerCase();
+
+    if (productsList?.length == 0) return;
+
+    const filtered = productsList.filter((product: any) => {
+      if (isRtl) {
+        return (
+          product.rtlName?.toLowerCase().includes(lowerValue) ||
+          product.rtlCategory?.category?.toLowerCase().includes(lowerValue) ||
+          product.rtlSubCat?.name?.toLowerCase().includes(lowerValue)
+        );
+      } else {
+        return (
+          product.name?.toLowerCase().includes(lowerValue) ||
+          product.category?.category?.toLowerCase().includes(lowerValue) ||
+          product.subCat?.name?.toLowerCase().includes(lowerValue)
+        );
+      }
+    });
+    console.log("filter ----  ", filtered);
+
+    setFilterProductList(filtered);
   };
 
   return (
@@ -147,39 +180,48 @@ const HomeScreen = (props: ScreenProps) => {
             onRightIconPress={() => {
               setCategoryModal(true);
             }}
-          />
-          <FlatList
-            data={
-              selectedCategory?.category?.length > 0
-                ? filterProductList
-                : productsList
-            }
-            showsVerticalScrollIndicator={false}
-            keyExtractor={(item, index) => index.toString()}
-            contentContainerStyle={{
-              paddingHorizontal: normalized(15),
-            }}
-            numColumns={2}
-            columnWrapperStyle={{
-              gap: normalized(10),
-              flex: 1,
-              // alignItems: "center",
-              // justifyContent: "center",
-            }}
-            ListFooterComponent={<View style={{ height: normalized(50) }} />}
-            renderItem={({ item }) => {
-              return (
-                <ProductItem
-                  item={item}
-                  onItemPress={(item: any) => {
-                    props?.navigation.navigate(Routes.Home.productDetail, {
-                      item,
-                    });
-                  }}
-                />
-              );
+            search={search}
+            atSearch={(e: any) => {
+              setSearch(e);
+              searchProduct(e);
             }}
           />
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "undefined"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? hv(10) : 0}
+          >
+            <FlatList
+              data={
+                selectedCategory?.category?.length > 0 || search?.length > 0
+                  ? filterProductList
+                  : productsList
+              }
+              showsVerticalScrollIndicator={false}
+              keyExtractor={(item, index) => index.toString()}
+              contentContainerStyle={{
+                paddingHorizontal: normalized(15),
+              }}
+              numColumns={2}
+              columnWrapperStyle={{
+                gap: normalized(10),
+                flex: 1,
+              }}
+              ListFooterComponent={<View style={{ height: normalized(50) }} />}
+              renderItem={({ item }) => {
+                return (
+                  <ProductItem
+                    item={item}
+                    onItemPress={(item: any) => {
+                      props?.navigation.navigate(Routes.Home.productDetail, {
+                        item,
+                      });
+                    }}
+                  />
+                );
+              }}
+            />
+          </KeyboardAvoidingView>
         </>
       )}
       {categoryModal && (
