@@ -6,10 +6,12 @@ import {
   AppImages,
   normalized,
 } from "../../../../Utils/AppConstants";
+import { useSelector } from "react-redux";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const ProductHeader = (props: any) => {
   return (
-    <View style={styles.mainCont}>
+    <View style={[styles.mainCont, { flexDirection: "row" }]}>
       {props.leftIcon && (
         <TouchableOpacity
           style={styles.imageCont}
@@ -47,7 +49,6 @@ export default ProductHeader;
 const styles = StyleSheet.create({
   mainCont: {
     height: normalized(50),
-    flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: normalized(20),

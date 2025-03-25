@@ -21,14 +21,13 @@ import {
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
-import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 import { addAddressReq } from "../../../../Network/Services/AddressServices";
 
 const UpdateDeliveryScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
-  const userData = selector?.userData || null;
+  const isRtl = selector?.isRtl;
   const dispatch = useDispatch();
 
   const item = props?.route?.params?.item;
@@ -128,7 +127,15 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
       <SafeAreaView />
       <CustomHeader
         onPress={() => props?.navigation?.goBack()}
-        title={item ? "Update Delivery Address" : "Add Delivery Adddress"}
+        title={
+          item
+            ? isRtl
+              ? "ڈلیوری ایڈریس اپ ڈیٹ کریں"
+              : "Update Delivery Address"
+            : isRtl
+            ? "ڈلیوری ایڈریس شامل کریں"
+            : "Add Delivery Address"
+        }
         {...(item
           ? {
               icon: [AppImages.Products.delete],

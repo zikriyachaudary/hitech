@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import React from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import Bar from "./Bar";
 import { AppColors, normalized } from "../../../Utils/AppConstants";
 import { setTab } from "../../../Redux/Reducers/AppReducers";
@@ -11,6 +11,7 @@ const BottomBar = ({ bottomBarList, navigation, tab }: any) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const isRtl = selector?.isRtl;
 
   return (
     <View
@@ -33,7 +34,12 @@ const BottomBar = ({ bottomBarList, navigation, tab }: any) => {
       <View
         style={{
           width: "100%",
-          height: normalized(100),
+          height:
+            Platform.OS == "ios"
+              ? isRtl
+                ? normalized(140)
+                : normalized(100)
+              : normalized(100),
           flexDirection: "row",
           justifyContent: "space-around",
           backgroundColor: AppColors.white.white,
@@ -41,7 +47,12 @@ const BottomBar = ({ bottomBarList, navigation, tab }: any) => {
           borderTopLeftRadius: normalized(25),
           borderTopRightRadius: normalized(25),
           zIndex: 20,
-          paddingTop: normalized(10),
+          paddingTop:
+            Platform.OS == "ios"
+              ? isRtl
+                ? normalized(20)
+                : normalized(10)
+              : normalized(10),
           borderColor: AppColors.themeColor.dark,
           borderWidth: 1,
         }}

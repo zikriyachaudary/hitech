@@ -32,6 +32,7 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const isRtl = selector?.isRtl;
   const userData = selector?.userData;
 
   const dispatch = useDispatch();
@@ -64,11 +65,7 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
   const fetchAddress = async () => {
     addressList?.length == 0 && dispatch(setIsLoader(true));
     await fetchAddressReq(userData?.userId, (resp: any) => {
-      console.log("resp --0----- ", resp);
-
       if (resp?.status) {
-        console.log("address list -->>  ", resp?.data);
-
         setAddressList(resp?.data);
       }
     });
@@ -84,7 +81,7 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
       <SafeAreaView />
       <CustomHeader
         onPress={() => props?.navigation?.goBack()}
-        title={"Delivery Address"}
+        title={isRtl ? "ڈلیوری ایڈریس" : "Delivery Address"}
         icon={[AppImages.Home.PlusBlack]}
         rightIconCont={{
           width: normalized(33),

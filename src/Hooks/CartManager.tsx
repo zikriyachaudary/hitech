@@ -35,7 +35,6 @@ const CartManager = () => {
       const price = Number(el?.unitPrice || el?.price) * el?.count;
       totalPrice = totalPrice + price;
     });
-    console.log("total price ---->>>   ", totalPrice);
 
     return Number(isTotalPrice ? totalPrice + 200 : totalPrice).toFixed(2);
   };

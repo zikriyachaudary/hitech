@@ -19,7 +19,7 @@ const ProductItem = (props: any) => {
 
   return (
     <TouchableOpacity
-      activeOpacity={0.7}
+      activeOpacity={1}
       style={{
         padding: normalized(6),
         borderWidth: 1,
@@ -89,7 +89,8 @@ const styles = StyleSheet.create({
     height: normalized(35),
   },
   priceCont: {
-    height: normalized(25),
+    // height: normalized(25),
+    // lineHeight: normalized(10),
     backgroundColor: AppColors.white.white,
     borderWidth: 1,
     borderColor: AppColors.themeColor.dark,
