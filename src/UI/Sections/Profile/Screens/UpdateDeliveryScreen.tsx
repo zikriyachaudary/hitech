@@ -142,12 +142,18 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
               onRightIconPress: () => {
                 // Handle delete action here
               },
+              rightIconCont: {
+                // backgroundColor: "green",
+              },
             }
           : {})}
       />
+
       <ScrollView style={styles.mainCont}>
         <View style={{ height: normalized(20) }} />
-        <Text style={styles.head}>House Number</Text>
+        <Text style={[styles.head, { textAlign: isRtl ? "right" : "left" }]}>
+          {isRtl ? "مکان نمبر" : "House Number"}
+        </Text>
         <CustomInput
           onSubmitEditing={() => focusNextField(streetRef)}
           placeHolderColor={AppColors.grey.greyLevel4}
@@ -159,7 +165,10 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
           value={house}
           errorMsg={houseError}
         />
-        <Text style={styles.head}>Street Number</Text>
+
+        <Text style={[styles.head, { textAlign: isRtl ? "right" : "left" }]}>
+          {isRtl ? "گلی نمبر" : "Street Number"}
+        </Text>
         <CustomInput
           onSubmitEditing={() => focusNextField(areaRef)}
           placeHolderColor={AppColors.grey.greyLevel4}
@@ -172,7 +181,9 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
           errorMsg={streetError}
         />
 
-        <Text style={styles.head}>Area</Text>
+        <Text style={[styles.head, { textAlign: isRtl ? "right" : "left" }]}>
+          {isRtl ? "علاقہ" : "Area"}
+        </Text>
         <CustomInput
           onSubmitEditing={() => focusNextField(cityRef)}
           placeHolderColor={AppColors.grey.greyLevel4}
@@ -185,7 +196,9 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
           errorMsg={areaError}
         />
 
-        <Text style={styles.head}>City</Text>
+        <Text style={[styles.head, { textAlign: isRtl ? "right" : "left" }]}>
+          {isRtl ? "شہر" : "City"}
+        </Text>
         <CustomInput
           onSubmitEditing={() => focusNextField(addressRef)}
           placeHolderColor={AppColors.grey.greyLevel4}
@@ -198,7 +211,9 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
           errorMsg={cityError}
         />
 
-        <Text style={styles.head}>Complete Address</Text>
+        <Text style={[styles.head, { textAlign: isRtl ? "right" : "left" }]}>
+          {isRtl ? "مکمل پتہ" : "Complete Address"}
+        </Text>
         <CustomInput
           placeHolderColor={AppColors.grey.greyLevel4}
           setValue={(val: string) => {
@@ -209,14 +224,26 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
           value={completeAddress}
           container={{ height: normalized(120) }}
           isMultiLine={true}
-          textInputStyle={{ textAlignVertical: "top", height: normalized(120) }}
+          textInputStyle={{
+            textAlignVertical: "top",
+            height: normalized(120),
+            textAlign: isRtl ? "right" : "left",
+          }}
           maxLength={1000}
           errorMsg={addressError}
         />
 
         <FilledButton
           onPress={() => onAddAddress()}
-          label={item ? "Update Address" : "Add Address"}
+          label={
+            isRtl
+              ? item
+                ? "پتہ اپ ڈیٹ کریں"
+                : "پتہ شامل کریں"
+              : item
+              ? "Update Address"
+              : "Add Address"
+          }
         />
       </ScrollView>
     </View>

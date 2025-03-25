@@ -126,9 +126,10 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
         />
       ) : (
         <View style={styles.emptyListCont}>
-          <Text style={styles.emptyTxt}>
-            No address added yet. Tap the button in the top right corner to add
-            a new address and complete the required details.
+          <Text style={[styles.emptyTxt]}>
+            {isRtl
+              ? "ابھی تک کوئی پتہ شامل نہیں کیا گیا۔ نیا پتہ شامل کرنے اور مطلوبہ تفصیلات مکمل کرنے کے لیے اوپر بائیں کونے میں موجود بٹن کو دبائیں۔"
+              : "No address added yet. Tap the button in the top right corner to add a new address and complete the required details."}
           </Text>
         </View>
       )}

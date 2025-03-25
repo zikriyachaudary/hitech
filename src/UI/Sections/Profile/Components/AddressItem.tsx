@@ -23,7 +23,9 @@ const AddressItem = (props: any) => {
     <TouchableOpacity
       style={{
         ...styles.mainCont,
-        borderColor: item?.isDefault ? AppColors.green.dark : "transparent",
+        borderColor: item?.isDefault
+          ? AppColors.themeColor.dark
+          : "transparent",
         borderWidth: 1,
       }}
       onPress={() => {
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
   editIconCont: {
     width: normalized(26),
     height: normalized(26),
-    backgroundColor: AppColors.red.dark,
+    backgroundColor: AppColors.themeColor.dark,
     borderRadius: normalized(30),
     alignItems: "center",
     justifyContent: "center",

@@ -45,7 +45,14 @@ const CustomHeader = (props: any) => {
           </TouchableOpacity>
         )}
 
-        <Text style={[styles.forgetText, props?.titleStyle]}>
+        <Text
+          style={[
+            styles.forgetText,
+            props?.titleStyle,
+            { textAlign: isRtl ? "right" : "left" },
+          ]}
+          numberOfLines={1}
+        >
           {props?.Text ?? props?.title}
         </Text>
       </View>
@@ -53,8 +60,8 @@ const CustomHeader = (props: any) => {
         style={{
           flexDirection: isRtl ? "row-reverse" : "row",
           gap: normalized(15),
-          paddingLeft: isRtl ? normalized(5) : 0,
-          paddingRight: isRtl ? 0 : normalized(5),
+          marginLeft: isRtl ? normalized(10) : 0,
+          marginRight: isRtl ? 0 : normalized(10),
         }}
       >
         {props?.icon
@@ -101,7 +108,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: normalized(3),
     backgroundColor: AppColors.white.white,
-    paddingHorizontal: normalized(3),
+    paddingHorizontal: normalized(5),
   },
   imageCont: {
     width: normalized(47),
@@ -124,6 +131,7 @@ const styles = StyleSheet.create({
     color: AppColors.black.black,
     marginLeft: normalized(10),
     fontWeight: "600",
+    width: normalized(230),
   },
   icon1: {
     width: normalized(24),
