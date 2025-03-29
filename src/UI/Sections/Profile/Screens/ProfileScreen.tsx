@@ -28,6 +28,7 @@ import ProfileBar from "../Components/ProfileBar";
 import LogoutModal from "../Components/LogoutModal";
 import { Routes } from "../../../../Utils/Routes";
 import CommonDataManager from "../../../../Utils/CommonManager";
+import ProfileList from "../Components/ProfileList";
 
 const ProfileScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -63,7 +64,8 @@ const ProfileScreen = (props: ScreenProps) => {
           userData?.fullName || userData?.firstName + " " + userData?.lastName
         )}
       </Text>
-      <ProfileBar
+
+      <ProfileList
         List={isAdmin ? adminProfileList : profileBarList}
         setValue={(id: any) => {
           if (id == 1) {
