@@ -69,14 +69,6 @@ const CartScreen = (props: ScreenProps) => {
     getUserAddress();
   }, []);
 
-  // const address = {
-  //   general: "House 00 Stree 00 Mohallah Lahore Pakistan",
-  //   street: "00",
-  //   house: "00",
-  //   Area: "Some Area here",
-  //   City: "Pakistan",
-  //   isDefault: true,
-  // };
   let productList = useSelector((state: any) => state.SliceReducer.cartDetail);
 
   const placeOrder = async () => {

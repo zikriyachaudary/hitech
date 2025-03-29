@@ -29,6 +29,7 @@ import LogoutModal from "../Components/LogoutModal";
 import { Routes } from "../../../../Utils/Routes";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import ProfileList from "../Components/ProfileList";
+import SimpleHeader from "../../../Components/CustomHeader/SimpleHeader";
 
 const ProfileScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -50,15 +51,18 @@ const ProfileScreen = (props: ScreenProps) => {
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
-      <Text style={styles.profile}>Profile</Text>
+      <SimpleHeader title={"Profile"} />
       <View style={{ height: normalized(20) }} />
-      <AppImageViewer
-        source={{
-          uri: selector?.userData?.profileImage || selector?.userData?.profile,
-        }}
-        style={styles.profileImg}
-        resizeMode="cover"
-      />
+      <View style={styles.profileImgCont}>
+        <AppImageViewer
+          source={{
+            uri:
+              selector?.userData?.profileImage || selector?.userData?.profile,
+          }}
+          style={styles.profileImg}
+          resizeMode="cover"
+        />
+      </View>
       <Text style={styles.username}>
         {CommonDataManager?.getSharedInstance()?.capitalizeEachWord(
           userData?.fullName || userData?.firstName + " " + userData?.lastName
@@ -127,10 +131,7 @@ const styles = StyleSheet.create({
   profileImg: {
     width: normalized(120),
     height: normalized(120),
-    borderRadius: normalized(10),
-    borderWidth: 1,
-    borderColor: AppColors.themeColor.dark,
-    borderStyle: "dashed",
+    borderRadius: normalized(8),
     alignSelf: "center",
     resizeMode: "contain",
     overflow: "hidden",
@@ -141,5 +142,18 @@ const styles = StyleSheet.create({
     fontSize: normalized(15),
     fontFamily: AppFonts.PoppinsMedium,
     alignSelf: "center",
+  },
+  profileImgCont: {
+    width: normalized(130),
+    height: normalized(130),
+    borderRadius: normalized(10),
+    borderWidth: 1,
+    borderColor: AppColors.themeColor.dark,
+    // borderStyle: "dashed",
+    alignSelf: "center",
+    resizeMode: "contain",
+    overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

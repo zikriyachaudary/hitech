@@ -31,6 +31,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { fetchAllProducts } from "../../../../Network/Services/ProductServices";
 import {
   setIsLoader,
+  setProductList,
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
@@ -41,7 +42,7 @@ const HomeScreen = (props: ScreenProps) => {
     (state: AppRootStore) => state.SliceReducer
   );
   const isRtl = selector?.isRtl;
-  const [productsList, setProductsList] = useState([]);
+  const [productsList, setProductsList] = useState(selector?.productsList);
   const dispatch = useDispatch();
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState<any>([]);
@@ -53,10 +54,11 @@ const HomeScreen = (props: ScreenProps) => {
 
   const fetchProductsReq = async () => {
     try {
-      productsList?.length == 0 && dispatch(setIsLoader(true));
+      !selector?.productsList[0] && dispatch(setIsLoader(true));
       await fetchAllProducts((resp: any) => {
         if (resp?.status) {
           setProductsList(resp?.data);
+          dispatch(setProductList(resp?.data));
         } else {
           dispatch(
             setShowToast({

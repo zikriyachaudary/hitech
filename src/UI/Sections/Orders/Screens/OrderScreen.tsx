@@ -11,35 +11,37 @@ import {
 } from "../../../../Utils/AppConstants";
 import { getUserOrdersList } from "../../../../Network/Services/GeneralServices";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsLoader } from "../../../../Redux/Reducers/AppReducers";
-import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
+import {
+  setIsLoader,
+  setOrderList,
+} from "../../../../Redux/Reducers/AppReducers";
 import SimpleHeader from "../../../Components/CustomHeader/SimpleHeader";
 
 const OrderScreen = () => {
   const selector = useSelector((state: any) => state.SliceReducer);
   const userData = selector?.userData;
-  const [ordersList, setOrdersList] = useState([]);
+  const [ordersList, setOrdersList] = useState(selector?.ordersList);
   const [isFetched, setIsFetched] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
     fetchOrders();
   }, []);
+  console.log("selector?.ordersList ----  ", selector?.ordersList);
 
   const fetchOrders = async () => {
-    if (ordersList?.length == 0) dispatch(setIsLoader(true));
+    !selector?.ordersList[0] && dispatch(setIsLoader(true));
     await getUserOrdersList(userData?.userId, (resp: any) => {
       if (resp?.status) {
         setOrdersList(resp?.data);
         setIsFetched(true);
+        dispatch(setOrderList(resp?.data));
       } else {
         setIsFetched(true);
       }
     });
     dispatch(setIsLoader(false));
   };
-
-  console.log("ordersList ---->>>  ", ordersList?.length);
 
   return (
     <View style={AppStyles.MainStyle}>
@@ -49,9 +51,8 @@ const OrderScreen = () => {
         <FlatList
           data={ordersList}
           keyExtractor={(index, item) => `${index}`}
-          style={{
-            // marginHorizontal: normalized(20),
-            marginBottom: normalized(25),
+          contentContainerStyle={{
+            paddingBottom: normalized(45),
           }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item, index }: any) => {
