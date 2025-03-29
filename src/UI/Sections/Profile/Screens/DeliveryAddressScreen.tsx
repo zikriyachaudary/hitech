@@ -67,13 +67,17 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
     await fetchAddressReq(userData?.userId, (resp: any) => {
       if (resp?.status) {
         setAddressList(resp?.data);
+      } else {
+        setAddressList([]);
       }
     });
     dispatch(setIsLoader(false));
   };
 
   useEffect(() => {
-    fetchAddress();
+    if (isFocused) {
+      fetchAddress();
+    }
   }, [isFocused]);
 
   return (

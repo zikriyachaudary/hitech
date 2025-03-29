@@ -1,4 +1,4 @@
-import { Collections } from "../../Utils/AppStrings";
+import { AppStrings, Collections } from "../../Utils/AppStrings";
 import firestore from "@react-native-firebase/firestore";
 
 export const addAddressReq = async (
@@ -36,8 +36,6 @@ export const fetchAddressReq = async (
   userId: string,
   onComplete: (response: any) => void
 ) => {
-  console.log("userId --- ", userId);
-
   try {
     const addressRef = firestore()
       .collection(Collections.CUSTOMERS_COLLECTION)
@@ -60,5 +58,26 @@ export const fetchAddressReq = async (
   } catch (error) {
     console.log("fetchAddressReq Error --->>> ", error);
     onComplete({ status: false, message: "Failed to fetch addresses" });
+  }
+};
+
+export const deleteAddressReq = async (
+  userId: any,
+  addressId: any,
+  onComplete: (response: any) => void
+) => {
+  try {
+    firestore()
+      .collection(Collections.CUSTOMERS_COLLECTION)
+      .doc(userId)
+      .collection(Collections.DELIVERY_ADDRESS)
+      .doc(addressId)
+      .delete()
+      .then(() => {
+        onComplete({ status: true, message: "Address Remove Successfully" });
+      });
+  } catch (error) {
+    console.log("delete address error --0---   ", error);
+    onComplete({ status: false, message: AppStrings.Network.someThingError });
   }
 };

@@ -21,7 +21,10 @@ import {
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
-import { addAddressReq } from "../../../../Network/Services/AddressServices";
+import {
+  addAddressReq,
+  deleteAddressReq,
+} from "../../../../Network/Services/AddressServices";
 
 const UpdateDeliveryScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -62,21 +65,28 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
 
   const onAddAddress = async () => {
     let isFormValid = true;
+
     if (!house) {
-      setHouseError("Enter House No.");
+      setHouseError(isRtl ? "مکان نمبر درج کریں۔" : "Enter House No.");
       isFormValid = false;
     }
     if (!street) {
-      setStreetError("Enter Street No.");
+      setStreetError(isRtl ? "گلی نمبر درج کریں۔" : "Enter Street No.");
+      isFormValid = false;
     }
     if (!area) {
-      setAreaError("Enter your area");
+      setAreaError(isRtl ? "اپنا علاقہ درج کریں۔" : "Enter your area");
+      isFormValid = false;
     }
     if (!city) {
-      setCityError("Enter your City");
+      setCityError(isRtl ? "اپنا شہر درج کریں۔" : "Enter your City");
+      isFormValid = false;
     }
     if (!completeAddress) {
-      setAddressError("Enter your Complete Address");
+      setAddressError(
+        isRtl ? "اپنا مکمل پتہ درج کریں۔" : "Enter your Complete Address"
+      );
+      isFormValid = false;
     }
     if (!isFormValid) {
       return;
@@ -118,6 +128,30 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
     );
   };
 
+  const onDeleteAdd = async () => {
+    dispatch(setIsLoader(true));
+    deleteAddressReq(selector?.userData?.userId, item?.id, (resp: any) => {
+      if (resp?.status) {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.success,
+            message: resp?.message,
+          })
+        );
+        props?.navigation?.goBack();
+        dispatch(setIsLoader(false));
+      } else {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.error,
+            message: resp?.message,
+          })
+        );
+        dispatch(setIsLoader(false));
+      }
+    });
+  };
+
   return (
     <View
       style={{
@@ -147,6 +181,7 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
               },
             }
           : {})}
+        onRightIconPress={() => onDeleteAdd()}
       />
 
       <ScrollView style={styles.mainCont}>
