@@ -50,7 +50,7 @@ const Bar = ({ obj, onPress, index, tab }: any) => {
               tab == index
                 ? AppColors.themeColor.dark
                 : AppColors.grey.greyLevel9,
-            fontSize: isRtl ? normalized(14) : normalized(12),
+            fontSize: isRtl ? normalized(13) : normalized(11),
             fontFamily: isRtl
               ? AppFonts.PoppinsSemiBold
               : AppFonts.PoppinsMedium,
@@ -66,8 +66,8 @@ const Bar = ({ obj, onPress, index, tab }: any) => {
 const styles = StyleSheet.create({
   selectedTab: {
     tintColor: AppColors.grey.greyLevel9,
-    width: normalized(22),
-    height: normalized(22),
+    width: normalized(20),
+    height: normalized(20),
     paddingVertical: normalized(5),
   },
 });

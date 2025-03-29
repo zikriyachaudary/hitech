@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     height: hv(32),
     width: normalized(110),
     borderWidth: 1,
-    borderColor: AppColors.red.dark,
+    borderColor: AppColors.themeColor.dark,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
@@ -140,12 +140,12 @@ const styles = StyleSheet.create({
   yesBtnTxt: {
     fontSize: normalized(14),
     fontWeight: "400",
-    color: AppColors.red.dark,
+    color: AppColors.themeColor.dark,
   },
   cancelBtn: {
     height: hv(32),
     width: normalized(110),
-    backgroundColor: AppColors.red.dark,
+    backgroundColor: AppColors.themeColor.dark,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 10,
