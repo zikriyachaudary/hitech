@@ -82,3 +82,8 @@ export const USER_TYPE = {
   Silver: "Silver",
   Gold: "Gold",
 };
+
+export const ORDER_STATUS = {
+  Order_Placed: "Order_Placed",
+  Dispatched: "Dispatched",
+};

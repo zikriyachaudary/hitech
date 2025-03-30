@@ -32,6 +32,7 @@ import { Routes } from "../../../../Utils/Routes";
 const OrderScreen = (props: ScreenProps) => {
   const selector = useSelector((state: any) => state.SliceReducer);
   const userData = selector?.userData;
+  const isRtl = selector?.isRtl;
   const [ordersList, setOrdersList] = useState(selector?.ordersList);
   const [isFetched, setIsFetched] = useState(false);
   const dispatch = useDispatch();
@@ -73,7 +74,7 @@ const OrderScreen = (props: ScreenProps) => {
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
-      <SimpleHeader Text={"Order History"} />
+      <SimpleHeader Text={isRtl ? "تمام آرڈرز" : "Order History"} />
       {ordersList?.length > 0 ? (
         <FlatList
           data={ordersList}
@@ -86,9 +87,14 @@ const OrderScreen = (props: ScreenProps) => {
             return (
               <TouchableOpacity
                 activeOpacity={0.8}
-                onPress={() =>
-                  props?.navigation?.navigate(Routes.Home.OrderDetailScreen, {})
-                }
+                onPress={() => {
+                  if (userData?.isAdmin) {
+                    props?.navigation?.navigate(Routes.Home.OrderDetailScreen, {
+                      item,
+                    });
+                  } else {
+                  }
+                }}
                 style={styles.cont}
               >
                 <View style={styles.txtCont}>
@@ -98,7 +104,13 @@ const OrderScreen = (props: ScreenProps) => {
                 </View>
                 {item?.products?.map((product: any, index: any) => (
                   <>
-                    <View key={index} style={styles.productCont}>
+                    <View
+                      key={index}
+                      style={[
+                        styles.productCont,
+                        { flexDirection: isRtl ? "row-reverse" : "row" },
+                      ]}
+                    >
                       <AppImageViewer
                         style={styles.productImg}
                         source={{ uri: product?.images?.[0]?.url }}
@@ -111,7 +123,7 @@ const OrderScreen = (props: ScreenProps) => {
                         }}
                       />
                       <Text style={styles.productName} numberOfLines={2}>
-                        {product?.name}
+                        {isRtl ? product?.rtlName : product?.name}
                       </Text>
                     </View>
                     {item?.products?.length - 1 != index && (
@@ -119,9 +131,16 @@ const OrderScreen = (props: ScreenProps) => {
                     )}
                   </>
                 ))}
-                <View style={styles.priceCont}>
+                <View
+                  style={[
+                    styles.priceCont,
+                    { alignSelf: isRtl ? "flex-start" : "flex-end" },
+                  ]}
+                >
                   <Text style={styles.priceTxt}>
-                    {`Rs. ${Math.floor(item?.orderPrice || 0)}`}
+                    {isRtl
+                      ? `${Math.floor(item?.orderPrice || 0)} روپے`
+                      : `Rs. ${Math.floor(item?.orderPrice || 0)}`}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -191,7 +210,7 @@ const styles = StyleSheet.create({
     fontFamily: AppFonts.PoppinsMedium,
   },
   divider: {
-    width: normalized(2),
+    width: normalized(0.5),
     height: normalized(13),
     backgroundColor: AppColors.black.black,
     marginHorizontal: normalized(5),
@@ -203,7 +222,6 @@ const styles = StyleSheet.create({
     borderRadius: normalized(5),
   },
   productCont: {
-    flexDirection: "row",
     alignItems: "center",
   },
   productName: {
@@ -220,12 +238,10 @@ const styles = StyleSheet.create({
     marginVertical: normalized(1),
   },
   priceCont: {
-    // width: normalized(100),
     height: normalized(28),
     paddingHorizontal: normalized(14),
     borderRadius: normalized(5),
     backgroundColor: AppColors.white.white,
-    alignSelf: "flex-end",
     borderWidth: 1,
     borderColor: AppColors.themeColor.dark,
     alignItems: "center",

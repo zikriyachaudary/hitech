@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
     width: normalized(130),
     height: normalized(130),
     borderRadius: normalized(10),
-    borderWidth: 1,
+    borderWidth: 0.7,
     borderColor: AppColors.themeColor.dark,
     alignSelf: "center",
     resizeMode: "contain",

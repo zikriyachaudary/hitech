@@ -63,7 +63,7 @@ const ProductDetailScreen = (props: ScreenProps) => {
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
       <ProductHeader
-        leftIcon={AppImages.Auth.backArrow}
+        leftIcon={AppImages.Home.backArrow}
         onBackPress={() => props?.navigation?.goBack()}
         title={isRtl ? "پروڈکٹ کی تفصیلات" : "Product Details"}
         rightIcon={AppImages.Home.cart}
@@ -71,6 +71,7 @@ const ProductDetailScreen = (props: ScreenProps) => {
           props?.navigation?.navigate(Routes.Home.cartScreen);
         }}
         cartDetail={cartDetail}
+        isFromAdmin={props?.route?.params?.isFromAdmin}
       />
       <View>
         <ProductSliderComp
