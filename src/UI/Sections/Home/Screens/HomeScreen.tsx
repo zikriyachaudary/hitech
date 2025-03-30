@@ -132,6 +132,12 @@ const HomeScreen = (props: ScreenProps) => {
           contentContainerStyle={{
             paddingHorizontal: normalized(15),
           }}
+          numColumns={2}
+          columnWrapperStyle={{
+            gap: normalized(10),
+            flex: 1,
+            justifyContent: "center",
+          }}
           ListFooterComponent={<View style={{ height: normalized(30) }} />}
           renderItem={({ item }) => {
             return (
@@ -139,7 +145,6 @@ const HomeScreen = (props: ScreenProps) => {
                 activeOpacity={0.7}
                 style={{
                   ...styles.cont,
-                  flexDirection: isRtl ? "row-reverse" : "row",
                 }}
                 onPress={() => {
                   if (item?.id == 1) {
@@ -164,9 +169,7 @@ const HomeScreen = (props: ScreenProps) => {
                     marginLeft: isRtl ? normalized(10) : 0,
                   }}
                 />
-                <Text
-                  style={{ ...styles.txt, textAlign: isRtl ? "right" : "left" }}
-                >
+                <Text style={{ ...styles.txt }} numberOfLines={3}>
                   {isRtl ? item?.rtlTitle : item?.title}
                 </Text>
               </TouchableOpacity>
@@ -259,20 +262,21 @@ const styles = StyleSheet.create({
     tintColor: AppColors.themeColor.dark,
   },
   cont: {
-    height: normalized(100),
     borderRadius: normalized(10),
     marginTop: normalized(10),
     alignItems: "center",
     padding: normalized(10),
     borderColor: AppColors.themeColor.dark,
-    borderWidth: 2,
+    borderWidth: 0.5,
+    justifyContent: "center",
+    flex: 1,
   },
   txt: {
-    fontSize: normalized(16),
+    fontSize: normalized(14),
     color: AppColors.themeColor.dark,
-    fontFamily: AppFonts.PoppinsSemiBold,
-    marginLeft: normalized(10),
-    width: normalized(270),
+    fontFamily: AppFonts.PoppinsMedium,
+    textAlign: "center",
+    marginTop: normalized(5),
   },
 });
 export default HomeScreen;

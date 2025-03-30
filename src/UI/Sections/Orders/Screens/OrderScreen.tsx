@@ -114,8 +114,6 @@ export default OrderScreen;
 
 const styles = StyleSheet.create({
   cont: {
-    // alignItems: "center",
-    // height: normalized(100),
     paddingHorizontal: normalized(15),
     borderRadius: normalized(10),
     marginTop: normalized(20),

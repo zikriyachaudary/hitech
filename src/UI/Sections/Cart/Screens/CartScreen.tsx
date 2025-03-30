@@ -49,7 +49,9 @@ const CartScreen = (props: ScreenProps) => {
   const dispatch = useDispatch();
   const [locationError, setLocationError] = useState("");
 
-  const [DeliveryAdd, setDeliveryAdd] = useState<any>(null);
+  const [deliveryAdd, setDeliveryAdd] = useState<any>(
+    props?.route?.params?.address || null
+  );
 
   const getUserAddress = () => {
     dispatch(setIsLoader(true));
@@ -57,7 +59,7 @@ const CartScreen = (props: ScreenProps) => {
       if (resp?.status) {
         const defaultAddress =
           resp.data.find((item: any) => item.isDefault) || null;
-        setDeliveryAdd(defaultAddress);
+        !deliveryAdd && setDeliveryAdd(defaultAddress);
         dispatch(setIsLoader(false));
       } else {
         dispatch(setIsLoader(false));
@@ -149,7 +151,7 @@ const CartScreen = (props: ScreenProps) => {
                         {isRtl ? "ڈلیوری کا پتہ" : "Delivery Address"}
                       </Text>
                       <Text numberOfLines={2} style={styles.addressTxt}>
-                        {DeliveryAdd?.address || "Select Delivery Address"}
+                        {deliveryAdd?.address || "Select Delivery Address"}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -158,7 +160,7 @@ const CartScreen = (props: ScreenProps) => {
                       onPress={() => {
                         props?.navigation?.navigate(
                           Routes.Home.DeliveryAddress,
-                          { address: DeliveryAdd }
+                          { fromCartScreen: true }
                         );
                       }}
                     >
@@ -371,7 +373,7 @@ const CartScreen = (props: ScreenProps) => {
             <FilledButton
               label={isRtl ? "آگے بڑھیں" : "Proceed"}
               onPress={() => {
-                if (!DeliveryAdd) {
+                if (!deliveryAdd) {
                   setLocationError(
                     isRtl
                       ? "براہ کرم ڈلیوری ایڈریس منتخب کریں"

@@ -37,9 +37,11 @@ const CustomHeader = (props: any) => {
             <Image
               style={[
                 styles.arrowImage,
-                { transform: [{ scaleX: isRtl ? -1 : 1 }] },
+                {
+                  transform: [{ scaleX: isRtl ? -1 : 1 }],
+                },
               ]}
-              source={AppImages.Auth.backArrow}
+              source={AppImages.Home.backArrow}
               tintColor={AppColors.themeColor.dark}
             />
           </TouchableOpacity>
@@ -94,19 +96,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginHorizontal: normalized(15),
     borderWidth: 1,
-    borderBottomColor: "transparent",
-    borderTopColor: "transparent",
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
+    // borderBottomColor: "transparent",
+    // borderTopColor: "transparent",
+    // borderLeftColor: "transparent",
+    // borderRightColor: "transparent",
     borderRadius: normalized(50),
-    shadowColor: AppColors.black.black,
-    shadowOffset: {
-      height: 2,
-      width: 2,
-    },
-    elevation: 5,
-    shadowOpacity: 0.3,
-    shadowRadius: normalized(3),
+    borderColor: AppColors.grey.greyLevel1,
+    // shadowColor: AppColors.black.black,
+    // shadowOffset: {
+    //   height: 2,
+    //   width: 2,
+    // },
+    // elevation: 5,
+    // shadowOpacity: 0.3,
+    // shadowRadius: normalized(3),
     backgroundColor: AppColors.white.white,
     paddingHorizontal: normalized(5),
   },
@@ -121,17 +124,18 @@ const styles = StyleSheet.create({
     borderColor: AppColors.themeColor.dark,
   },
   arrowImage: {
-    width: normalized(45),
-    height: normalized(45),
+    width: normalized(25),
+    height: normalized(25),
     resizeMode: "contain",
   },
   forgetText: {
     fontFamily: AppFonts.PoppinsSemiBold,
     fontSize: normalized(17),
-    color: AppColors.black.black,
-    marginLeft: normalized(10),
+    color: AppColors.themeColor.dark,
+    // marginLeft: normalized(10),
     fontWeight: "600",
     width: normalized(230),
+    marginTop: normalized(2),
   },
   icon1: {
     width: normalized(24),

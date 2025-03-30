@@ -8,7 +8,13 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
-import { setTab, setUserData } from "../../../../Redux/Reducers/AppReducers";
+import {
+  setNotiList,
+  setOrderList,
+  setProductList,
+  setTab,
+  setUserData,
+} from "../../../../Redux/Reducers/AppReducers";
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -45,6 +51,9 @@ const ProfileScreen = (props: ScreenProps) => {
   const onLogoutPress = () => {
     dispatch(setUserData(null));
     dispatch(setTab(0));
+    dispatch(setOrderList([]));
+    dispatch(setNotiList([]));
+    dispatch(setProductList([]));
     setUserDataInAsync({ isRtl: true });
   };
   const dispatch = useDispatch();
@@ -149,7 +158,6 @@ const styles = StyleSheet.create({
     borderRadius: normalized(10),
     borderWidth: 1,
     borderColor: AppColors.themeColor.dark,
-    // borderStyle: "dashed",
     alignSelf: "center",
     resizeMode: "contain",
     overflow: "hidden",

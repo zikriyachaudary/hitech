@@ -117,7 +117,13 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
               <AddressItem
                 item={item}
                 changeDefaultAddress={() => {
-                  changeDefaultAddress(index, item);
+                  if (props?.route?.params?.fromCartScreen) {
+                    props?.navigation?.navigate(Routes.Home.cartScreen, {
+                      address: item,
+                    });
+                  } else {
+                    changeDefaultAddress(index, item);
+                  }
                 }}
                 onEdit={(item: any) => {
                   props?.navigation?.navigate(Routes.Home.UpdateDelivery, {

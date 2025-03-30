@@ -77,19 +77,18 @@ const ManageCategories = (props: ScreenProps) => {
         titleStyle={styles.heading}
         icon={[AppImages.Home.PlusBlack]}
         rightIconCont={{
-          width: normalized(33),
-          height: normalized(33),
+          width: normalized(27),
+          height: normalized(27),
           borderColor: AppColors.themeColor.dark,
           borderRadius: normalized(40),
           borderWidth: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: AppColors.themeColor.dark,
         }}
         rightIconStyle={{
-          width: normalized(20),
-          height: normalized(20),
-          tintColor: AppColors.white.white,
+          width: normalized(15),
+          height: normalized(15),
+          tintColor: AppColors.themeColor.dark,
         }}
         onRightIconPress={() => {
           props?.navigation?.navigate(Routes.Admin.AddCategory);
@@ -149,7 +148,7 @@ const styles = StyleSheet.create({
     fontSize: normalized(18),
     fontFamily: AppFonts.PoppinsSemiBold,
     alignSelf: "center",
-    color: AppColors.black.black,
+    color: AppColors.themeColor.dark,
   },
   emptyListCont: {
     flex: 1,
@@ -163,7 +162,7 @@ const styles = StyleSheet.create({
     color: AppColors.black.black,
   },
   itemCont: {
-    borderWidth: 2,
+    borderWidth: 0.5,
     borderColor: AppColors.themeColor.dark,
     borderRadius: normalized(8),
     // height: normalized(40),
