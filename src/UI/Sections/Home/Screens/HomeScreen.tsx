@@ -34,7 +34,7 @@ import {
   setProductList,
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
-import { AppStrings } from "../../../../Utils/AppStrings";
+import { AppStrings, USER_TYPE } from "../../../../Utils/AppStrings";
 import CategorySelectionModal from "../../../Components/CustomModal/CategorySelectionModal";
 
 const HomeScreen = (props: ScreenProps) => {
@@ -54,7 +54,9 @@ const HomeScreen = (props: ScreenProps) => {
 
   const fetchProductsReq = async () => {
     try {
-      !selector?.productsList[0] && dispatch(setIsLoader(true));
+      !selector?.productsList[0] &&
+        selector?.userData?.userType == USER_TYPE.Silver &&
+        dispatch(setIsLoader(true));
       await fetchAllProducts((resp: any) => {
         if (resp?.status) {
           setProductsList(resp?.data);

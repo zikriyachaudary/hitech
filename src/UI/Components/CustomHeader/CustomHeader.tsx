@@ -16,6 +16,7 @@ const CustomHeader = (props: any) => {
     (state: AppRootStore) => state.SliceReducer
   );
   const isRtl = selector?.isRtl;
+
   return (
     <View
       style={[
@@ -30,6 +31,8 @@ const CustomHeader = (props: any) => {
         style={{
           flexDirection: isRtl ? "row-reverse" : "row",
           alignItems: "center",
+          justifyContent: "space-between",
+          flex: 1,
         }}
       >
         {props?.onPress && (
@@ -46,28 +49,32 @@ const CustomHeader = (props: any) => {
             />
           </TouchableOpacity>
         )}
-
-        <Text
-          style={[
-            styles.forgetText,
-            props?.titleStyle,
-            { textAlign: isRtl ? "right" : "left" },
-          ]}
-          numberOfLines={1}
+        <View
+          style={{
+            alignItems: "center",
+          }}
         >
-          {props?.Text ?? props?.title}
-        </Text>
-      </View>
-      <View
-        style={{
-          flexDirection: isRtl ? "row-reverse" : "row",
-          gap: normalized(15),
-          marginLeft: isRtl ? normalized(10) : 0,
-          marginRight: isRtl ? 0 : normalized(10),
-        }}
-      >
-        {props?.icon
-          ? icons.map((item: any, index: any) => (
+          <Text
+            style={[
+              styles.forgetText,
+              props?.titleStyle,
+              { textAlign: isRtl ? "right" : "left" },
+            ]}
+            numberOfLines={1}
+          >
+            {props?.Text ?? props?.title}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: isRtl ? "row-reverse" : "row",
+            gap: normalized(15),
+            marginLeft: isRtl ? normalized(10) : 0,
+            marginRight: isRtl ? 0 : normalized(10),
+          }}
+        >
+          {props?.icon ? (
+            icons.map((item: any, index: any) => (
               <TouchableOpacity
                 key={item.index}
                 onPress={() => {
@@ -82,7 +89,14 @@ const CustomHeader = (props: any) => {
                 />
               </TouchableOpacity>
             ))
-          : null}
+          ) : (
+            <View
+              style={{
+                width: normalized(25),
+              }}
+            />
+          )}
+        </View>
       </View>
     </View>
   );
@@ -93,7 +107,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: normalized(50),
     alignItems: "center",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     marginHorizontal: normalized(15),
     borderWidth: 1,
     // borderBottomColor: "transparent",
@@ -110,7 +124,7 @@ const styles = StyleSheet.create({
     // elevation: 5,
     // shadowOpacity: 0.3,
     // shadowRadius: normalized(3),
-    backgroundColor: AppColors.white.white,
+    // backgroundColor: AppColors.white.white,
     paddingHorizontal: normalized(5),
   },
   imageCont: {
@@ -134,7 +148,7 @@ const styles = StyleSheet.create({
     color: AppColors.themeColor.dark,
     // marginLeft: normalized(10),
     fontWeight: "600",
-    width: normalized(230),
+    // width: normalized(230),
     marginTop: normalized(2),
   },
   icon1: {

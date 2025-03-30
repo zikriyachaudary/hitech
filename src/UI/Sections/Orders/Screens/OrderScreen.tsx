@@ -9,7 +9,10 @@ import {
   normalized,
   ScreenSize,
 } from "../../../../Utils/AppConstants";
-import { getUserOrdersList } from "../../../../Network/Services/GeneralServices";
+import {
+  getAllOrdersList,
+  getUserOrdersList,
+} from "../../../../Network/Services/GeneralServices";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setIsLoader,
@@ -25,9 +28,12 @@ const OrderScreen = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchOrders();
+    if (selector?.userData?.isAdmin) {
+      fetchAllOrders();
+    } else {
+      fetchOrders();
+    }
   }, []);
-  console.log("selector?.ordersList ----  ", selector?.ordersList);
 
   const fetchOrders = async () => {
     !selector?.ordersList[0] && dispatch(setIsLoader(true));
@@ -41,6 +47,18 @@ const OrderScreen = () => {
       }
     });
     dispatch(setIsLoader(false));
+  };
+
+  const fetchAllOrders = async () => {
+    dispatch(setIsLoader(true));
+    await getAllOrdersList((resp: any) => {
+      if (resp?.status) {
+        setOrdersList(resp?.data);
+        dispatch(setIsLoader(false));
+      } else {
+        dispatch(setIsLoader(false));
+      }
+    });
   };
 
   return (
@@ -118,16 +136,18 @@ const styles = StyleSheet.create({
     borderRadius: normalized(10),
     marginTop: normalized(20),
     gap: normalized(10),
-    shadowColor: AppColors.black.black,
-    shadowOpacity: 0.3,
-    elevation: 3,
+    // shadowColor: AppColors.black.black,
+    // shadowOpacity: 0.3,
+    // elevation: 3,
     backgroundColor: AppColors.white.white,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
     marginHorizontal: AppHorizontalMargin,
     paddingBottom: normalized(10),
+    borderWidth: 1,
+    borderColor: AppColors.grey.greyLevel2,
   },
 
   emptyCont: {
@@ -188,7 +208,7 @@ const styles = StyleSheet.create({
     // width: normalized(100),
     height: normalized(28),
     paddingHorizontal: normalized(14),
-    borderRadius: normalized(25),
+    borderRadius: normalized(5),
     backgroundColor: AppColors.white.white,
     alignSelf: "flex-end",
     borderWidth: 1,

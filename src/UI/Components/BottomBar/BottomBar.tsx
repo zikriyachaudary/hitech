@@ -54,7 +54,7 @@ const BottomBar = ({ bottomBarList, navigation, tab }: any) => {
                 : normalized(10)
               : normalized(10),
           borderColor: AppColors.themeColor.dark,
-          borderWidth: 1,
+          borderWidth: 0.5,
         }}
       >
         {bottomBarList.map((item: any, index: any) => (

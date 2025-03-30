@@ -33,10 +33,11 @@ const styles = StyleSheet.create({
   },
   forgetText: {
     fontFamily: AppFonts.PoppinsSemiBold,
-    fontSize: normalized(15),
-    color: AppColors.black.black,
+    fontSize: normalized(16),
+    color: AppColors.themeColor.dark,
     marginLeft: normalized(10),
     fontWeight: "600",
+    marginTop: normalized(2),
   },
 });
 
