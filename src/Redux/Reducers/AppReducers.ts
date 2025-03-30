@@ -18,7 +18,7 @@ const initialState: IReduxState = {
   showNoti: false,
   productsList: [],
   notificationsList: [],
-  ordersList: [],
+  orderList: [],
 };
 
 export const Reducer = createSlice({
@@ -78,7 +78,7 @@ export const Reducer = createSlice({
       state.notificationsList = action.payload;
     },
     setOrderList: (state, action) => {
-      state.ordersList = action.payload;
+      state.orderList = action.payload;
     },
   },
 });

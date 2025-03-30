@@ -1,4 +1,11 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import AppImageViewer from "../../../Components/AppImageView";
@@ -7,6 +14,7 @@ import {
   AppFonts,
   AppHorizontalMargin,
   normalized,
+  ScreenProps,
   ScreenSize,
 } from "../../../../Utils/AppConstants";
 import {
@@ -19,8 +27,9 @@ import {
   setOrderList,
 } from "../../../../Redux/Reducers/AppReducers";
 import SimpleHeader from "../../../Components/CustomHeader/SimpleHeader";
+import { Routes } from "../../../../Utils/Routes";
 
-const OrderScreen = () => {
+const OrderScreen = (props: ScreenProps) => {
   const selector = useSelector((state: any) => state.SliceReducer);
   const userData = selector?.userData;
   const [ordersList, setOrdersList] = useState(selector?.ordersList);
@@ -75,7 +84,13 @@ const OrderScreen = () => {
           showsVerticalScrollIndicator={false}
           renderItem={({ item, index }: any) => {
             return (
-              <View style={styles.cont}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() =>
+                  props?.navigation?.navigate(Routes.Home.OrderDetailScreen, {})
+                }
+                style={styles.cont}
+              >
                 <View style={styles.txtCont}>
                   <Text style={styles.title}>{`Order ID`}</Text>
                   <View style={styles.divider} />
@@ -109,7 +124,7 @@ const OrderScreen = () => {
                     {`Rs. ${Math.floor(item?.orderPrice || 0)}`}
                   </Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           }}
         />

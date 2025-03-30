@@ -33,6 +33,7 @@ const ProfileHeader = (props: any) => {
           placeholderTextColor={AppColors.grey.greyLevel6}
           style={{
             flex: 1,
+            color: AppColors.black.black,
           }}
           value={props?.search}
           onChangeText={(e) => props?.atSearch(e)}
