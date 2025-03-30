@@ -31,9 +31,10 @@ import { useIsFocused } from "@react-navigation/native";
 import { fetchAllProducts } from "../../../../Network/Services/ProductServices";
 import {
   setIsLoader,
+  setProductList,
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
-import { AppStrings } from "../../../../Utils/AppStrings";
+import { AppStrings, USER_TYPE } from "../../../../Utils/AppStrings";
 import CategorySelectionModal from "../../../Components/CustomModal/CategorySelectionModal";
 
 const HomeScreen = (props: ScreenProps) => {
@@ -41,7 +42,7 @@ const HomeScreen = (props: ScreenProps) => {
     (state: AppRootStore) => state.SliceReducer
   );
   const isRtl = selector?.isRtl;
-  const [productsList, setProductsList] = useState([]);
+  const [productsList, setProductsList] = useState(selector?.productsList);
   const dispatch = useDispatch();
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
   const [selectedSubCategory, setSelectedSubCategory] = useState<any>([]);
@@ -53,10 +54,13 @@ const HomeScreen = (props: ScreenProps) => {
 
   const fetchProductsReq = async () => {
     try {
-      productsList?.length == 0 && dispatch(setIsLoader(true));
+      !selector?.productsList[0] &&
+        selector?.userData?.userType == USER_TYPE.Silver &&
+        dispatch(setIsLoader(true));
       await fetchAllProducts((resp: any) => {
         if (resp?.status) {
           setProductsList(resp?.data);
+          dispatch(setProductList(resp?.data));
         } else {
           dispatch(
             setShowToast({
@@ -130,6 +134,12 @@ const HomeScreen = (props: ScreenProps) => {
           contentContainerStyle={{
             paddingHorizontal: normalized(15),
           }}
+          numColumns={2}
+          columnWrapperStyle={{
+            gap: normalized(10),
+            flex: 1,
+            justifyContent: "center",
+          }}
           ListFooterComponent={<View style={{ height: normalized(30) }} />}
           renderItem={({ item }) => {
             return (
@@ -137,7 +147,6 @@ const HomeScreen = (props: ScreenProps) => {
                 activeOpacity={0.7}
                 style={{
                   ...styles.cont,
-                  flexDirection: isRtl ? "row-reverse" : "row",
                 }}
                 onPress={() => {
                   if (item?.id == 1) {
@@ -162,9 +171,7 @@ const HomeScreen = (props: ScreenProps) => {
                     marginLeft: isRtl ? normalized(10) : 0,
                   }}
                 />
-                <Text
-                  style={{ ...styles.txt, textAlign: isRtl ? "right" : "left" }}
-                >
+                <Text style={{ ...styles.txt }} numberOfLines={3}>
                   {isRtl ? item?.rtlTitle : item?.title}
                 </Text>
               </TouchableOpacity>
@@ -257,20 +264,21 @@ const styles = StyleSheet.create({
     tintColor: AppColors.themeColor.dark,
   },
   cont: {
-    height: normalized(100),
     borderRadius: normalized(10),
     marginTop: normalized(10),
     alignItems: "center",
     padding: normalized(10),
     borderColor: AppColors.themeColor.dark,
-    borderWidth: 2,
+    borderWidth: 0.5,
+    justifyContent: "center",
+    flex: 1,
   },
   txt: {
-    fontSize: normalized(16),
+    fontSize: normalized(14),
     color: AppColors.themeColor.dark,
-    fontFamily: AppFonts.PoppinsSemiBold,
-    marginLeft: normalized(10),
-    width: normalized(270),
+    fontFamily: AppFonts.PoppinsMedium,
+    textAlign: "center",
+    marginTop: normalized(5),
   },
 });
 export default HomeScreen;

@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   Image,
+  LayoutAnimation,
 } from "react-native";
 import React, { useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
@@ -191,7 +192,7 @@ const AddCategoryScreen = (props: ScreenProps) => {
         rightIconCont={{
           width: normalized(33),
           height: normalized(33),
-          borderColor: AppColors.red.dark,
+          borderColor: AppColors.themeColor.dark,
           borderRadius: normalized(40),
           borderWidth: 1,
           alignItems: "center",
@@ -201,7 +202,7 @@ const AddCategoryScreen = (props: ScreenProps) => {
         rightIconStyle={{
           width: normalized(20),
           height: normalized(20),
-          tintColor: AppColors.red.dark,
+          tintColor: AppColors.themeColor.dark,
         }}
         {...(item && {
           icon: [AppImages.Products.delete],
@@ -247,7 +248,12 @@ const AddCategoryScreen = (props: ScreenProps) => {
               </View>
               <TouchableOpacity
                 style={styles.closeImgCont}
-                onPress={() => removeSubCategory(sub.id)}
+                onPress={() => {
+                  removeSubCategory(sub.id),
+                    LayoutAnimation.configureNext(
+                      LayoutAnimation.Presets.easeInEaseOut
+                    );
+                }}
               >
                 <Image source={AppImages.Home.close} style={styles.closeImg} />
               </TouchableOpacity>
@@ -268,12 +274,19 @@ const AddCategoryScreen = (props: ScreenProps) => {
                 <CustomInput
                   isRtl={true}
                   value={sub.name}
-                  setValue={(val: string) => updateRtlSubCategory(sub.id, val)}
+                  setValue={(val: string) => {
+                    updateRtlSubCategory(sub.id, val);
+                  }}
                 />
               </View>
               <TouchableOpacity
                 style={styles.closeImgCont}
-                onPress={() => removeSubCategory(sub.id)}
+                onPress={() => {
+                  removeSubCategory(sub.id),
+                    LayoutAnimation.configureNext(
+                      LayoutAnimation.Presets.easeInEaseOut
+                    );
+                }}
               >
                 <Image source={AppImages.Home.close} style={styles.closeImg} />
               </TouchableOpacity>
@@ -284,7 +297,12 @@ const AddCategoryScreen = (props: ScreenProps) => {
         <TouchableOpacity
           activeOpacity={0.7}
           style={styles.addButton}
-          onPress={addSubCategory}
+          onPress={() => {
+            addSubCategory();
+            LayoutAnimation.configureNext(
+              LayoutAnimation.Presets.easeInEaseOut
+            );
+          }}
         >
           <Text style={styles.addButtonText}>
             {isRtl ? "+ سبکیٹگری شامل کریں" : "+ Add Sub-Category"}
@@ -320,14 +338,15 @@ const styles = StyleSheet.create({
   addButton: {
     marginTop: normalized(10),
     padding: normalized(10),
-    backgroundColor: AppColors.themeColor.dark,
+    borderWidth: 1,
+    borderColor: AppColors.themeColor.dark,
     borderRadius: 5,
     alignItems: "center",
   },
   addButtonText: {
-    color: "#fff",
+    color: AppColors.themeColor.dark,
     fontSize: normalized(14),
-    fontFamily: AppFonts.PoppinsMedium,
+    fontFamily: AppFonts.PoppinsSemiBold,
   },
   closeImg: {
     width: normalized(14),

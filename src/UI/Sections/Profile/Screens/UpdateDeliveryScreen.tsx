@@ -21,14 +21,16 @@ import {
 } from "../../../../Redux/Reducers/AppReducers";
 import { AppStrings } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
-import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
-import { addAddressReq } from "../../../../Network/Services/AddressServices";
+import {
+  addAddressReq,
+  deleteAddressReq,
+} from "../../../../Network/Services/AddressServices";
 
 const UpdateDeliveryScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
-  const userData = selector?.userData || null;
+  const isRtl = selector?.isRtl;
   const dispatch = useDispatch();
 
   const item = props?.route?.params?.item;
@@ -63,21 +65,28 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
 
   const onAddAddress = async () => {
     let isFormValid = true;
+
     if (!house) {
-      setHouseError("Enter House No.");
+      setHouseError(isRtl ? "مکان نمبر درج کریں۔" : "Enter House No.");
       isFormValid = false;
     }
     if (!street) {
-      setStreetError("Enter Street No.");
+      setStreetError(isRtl ? "گلی نمبر درج کریں۔" : "Enter Street No.");
+      isFormValid = false;
     }
     if (!area) {
-      setAreaError("Enter your area");
+      setAreaError(isRtl ? "اپنا علاقہ درج کریں۔" : "Enter your area");
+      isFormValid = false;
     }
     if (!city) {
-      setCityError("Enter your City");
+      setCityError(isRtl ? "اپنا شہر درج کریں۔" : "Enter your City");
+      isFormValid = false;
     }
     if (!completeAddress) {
-      setAddressError("Enter your Complete Address");
+      setAddressError(
+        isRtl ? "اپنا مکمل پتہ درج کریں۔" : "Enter your Complete Address"
+      );
+      isFormValid = false;
     }
     if (!isFormValid) {
       return;
@@ -119,6 +128,30 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
     );
   };
 
+  const onDeleteAdd = async () => {
+    dispatch(setIsLoader(true));
+    deleteAddressReq(selector?.userData?.userId, item?.id, (resp: any) => {
+      if (resp?.status) {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.success,
+            message: resp?.message,
+          })
+        );
+        props?.navigation?.goBack();
+        dispatch(setIsLoader(false));
+      } else {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.error,
+            message: resp?.message,
+          })
+        );
+        dispatch(setIsLoader(false));
+      }
+    });
+  };
+
   return (
     <View
       style={{
@@ -128,19 +161,34 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
       <SafeAreaView />
       <CustomHeader
         onPress={() => props?.navigation?.goBack()}
-        title={item ? "Update Delivery Address" : "Add Delivery Adddress"}
+        title={
+          item
+            ? isRtl
+              ? "ڈلیوری ایڈریس اپ ڈیٹ کریں"
+              : "Update Delivery Address"
+            : isRtl
+            ? "ڈلیوری ایڈریس شامل کریں"
+            : "Add Delivery Address"
+        }
         {...(item
           ? {
               icon: [AppImages.Products.delete],
               onRightIconPress: () => {
                 // Handle delete action here
               },
+              rightIconCont: {
+                // backgroundColor: "green",
+              },
             }
           : {})}
+        onRightIconPress={() => onDeleteAdd()}
       />
+
       <ScrollView style={styles.mainCont}>
         <View style={{ height: normalized(20) }} />
-        <Text style={styles.head}>House Number</Text>
+        <Text style={[styles.head, { textAlign: isRtl ? "right" : "left" }]}>
+          {isRtl ? "مکان نمبر" : "House Number"}
+        </Text>
         <CustomInput
           onSubmitEditing={() => focusNextField(streetRef)}
           placeHolderColor={AppColors.grey.greyLevel4}
@@ -152,7 +200,10 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
           value={house}
           errorMsg={houseError}
         />
-        <Text style={styles.head}>Street Number</Text>
+
+        <Text style={[styles.head, { textAlign: isRtl ? "right" : "left" }]}>
+          {isRtl ? "گلی نمبر" : "Street Number"}
+        </Text>
         <CustomInput
           onSubmitEditing={() => focusNextField(areaRef)}
           placeHolderColor={AppColors.grey.greyLevel4}
@@ -165,7 +216,9 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
           errorMsg={streetError}
         />
 
-        <Text style={styles.head}>Area</Text>
+        <Text style={[styles.head, { textAlign: isRtl ? "right" : "left" }]}>
+          {isRtl ? "علاقہ" : "Area"}
+        </Text>
         <CustomInput
           onSubmitEditing={() => focusNextField(cityRef)}
           placeHolderColor={AppColors.grey.greyLevel4}
@@ -178,7 +231,9 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
           errorMsg={areaError}
         />
 
-        <Text style={styles.head}>City</Text>
+        <Text style={[styles.head, { textAlign: isRtl ? "right" : "left" }]}>
+          {isRtl ? "شہر" : "City"}
+        </Text>
         <CustomInput
           onSubmitEditing={() => focusNextField(addressRef)}
           placeHolderColor={AppColors.grey.greyLevel4}
@@ -191,7 +246,9 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
           errorMsg={cityError}
         />
 
-        <Text style={styles.head}>Complete Address</Text>
+        <Text style={[styles.head, { textAlign: isRtl ? "right" : "left" }]}>
+          {isRtl ? "مکمل پتہ" : "Complete Address"}
+        </Text>
         <CustomInput
           placeHolderColor={AppColors.grey.greyLevel4}
           setValue={(val: string) => {
@@ -202,14 +259,26 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
           value={completeAddress}
           container={{ height: normalized(120) }}
           isMultiLine={true}
-          textInputStyle={{ textAlignVertical: "top", height: normalized(120) }}
+          textInputStyle={{
+            textAlignVertical: "top",
+            height: normalized(120),
+            textAlign: isRtl ? "right" : "left",
+          }}
           maxLength={1000}
           errorMsg={addressError}
         />
 
         <FilledButton
           onPress={() => onAddAddress()}
-          label={item ? "Update Address" : "Add Address"}
+          label={
+            isRtl
+              ? item
+                ? "پتہ اپ ڈیٹ کریں"
+                : "پتہ شامل کریں"
+              : item
+              ? "Update Address"
+              : "Add Address"
+          }
         />
       </ScrollView>
     </View>

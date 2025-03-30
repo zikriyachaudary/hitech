@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import {
@@ -36,25 +36,41 @@ import { placeOrderReq } from "../../../../Network/Services/ProductServices";
 import { AppStrings } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
+import { fetchAddressReq } from "../../../../Network/Services/AddressServices";
 
 const CartScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const userData = selector?.userData;
   const isRtl = selector?.isRtl;
   const { updateProductList, removeProductFromCart, getProductsTotalPrice } =
     CartManager();
   const dispatch = useDispatch();
   const [locationError, setLocationError] = useState("");
 
-  const address = {
-    general: "House 00 Stree 00 Mohallah Lahore Pakistan",
-    street: "00",
-    house: "00",
-    Area: "Some Area here",
-    City: "Pakistan",
-    isDefault: true,
+  const [deliveryAdd, setDeliveryAdd] = useState<any>(
+    props?.route?.params?.address || null
+  );
+
+  const getUserAddress = () => {
+    dispatch(setIsLoader(true));
+    fetchAddressReq(userData?.userId, (resp) => {
+      if (resp?.status) {
+        const defaultAddress =
+          resp.data.find((item: any) => item.isDefault) || null;
+        !deliveryAdd && setDeliveryAdd(defaultAddress);
+        dispatch(setIsLoader(false));
+      } else {
+        dispatch(setIsLoader(false));
+      }
+    });
   };
+
+  useEffect(() => {
+    getUserAddress();
+  }, []);
+
   let productList = useSelector((state: any) => state.SliceReducer.cartDetail);
 
   const placeOrder = async () => {
@@ -129,12 +145,13 @@ const CartScreen = (props: ScreenProps) => {
                         style={{
                           ...styles.title,
                           marginRight: isRtl ? normalized(10) : 0,
+                          textAlign: isRtl ? "right" : "left",
                         }}
                       >
                         {isRtl ? "ڈلیوری کا پتہ" : "Delivery Address"}
                       </Text>
                       <Text numberOfLines={2} style={styles.addressTxt}>
-                        {address?.general || "Select Delivery Address"}
+                        {deliveryAdd?.address || "Select Delivery Address"}
                       </Text>
                     </View>
                     <TouchableOpacity
@@ -143,7 +160,7 @@ const CartScreen = (props: ScreenProps) => {
                       onPress={() => {
                         props?.navigation?.navigate(
                           Routes.Home.DeliveryAddress,
-                          { address: address }
+                          { fromCartScreen: true }
                         );
                       }}
                     >
@@ -229,7 +246,12 @@ const CartScreen = (props: ScreenProps) => {
                     }}
                     ListHeaderComponent={() => {
                       return (
-                        <Text style={styles.headerTxt}>
+                        <Text
+                          style={{
+                            ...styles.headerTxt,
+                            textAlign: isRtl ? "right" : "left",
+                          }}
+                        >
                           {isRtl ? "آرڈر کی تفصیلات" : "Order Details"}
                         </Text>
                       );
@@ -307,28 +329,56 @@ const CartScreen = (props: ScreenProps) => {
               </Text>
             )} */}
 
-            <View style={styles.bottomCont}>
-              <Text style={styles.leftTxt}>Price</Text>
+            <View
+              style={[
+                styles.bottomCont,
+                { flexDirection: isRtl ? "row-reverse" : "row" },
+              ]}
+            >
+              <Text style={styles.leftTxt}>{isRtl ? "روپے" : "Price"}</Text>
               <Text style={styles.rightTxt}>
                 {`Rs. ${getProductsTotalPrice(false)}`}
               </Text>
             </View>
-            <View style={styles.bottomCont}>
-              <Text style={styles.leftTxt}>Delivery Fee</Text>
+            <View
+              style={[
+                styles.bottomCont,
+                { flexDirection: isRtl ? "row-reverse" : "row" },
+              ]}
+            >
+              <Text
+                style={{
+                  ...styles.leftTxt,
+                  textAlign: isRtl ? "right" : "left",
+                }}
+              >
+                {isRtl ? "ڈلیوری چارجز" : "Delivery Charges"}
+              </Text>
               <Text style={styles.rightTxt}>Rs. 200</Text>
             </View>
 
-            <View style={styles.bottomCont}>
-              <Text style={styles.leftTxt}>Total (incl. DC)</Text>
+            <View
+              style={[
+                styles.bottomCont,
+                { flexDirection: isRtl ? "row-reverse" : "row" },
+              ]}
+            >
+              <Text style={styles.leftTxt}>
+                {isRtl ? "ٹوٹل" : "Total (incl. DC)"}
+              </Text>
               <Text style={styles.rightTxt}>
                 {`Rs. ${getProductsTotalPrice(true)}`}
               </Text>
             </View>
             <FilledButton
-              label={"Proceed"}
+              label={isRtl ? "آگے بڑھیں" : "Proceed"}
               onPress={() => {
-                if (!address) {
-                  setLocationError("Please select delivery address");
+                if (!deliveryAdd) {
+                  setLocationError(
+                    isRtl
+                      ? "براہ کرم ڈلیوری ایڈریس منتخب کریں"
+                      : "Please select delivery address"
+                  );
                   return;
                 }
                 placeOrder();
@@ -346,10 +396,24 @@ const CartScreen = (props: ScreenProps) => {
             return index == 0 ? (
               <View style={{ justifyContent: "center", alignItems: "center" }}>
                 <Image source={AppImages.Products.emptyCart} />
-                <Text style={styles.title}>Your cart is empty!</Text>
-                <Text style={styles.des}>Discover our products</Text>
+
+                <Text
+                  style={[
+                    styles.title,
+                    { textAlign: isRtl ? "right" : "left" },
+                  ]}
+                >
+                  {isRtl ? "آپ کی ٹوکری خالی ہے!" : "Your cart is empty!"}
+                </Text>
+                <Text
+                  style={[styles.des, { textAlign: isRtl ? "right" : "left" }]}
+                >
+                  {isRtl
+                    ? "ہمارے مصنوعات دریافت کریں"
+                    : "Discover our products"}
+                </Text>
                 <FilledButton
-                  label={"Explore Products"}
+                  label={isRtl ? "مصنوعات دریافت کریں" : "Explore Products"}
                   onPress={() => {
                     dispatch(setTab(0));
                     props?.navigation?.pop(1);
@@ -360,14 +424,24 @@ const CartScreen = (props: ScreenProps) => {
             ) : index == 1 ? (
               <View style={{ flex: 1, marginTop: hv(30) }}>
                 <View style={styles.recomdCont}>
-                  <Text style={styles.recomdTxt}>Recommendations</Text>
                   <Text
-                    style={styles.seeAll}
+                    style={[
+                      styles.recomdTxt,
+                      { textAlign: isRtl ? "right" : "left" },
+                    ]}
+                  >
+                    {isRtl ? "سفارشات" : "Recommendations"}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.seeAll,
+                      { textAlign: isRtl ? "right" : "left" },
+                    ]}
                     onPress={() => {
                       dispatch(setTab(0));
                     }}
                   >
-                    See All
+                    {isRtl ? "سب دیکھیں" : "See All"}
                   </Text>
                 </View>
                 <FlatList
@@ -530,7 +604,6 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   bottomCont: {
-    flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginVertical: 4,

@@ -73,7 +73,7 @@ const GoldNSilverScreen = (props: ScreenProps) => {
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
-      <View
+      {/* <View
         style={{
           ...styles.headerCont,
           flexDirection: isRtl ? "row-reverse" : "row",
@@ -98,7 +98,7 @@ const GoldNSilverScreen = (props: ScreenProps) => {
           {isRtl ? "گولڈ اور سلور کسٹمرز" : "Gold And Silver Customers"}
         </Text>
         <View style={{ width: normalized(25) }} />
-      </View>
+      </View> */}
 
       <GoldNSilverTopTapNav goldUsers={goldUsers} silverUsers={silverUsers} />
     </View>

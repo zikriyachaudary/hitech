@@ -90,3 +90,7 @@ export const Chat_Message_Type = {
   image: "image",
   document: "document",
 };
+export const ORDER_STATUS = {
+  Order_Placed: "Order_Placed",
+  Dispatched: "Dispatched",
+};

@@ -144,3 +144,16 @@ export const getUserCompleteListReq = async (
     console.error("Error fetching users with pagination:", error);
   }
 };
+export const getAllOrdersList = async (onComplete: any) => {
+  try {
+    const snapshot = await firestore()
+      .collection(Collections.ORDER_COLLECTION)
+      .get();
+    const orders = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+    onComplete({ status: true, data: orders });
+  } catch (error) {
+    console.log("getAllOrdersList --->>>", error);
+    onComplete({ status: false, error: error });
+  }
+};

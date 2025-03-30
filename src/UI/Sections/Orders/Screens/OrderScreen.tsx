@@ -1,4 +1,11 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import AppImageViewer from "../../../Components/AppImageView";
@@ -7,31 +14,44 @@ import {
   AppFonts,
   AppHorizontalMargin,
   normalized,
+  ScreenProps,
   ScreenSize,
 } from "../../../../Utils/AppConstants";
-import { getUserOrdersList } from "../../../../Network/Services/GeneralServices";
+import {
+  getAllOrdersList,
+  getUserOrdersList,
+} from "../../../../Network/Services/GeneralServices";
 import { useDispatch, useSelector } from "react-redux";
-import { setIsLoader } from "../../../../Redux/Reducers/AppReducers";
-import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
+import {
+  setIsLoader,
+  setOrderList,
+} from "../../../../Redux/Reducers/AppReducers";
 import SimpleHeader from "../../../Components/CustomHeader/SimpleHeader";
+import { Routes } from "../../../../Utils/Routes";
 
-const OrderScreen = () => {
+const OrderScreen = (props: ScreenProps) => {
   const selector = useSelector((state: any) => state.SliceReducer);
   const userData = selector?.userData;
-  const [ordersList, setOrdersList] = useState([]);
+  const isRtl = selector?.isRtl;
+  const [ordersList, setOrdersList] = useState(selector?.ordersList);
   const [isFetched, setIsFetched] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchOrders();
+    if (selector?.userData?.isAdmin) {
+      fetchAllOrders();
+    } else {
+      fetchOrders();
+    }
   }, []);
 
   const fetchOrders = async () => {
-    if (ordersList?.length == 0) dispatch(setIsLoader(true));
+    !selector?.ordersList[0] && dispatch(setIsLoader(true));
     await getUserOrdersList(userData?.userId, (resp: any) => {
       if (resp?.status) {
         setOrdersList(resp?.data);
         setIsFetched(true);
+        dispatch(setOrderList(resp?.data));
       } else {
         setIsFetched(true);
       }
@@ -39,24 +59,44 @@ const OrderScreen = () => {
     dispatch(setIsLoader(false));
   };
 
-  console.log("ordersList ---->>>  ", ordersList?.length);
+  const fetchAllOrders = async () => {
+    dispatch(setIsLoader(true));
+    await getAllOrdersList((resp: any) => {
+      if (resp?.status) {
+        setOrdersList(resp?.data);
+        dispatch(setIsLoader(false));
+      } else {
+        dispatch(setIsLoader(false));
+      }
+    });
+  };
 
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
-      <SimpleHeader Text={"Order History"} />
+      <SimpleHeader Text={isRtl ? "تمام آرڈرز" : "Order History"} />
       {ordersList?.length > 0 ? (
         <FlatList
           data={ordersList}
           keyExtractor={(index, item) => `${index}`}
-          style={{
-            // marginHorizontal: normalized(20),
-            marginBottom: normalized(25),
+          contentContainerStyle={{
+            paddingBottom: normalized(45),
           }}
           showsVerticalScrollIndicator={false}
           renderItem={({ item, index }: any) => {
             return (
-              <View style={styles.cont}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={() => {
+                  if (userData?.isAdmin) {
+                    props?.navigation?.navigate(Routes.Home.OrderDetailScreen, {
+                      item,
+                    });
+                  } else {
+                  }
+                }}
+                style={styles.cont}
+              >
                 <View style={styles.txtCont}>
                   <Text style={styles.title}>{`Order ID`}</Text>
                   <View style={styles.divider} />
@@ -64,7 +104,13 @@ const OrderScreen = () => {
                 </View>
                 {item?.products?.map((product: any, index: any) => (
                   <>
-                    <View key={index} style={styles.productCont}>
+                    <View
+                      key={index}
+                      style={[
+                        styles.productCont,
+                        { flexDirection: isRtl ? "row-reverse" : "row" },
+                      ]}
+                    >
                       <AppImageViewer
                         style={styles.productImg}
                         source={{ uri: product?.images?.[0]?.url }}
@@ -77,7 +123,7 @@ const OrderScreen = () => {
                         }}
                       />
                       <Text style={styles.productName} numberOfLines={2}>
-                        {product?.name}
+                        {isRtl ? product?.rtlName : product?.name}
                       </Text>
                     </View>
                     {item?.products?.length - 1 != index && (
@@ -85,12 +131,19 @@ const OrderScreen = () => {
                     )}
                   </>
                 ))}
-                <View style={styles.priceCont}>
+                <View
+                  style={[
+                    styles.priceCont,
+                    { alignSelf: isRtl ? "flex-start" : "flex-end" },
+                  ]}
+                >
                   <Text style={styles.priceTxt}>
-                    {`Rs. ${Math.floor(item?.orderPrice || 0)}`}
+                    {isRtl
+                      ? `${Math.floor(item?.orderPrice || 0)} روپے`
+                      : `Rs. ${Math.floor(item?.orderPrice || 0)}`}
                   </Text>
                 </View>
-              </View>
+              </TouchableOpacity>
             );
           }}
         />
@@ -113,22 +166,22 @@ export default OrderScreen;
 
 const styles = StyleSheet.create({
   cont: {
-    // alignItems: "center",
-    // height: normalized(100),
     paddingHorizontal: normalized(15),
     borderRadius: normalized(10),
     marginTop: normalized(20),
     gap: normalized(10),
-    shadowColor: AppColors.black.black,
-    shadowOpacity: 0.3,
-    elevation: 3,
+    // shadowColor: AppColors.black.black,
+    // shadowOpacity: 0.3,
+    // elevation: 3,
     backgroundColor: AppColors.white.white,
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 2,
+    // },
     marginHorizontal: AppHorizontalMargin,
     paddingBottom: normalized(10),
+    borderWidth: 1,
+    borderColor: AppColors.grey.greyLevel2,
   },
 
   emptyCont: {
@@ -157,7 +210,7 @@ const styles = StyleSheet.create({
     fontFamily: AppFonts.PoppinsMedium,
   },
   divider: {
-    width: normalized(2),
+    width: normalized(0.5),
     height: normalized(13),
     backgroundColor: AppColors.black.black,
     marginHorizontal: normalized(5),
@@ -169,7 +222,6 @@ const styles = StyleSheet.create({
     borderRadius: normalized(5),
   },
   productCont: {
-    flexDirection: "row",
     alignItems: "center",
   },
   productName: {
@@ -186,12 +238,10 @@ const styles = StyleSheet.create({
     marginVertical: normalized(1),
   },
   priceCont: {
-    // width: normalized(100),
     height: normalized(28),
     paddingHorizontal: normalized(14),
-    borderRadius: normalized(25),
+    borderRadius: normalized(5),
     backgroundColor: AppColors.white.white,
-    alignSelf: "flex-end",
     borderWidth: 1,
     borderColor: AppColors.themeColor.dark,
     alignItems: "center",

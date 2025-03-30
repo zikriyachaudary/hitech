@@ -32,6 +32,7 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const isRtl = selector?.isRtl;
   const userData = selector?.userData;
 
   const dispatch = useDispatch();
@@ -64,19 +65,19 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
   const fetchAddress = async () => {
     addressList?.length == 0 && dispatch(setIsLoader(true));
     await fetchAddressReq(userData?.userId, (resp: any) => {
-      console.log("resp --0----- ", resp);
-
       if (resp?.status) {
-        console.log("address list -->>  ", resp?.data);
-
         setAddressList(resp?.data);
+      } else {
+        setAddressList([]);
       }
     });
     dispatch(setIsLoader(false));
   };
 
   useEffect(() => {
-    fetchAddress();
+    if (isFocused) {
+      fetchAddress();
+    }
   }, [isFocused]);
 
   return (
@@ -84,7 +85,7 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
       <SafeAreaView />
       <CustomHeader
         onPress={() => props?.navigation?.goBack()}
-        title={"Delivery Address"}
+        title={isRtl ? "ڈلیوری ایڈریس" : "Delivery Address"}
         icon={[AppImages.Home.PlusBlack]}
         rightIconCont={{
           width: normalized(33),
@@ -116,7 +117,13 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
               <AddressItem
                 item={item}
                 changeDefaultAddress={() => {
-                  changeDefaultAddress(index, item);
+                  if (props?.route?.params?.fromCartScreen) {
+                    props?.navigation?.navigate(Routes.Home.cartScreen, {
+                      address: item,
+                    });
+                  } else {
+                    changeDefaultAddress(index, item);
+                  }
                 }}
                 onEdit={(item: any) => {
                   props?.navigation?.navigate(Routes.Home.UpdateDelivery, {
@@ -129,9 +136,10 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
         />
       ) : (
         <View style={styles.emptyListCont}>
-          <Text style={styles.emptyTxt}>
-            No address added yet. Tap the button in the top right corner to add
-            a new address and complete the required details.
+          <Text style={[styles.emptyTxt]}>
+            {isRtl
+              ? "ابھی تک کوئی پتہ شامل نہیں کیا گیا۔ نیا پتہ شامل کرنے اور مطلوبہ تفصیلات مکمل کرنے کے لیے اوپر بائیں کونے میں موجود بٹن کو دبائیں۔"
+              : "No address added yet. Tap the button in the top right corner to add a new address and complete the required details."}
           </Text>
         </View>
       )}

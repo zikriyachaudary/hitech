@@ -16,6 +16,7 @@ export const Routes = {
   Home: {
     HomeScreen: "HomeScreen",
     OrderScreen: "OrderScreen",
+    OrderDetailScreen: "OrderDetailScreen",
     NotificationScreen: "NotificationScreen",
     ProfileScreen: "ProfileScreen",
     productDetail: "ProductDetail",

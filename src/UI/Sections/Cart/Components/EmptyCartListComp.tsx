@@ -7,8 +7,15 @@ import {
   normalized,
 } from "../../../../Utils/AppConstants";
 import AppImageViewer from "../../../Components/AppImageView";
+import { useSelector } from "react-redux";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const EmptyCartListComp = (props: any) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
+
   return (
     <TouchableOpacity
       activeOpacity={0.7}
@@ -18,7 +25,11 @@ const EmptyCartListComp = (props: any) => {
       }}
     >
       <View style={styles.upperCont}>
-        <Text style={styles.upperContTxt}>Free Shipping</Text>
+        <Text
+          style={[styles.upperContTxt, { textAlign: isRtl ? "right" : "left" }]}
+        >
+          {isRtl ? "مفت شپنگ" : "Free Shipping"}
+        </Text>
       </View>
       <AppImageViewer
         resizeMode={"contain"}

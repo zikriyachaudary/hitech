@@ -3,13 +3,24 @@ import React from "react";
 import {
   AppColors,
   AppFonts,
-  AppImages,
   normalized,
 } from "../../../../Utils/AppConstants";
+import { useSelector } from "react-redux";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const ProductHeader = (props: any) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
+
   return (
-    <View style={styles.mainCont}>
+    <View
+      style={[
+        styles.mainCont,
+        { flexDirection: isRtl ? "row-reverse" : "row" },
+      ]}
+    >
       {props.leftIcon && (
         <TouchableOpacity
           style={styles.imageCont}
@@ -17,7 +28,10 @@ const ProductHeader = (props: any) => {
           onPress={() => props?.onBackPress()}
         >
           <Image
-            style={styles.arrowImage}
+            style={[
+              styles.arrowImage,
+              isRtl && { transform: [{ rotate: "180deg" }] },
+            ]}
             source={props?.leftIcon}
             tintColor={AppColors.themeColor.dark}
           />
@@ -34,7 +48,11 @@ const ProductHeader = (props: any) => {
           <Image
             style={styles.cartImg}
             source={props?.rightIcon}
-            tintColor={AppColors.themeColor.dark}
+            tintColor={
+              props?.isFromAdmin
+                ? AppColors.white.white
+                : AppColors.themeColor.dark
+            }
           />
         </TouchableOpacity>
       )}
@@ -47,14 +65,13 @@ export default ProductHeader;
 const styles = StyleSheet.create({
   mainCont: {
     height: normalized(50),
-    flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingHorizontal: normalized(20),
   },
   arrowImage: {
-    width: normalized(40),
-    height: normalized(40),
+    width: normalized(30),
+    height: normalized(30),
     resizeMode: "contain",
   },
   imageCont: {

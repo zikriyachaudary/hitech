@@ -16,6 +16,7 @@ const CustomHeader = (props: any) => {
     (state: AppRootStore) => state.SliceReducer
   );
   const isRtl = selector?.isRtl;
+
   return (
     <View
       style={[
@@ -30,6 +31,8 @@ const CustomHeader = (props: any) => {
         style={{
           flexDirection: isRtl ? "row-reverse" : "row",
           alignItems: "center",
+          justifyContent: "space-between",
+          flex: 1,
         }}
       >
         {props?.onPress && (
@@ -37,28 +40,41 @@ const CustomHeader = (props: any) => {
             <Image
               style={[
                 styles.arrowImage,
-                { transform: [{ scaleX: isRtl ? -1 : 1 }] },
+                {
+                  transform: [{ scaleX: isRtl ? -1 : 1 }],
+                },
               ]}
-              source={AppImages.Auth.backArrow}
+              source={AppImages.Home.backArrow}
               tintColor={AppColors.themeColor.dark}
             />
           </TouchableOpacity>
         )}
-
-        <Text style={[styles.forgetText, props?.titleStyle]}>
-          {props?.Text ?? props?.title}
-        </Text>
-      </View>
-      <View
-        style={{
-          flexDirection: isRtl ? "row-reverse" : "row",
-          gap: normalized(15),
-          paddingLeft: isRtl ? normalized(5) : 0,
-          paddingRight: isRtl ? 0 : normalized(5),
-        }}
-      >
-        {props?.icon
-          ? icons.map((item: any, index: any) => (
+        <View
+          style={{
+            alignItems: "center",
+          }}
+        >
+          <Text
+            style={[
+              styles.forgetText,
+              props?.titleStyle,
+              { textAlign: isRtl ? "right" : "left" },
+            ]}
+            numberOfLines={1}
+          >
+            {props?.Text ?? props?.title}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: isRtl ? "row-reverse" : "row",
+            gap: normalized(15),
+            marginLeft: isRtl ? normalized(10) : 0,
+            marginRight: isRtl ? 0 : normalized(10),
+          }}
+        >
+          {props?.icon ? (
+            icons.map((item: any, index: any) => (
               <TouchableOpacity
                 key={item.index}
                 onPress={() => {
@@ -73,7 +89,14 @@ const CustomHeader = (props: any) => {
                 />
               </TouchableOpacity>
             ))
-          : null}
+          ) : (
+            <View
+              style={{
+                width: normalized(25),
+              }}
+            />
+          )}
+        </View>
       </View>
     </View>
   );
@@ -84,24 +107,25 @@ const styles = StyleSheet.create({
     marginTop: 10,
     height: normalized(50),
     alignItems: "center",
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     marginHorizontal: normalized(15),
     borderWidth: 1,
-    borderBottomColor: "transparent",
-    borderTopColor: "transparent",
-    borderLeftColor: "transparent",
-    borderRightColor: "transparent",
+    // borderBottomColor: "transparent",
+    // borderTopColor: "transparent",
+    // borderLeftColor: "transparent",
+    // borderRightColor: "transparent",
     borderRadius: normalized(50),
-    shadowColor: AppColors.black.black,
-    shadowOffset: {
-      height: 2,
-      width: 2,
-    },
-    elevation: 5,
-    shadowOpacity: 0.3,
-    shadowRadius: normalized(3),
-    backgroundColor: AppColors.white.white,
-    paddingHorizontal: normalized(3),
+    borderColor: AppColors.grey.greyLevel1,
+    // shadowColor: AppColors.black.black,
+    // shadowOffset: {
+    //   height: 2,
+    //   width: 2,
+    // },
+    // elevation: 5,
+    // shadowOpacity: 0.3,
+    // shadowRadius: normalized(3),
+    // backgroundColor: AppColors.white.white,
+    paddingHorizontal: normalized(5),
   },
   imageCont: {
     width: normalized(47),
@@ -114,16 +138,18 @@ const styles = StyleSheet.create({
     borderColor: AppColors.themeColor.dark,
   },
   arrowImage: {
-    width: normalized(45),
-    height: normalized(45),
+    width: normalized(25),
+    height: normalized(25),
     resizeMode: "contain",
   },
   forgetText: {
     fontFamily: AppFonts.PoppinsSemiBold,
     fontSize: normalized(17),
-    color: AppColors.black.black,
-    marginLeft: normalized(10),
+    color: AppColors.themeColor.dark,
+    // marginLeft: normalized(10),
     fontWeight: "600",
+    // width: normalized(230),
+    marginTop: normalized(2),
   },
   icon1: {
     width: normalized(24),

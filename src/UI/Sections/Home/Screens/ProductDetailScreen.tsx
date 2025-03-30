@@ -22,38 +22,48 @@ import {
 import ProductSliderComp from "../Components/ProductSliderComp";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import ProductCounterComp from "../Components/ProductCounterComp";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import CartManager from "../../../../Hooks/CartManager";
 import { Routes } from "../../../../Utils/Routes";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
-import { USER_TYPE } from "../../../../Utils/AppStrings";
+import { AppStrings, USER_TYPE } from "../../../../Utils/AppStrings";
+import { fetchAddressReq } from "../../../../Network/Services/AddressServices";
+import { setShowToast } from "../../../../Redux/Reducers/AppReducers";
 
 const ProductDetailScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+
+  const getItemPrice = (item: any, isGoldenUser: any) => {
+    if (!item) return "N/A";
+
+    if (isGoldenUser) {
+      return item.goldenPrice || item?.sizeNPrice?.[0]?.goldenPrice || "N/A";
+    } else {
+      return item.price || item?.sizeNPrice?.[0]?.price || "N/A";
+    }
+  };
+
   const isRtl = selector?.isRtl;
-  const isGolderUser = selector?.userData?.userType == USER_TYPE.Gold;
+  const isGoldenUser = selector?.userData?.userType == USER_TYPE.Gold;
   const item = props?.route?.params?.item;
 
   const [count, setCount] = useState(1);
   const cartDetail = useSelector((state: any) => state.SliceReducer.cartDetail);
   const { updateProductList } = CartManager();
-  const [price, setPrice] = useState(
-    isGolderUser
-      ? item?.goldenPrice || item?.sizeNPrice[0]?.goldenPrice
-      : item?.price || item?.sizeNPrice[0]?.price
-  );
+
+  const [price, setPrice] = useState(getItemPrice(item, isGoldenUser));
 
   const [selectedSize, setSelectedSize] = useState(
-    item?.sizeNPrice[0]?.size || ""
+    item?.isMultipleSizes ? item?.sizeNPrice[0]?.size : ""
   );
 
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
       <ProductHeader
-        leftIcon={AppImages.Auth.backArrow}
+        leftIcon={AppImages.Home.backArrow}
         onBackPress={() => props?.navigation?.goBack()}
         title={isRtl ? "پروڈکٹ کی تفصیلات" : "Product Details"}
         rightIcon={AppImages.Home.cart}
@@ -61,6 +71,7 @@ const ProductDetailScreen = (props: ScreenProps) => {
           props?.navigation?.navigate(Routes.Home.cartScreen);
         }}
         cartDetail={cartDetail}
+        isFromAdmin={props?.route?.params?.isFromAdmin}
       />
       <View>
         <ProductSliderComp
@@ -112,7 +123,7 @@ const ProductDetailScreen = (props: ScreenProps) => {
                   }}
                   onPress={() => {
                     setSelectedSize(item?.size);
-                    setPrice(isGolderUser ? item?.goldenPrice : item?.price);
+                    setPrice(isGoldenUser ? item?.goldenPrice : item?.price);
                   }}
                 >
                   <Text style={styles.sizeTxt}>{item?.size}</Text>
@@ -122,7 +133,9 @@ const ProductDetailScreen = (props: ScreenProps) => {
           </View>
         )}
 
-        <Text style={styles.desc}>{isRtl ? "تفصیل:" : "Description:"}</Text>
+        <Text style={{ ...styles.desc, textAlign: isRtl ? "right" : "left" }}>
+          {isRtl ? "تفصیل:" : "Description:"}
+        </Text>
         <Text
           style={{ ...styles.descTxt, textAlign: isRtl ? "right" : "left" }}
         >

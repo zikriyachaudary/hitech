@@ -139,6 +139,7 @@ export const AppImages = {
   },
   Home: {
     tick: require("../UI/assets/Images/Profile/tick.png"),
+    backArrow: require("../UI/assets/Images/Home/backArrow.png"),
     filter: require("../UI/assets/Images/Home/filter.png"),
     close: require("../UI/assets/Images/Home/CloseIcon.png"),
     cart: require("../UI/assets/Images/Home/cart.png"),
@@ -182,6 +183,7 @@ export const AppImages = {
     language: require("../UI/assets/Images/Profile/language.png"),
     usa: require("../UI/assets/Images/Profile/usa.png"),
     pk: require("../UI/assets/Images/Profile/pk.png"),
+    password: require("../UI/assets/Images/Profile/password.png"),
   },
   User: {
     user: require("../UI/assets/Images/User/user.png"),
@@ -261,6 +263,12 @@ export const profileBarList = [
     leftIcon: AppImages.Profile.delivery,
   },
   {
+    id: 7,
+    text: "Change Password",
+    rtlTxt: "پاس ورڈ تبدیل کریں",
+    leftIcon: AppImages.Profile.password,
+  },
+  {
     id: 3,
     text: "My Cart",
     rtlTxt: "میری ٹوکری",
@@ -293,6 +301,12 @@ export const adminProfileList = [
     text: "Edit Your Profile",
     rtlTxt: "اپنی پروفائل میں ترمیم کریں",
     leftIcon: AppImages.Profile.ProfileIcon,
+  },
+  {
+    id: 7,
+    text: "Change Password",
+    rtlTxt: "پاس ورڈ تبدیل کریں",
+    leftIcon: AppImages.Profile.password,
   },
   {
     id: 6,
