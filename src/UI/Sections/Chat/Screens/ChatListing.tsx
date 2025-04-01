@@ -19,7 +19,6 @@ const ChatListingScreen = (props: ScreenProps) => {
   const { threadList, userData } = useSelector(
     (state: any) => state.SliceReducer
   );
-  console.log("threadList ----  ", threadList);
 
   const [chatList, setChatList] = useState([]);
   useEffect(() => {

@@ -100,7 +100,7 @@ const ChatHeader = (props: any) => {
             >
               <Image
                 style={styles.arrowImage}
-                source={AppImages.Auth.backArrow}
+                source={AppImages.Home.backArrow}
               />
             </TouchableOpacity>
 
@@ -214,8 +214,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   arrowImage: {
-    width: normalized(9),
-    height: normalized(16),
+    width: normalized(25),
+    height: normalized(25),
     tintColor: AppColors.themeColor.dark,
     alignItems: "flex-start",
   },

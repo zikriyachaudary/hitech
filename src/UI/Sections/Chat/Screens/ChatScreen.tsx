@@ -515,6 +515,7 @@ const ChatScreen = (props: ScreenProps) => {
             }
           }}
           showBorder={true}
+          atRightBtn={() => {}}
         />
         <View
           style={{
