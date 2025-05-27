@@ -86,4 +86,12 @@ export const USER_TYPE = {
 export const ORDER_STATUS = {
   Order_Placed: "Order_Placed",
   Dispatched: "Dispatched",
+  Returned: "Returned", 
+};
+
+export const NOTIFICATIONS_TYPES  = {
+  Order_Placed: "Order_Placed",
+  Dispatched: "Dispatched",
+  Returned: "Returned",
+  Refund: "Refund"
 };

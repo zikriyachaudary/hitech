@@ -24,6 +24,7 @@ import LinearGradient from "react-native-linear-gradient";
 import { Routes } from "../../../../Utils/Routes";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import UnFilledButton from "../../../Components/CustomButton/UnFilledButton";
+import { ORDER_STATUS } from "../../../../Utils/AppStrings";
 
 const OrderDetailScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -31,8 +32,8 @@ const OrderDetailScreen = (props: ScreenProps) => {
   );
   const isRtl = selector?.isRtl;
   const item = props?.route?.params?.item;
-  console.log("item?.products ----  ", item?.products);
-
+  console.log("item?.products ----  ", item);
+//   ---->>>  RTL Needed
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
@@ -56,6 +57,8 @@ const OrderDetailScreen = (props: ScreenProps) => {
         }}
       />
       <ScrollView>
+
+        <Text style = {styles.orderId}>{`Order ID: LKSJDF-ASDF`}</Text>
         <View style={styles.userMainCont}>
           <Text style={styles.headTxt}>
             {isRtl ? "کسٹمر کی تفصیلات" : "Customer Details"}
@@ -134,12 +137,12 @@ const OrderDetailScreen = (props: ScreenProps) => {
                   X{product?.count}
                 </Text>
               </TouchableOpacity>
-              {item?.products?.length - 1 != index && (
+              {item?.products?.length - 1 == index && (
                 <View style={styles.prodductDiv} />
               )}
             </>
           ))}
-          <View
+           <View
             style={{
               width: ScreenSize.width - normalized(80),
               alignSelf: "center",
@@ -149,7 +152,43 @@ const OrderDetailScreen = (props: ScreenProps) => {
             }}
           />
         </View>
-        <UnFilledButton label={"Dispatched"} />
+
+        <View style = {styles.statusBtnCont} >
+       <TouchableOpacity
+       activeOpacity={0.8}
+       style = {[styles.btn, {
+        backgroundColor: item?.orderStatus == ORDER_STATUS.Order_Placed ? AppColors.themeColor.dark : AppColors.white.white,
+       }]}
+            onPress={()=>{}}
+>
+        <Text style = {[styles.btnTxt,{
+          color: item?.orderStatus == ORDER_STATUS.Order_Placed ? AppColors.white.white : AppColors.themeColor.dark
+        }]}>Pending</Text>
+       </TouchableOpacity>
+       <TouchableOpacity
+       activeOpacity={0.8}
+       style = {[styles.btn, {
+        backgroundColor: item?.orderStatus == ORDER_STATUS.Dispatched ? AppColors.themeColor.dark : AppColors.white.white,
+       }]}
+            onPress={()=>{}}
+>
+        <Text style = {[styles.btnTxt,{
+          color: item?.orderStatus == ORDER_STATUS.Dispatched ? AppColors.white.white : AppColors.themeColor.dark
+        }]}>Dispatched</Text>
+       </TouchableOpacity>
+
+         <TouchableOpacity
+       activeOpacity={0.8}
+       style = {[styles.btn, {
+        backgroundColor: item?.orderStatus == ORDER_STATUS.Dispatched ? AppColors.themeColor.dark : AppColors.white.white,
+       }]}
+            onPress={()=>{}}
+>
+        <Text style = {[styles.btnTxt,{
+          color: item?.orderStatus == ORDER_STATUS.Returned ? AppColors.white.white : AppColors.themeColor.dark
+        }]}>Refund</Text>
+       </TouchableOpacity>
+       </View>
       </ScrollView>
     </View>
   );
@@ -219,4 +258,31 @@ const styles = StyleSheet.create({
     marginHorizontal: AppHorizontalMargin,
     marginVertical: normalized(5),
   },
+  statusBtnCont: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: normalized(10),
+    marginBottom: normalized(20)
+  },
+  btn: {
+    paddingHorizontal: normalized(10),
+    paddingVertical: normalized(8),
+    borderRadius: normalized(8),
+    borderColor: AppColors.themeColor.dark,
+    borderWidth: 1
+  },
+  btnTxt: {
+    fontSize: normalized(14),
+    fontFamily: AppFonts.PoppinsSemiBold
+  },
+  orderId: {
+    fontSize: normalized(14),
+    color: AppColors.black.black,
+    fontFamily: AppFonts.PoppinsSemiBold,
+    alignSelf: 'center',
+    textDecorationLine: 'underline',
+    marginTop: normalized(10)
+  }
 });
