@@ -88,19 +88,18 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
         title={isRtl ? "ڈلیوری ایڈریس" : "Delivery Address"}
         icon={[AppImages.Home.PlusBlack]}
         rightIconCont={{
-          width: normalized(33),
-          height: normalized(33),
+          width: normalized(28),
+          height: normalized(28),
           borderColor: AppColors.themeColor.dark,
           borderRadius: normalized(40),
           borderWidth: 1,
           alignItems: "center",
           justifyContent: "center",
-          backgroundColor: AppColors.themeColor.dark,
         }}
         rightIconStyle={{
-          width: normalized(20),
-          height: normalized(20),
-          tintColor: AppColors.white.white,
+          width: normalized(15),
+          height: normalized(15),
+          tintColor: AppColors.themeColor.dark,
         }}
         onRightIconPress={() => {
           props?.navigation?.navigate(Routes.Home.UpdateDelivery);

@@ -131,6 +131,8 @@ const ManageProductScreen = (props: ScreenProps) => {
         contentContainerStyle={{
           paddingHorizontal: normalized(15),
         }}
+        columnWrapperStyle={{ gap: normalized(10) }}
+        numColumns={2}
         ListFooterComponent={<View style={{ height: normalized(30) }} />}
         renderItem={({ item }) => {
           return (

@@ -140,7 +140,7 @@ const Login = (props: ScreenProps) => {
               }
             );
           }
-          setUserDataInAsync({ ...userUpdatedData, isRtl: true });
+          setUserDataInAsync({ ...userUpdatedData });
           dispatch(setUserData(userUpdatedData));
         } else {
           showToast(AppStrings.ToastType.error, "Invalid Credentials");

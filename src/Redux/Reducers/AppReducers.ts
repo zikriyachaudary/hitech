@@ -18,7 +18,10 @@ const initialState: IReduxState = {
   showNoti: false,
   productsList: [],
   notificationsList: [],
-  orderList: [],
+  pendingOrdersList: [],
+  dispatchedOrdersList: [],
+  ordersList: [],
+  addressList: [],
 };
 
 export const Reducer = createSlice({
@@ -34,7 +37,6 @@ export const Reducer = createSlice({
     setIsLoader: (state, action) => {
       state.isLoaderStart = action.payload;
     },
-
     setIsAlertShow: (state, action) => {
       state.isAlertShow = action.payload;
     },
@@ -77,8 +79,17 @@ export const Reducer = createSlice({
     setNotiList: (state, action) => {
       state.notificationsList = action.payload;
     },
-    setOrderList: (state, action) => {
-      state.orderList = action.payload;
+    setPendingOrders: (state, action) => {
+      state.pendingOrdersList = action.payload;
+    },
+    setDispatchedOrders: (state, action) => {
+      state.dispatchedOrdersList = action.payload;
+    },
+    setAddressList: (state, action) => {
+      state.addressList = action.payload;
+    },
+    setOrdersList: (state, action) => {
+      state.ordersList = action.payload;
     },
   },
 });
@@ -101,7 +112,10 @@ export const {
   setIsShowNoti,
   setProductList,
   setNotiList,
-  setOrderList,
+  setPendingOrders,
+  setDispatchedOrders,
+  setAddressList,
+  setOrdersList,
 } = Reducer.actions;
 
 export default Reducer.reducer;

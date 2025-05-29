@@ -143,36 +143,37 @@ const ProductDetailScreen = (props: ScreenProps) => {
         </Text>
       </ScrollView>
 
-      <View style={styles.bottomCont}>
-        <ProductCounterComp
-          count={count}
-          atIncreaseCount={() => {
-            setCount(count + 1);
-          }}
-          atDecreaseCount={() => {
-            setCount(count - 1);
-          }}
-        />
-        <FilledButton
-          label={isRtl ? "کارٹ میں شامل کریں" : "Add To Cart"}
-          onPress={async () => {
-            let tempItem = { ...item };
-            delete tempItem.sizeNPrice;
-            const updateItem = {
-              ...tempItem,
-              count,
-              price,
-              size: selectedSize,
-            };
-            console.log("item --0----   ", updateItem);
-            updateProductList(updateItem);
-          }}
-          mainContainer={{
-            width: normalized(150),
-            height: normalized(40),
-          }}
-        />
-      </View>
+      {!selector?.userData?.isAdmin && (
+        <View style={styles.bottomCont}>
+          <ProductCounterComp
+            count={count}
+            atIncreaseCount={() => {
+              setCount(count + 1);
+            }}
+            atDecreaseCount={() => {
+              setCount(count - 1);
+            }}
+          />
+          <FilledButton
+            label={isRtl ? "کارٹ میں شامل کریں" : "Add To Cart"}
+            onPress={async () => {
+              let tempItem = { ...item };
+              delete tempItem.sizeNPrice;
+              const updateItem = {
+                ...tempItem,
+                count,
+                price,
+                size: selectedSize,
+              };
+              updateProductList(updateItem);
+            }}
+            mainContainer={{
+              width: normalized(150),
+              height: normalized(40),
+            }}
+          />
+        </View>
+      )}
     </View>
   );
 };

@@ -27,6 +27,7 @@ import FilledButton from "../../../Components/CustomButton/FilledButton";
 import EmptyCartListComp from "../Components/EmptyCartListComp";
 import { Routes } from "../../../../Utils/Routes";
 import {
+  setAddressList,
   setIsLoader,
   setShowToast,
   setTab,
@@ -37,6 +38,7 @@ import { AppStrings } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import { fetchAddressReq } from "../../../../Network/Services/AddressServices";
+import { useIsFocused } from "@react-navigation/native";
 
 const CartScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -44,6 +46,7 @@ const CartScreen = (props: ScreenProps) => {
   );
   const userData = selector?.userData;
   const isRtl = selector?.isRtl;
+  const isFocused = useIsFocused();
   const { updateProductList, removeProductFromCart, getProductsTotalPrice } =
     CartManager();
   const dispatch = useDispatch();
@@ -52,7 +55,6 @@ const CartScreen = (props: ScreenProps) => {
   const [deliveryAdd, setDeliveryAdd] = useState<any>(
     props?.route?.params?.address || null
   );
-
   const getUserAddress = () => {
     dispatch(setIsLoader(true));
     fetchAddressReq(userData?.userId, (resp) => {
@@ -60,6 +62,7 @@ const CartScreen = (props: ScreenProps) => {
         const defaultAddress =
           resp.data.find((item: any) => item.isDefault) || null;
         !deliveryAdd && setDeliveryAdd(defaultAddress);
+        !deliveryAdd && dispatch(setAddressList(defaultAddress));
         dispatch(setIsLoader(false));
       } else {
         dispatch(setIsLoader(false));
@@ -69,23 +72,26 @@ const CartScreen = (props: ScreenProps) => {
 
   useEffect(() => {
     getUserAddress();
-  }, []);
+    if (props?.route?.params?.address != undefined)
+      setDeliveryAdd(props?.route?.params?.address);
+  }, [isFocused]);
 
   let productList = useSelector((state: any) => state.SliceReducer.cartDetail);
 
   const placeOrder = async () => {
     const obj = {
       deliveryDetails: {
-        generalAddress: "House 00 Stree 00 Mohallah Lahore Pakistan",
-        street: "00",
-        house: "00",
-        Area: "Some Area here",
-        City: "Pakistan",
+        generalAddress: deliveryAdd?.address,
+        street: deliveryAdd?.street,
+        house: deliveryAdd?.house,
+        Area: deliveryAdd?.area,
+        City: deliveryAdd?.city,
       },
       orderPrice: getProductsTotalPrice(true),
       products: selector?.cartDetail,
       userDetail: selector?.userData,
       orderId: CommonDataManager.getSharedInstance().makeid(1),
+      createdAd: new Date(),
     };
     dispatch(setIsLoader(true));
     await placeOrderReq(obj, (resp: any) => {

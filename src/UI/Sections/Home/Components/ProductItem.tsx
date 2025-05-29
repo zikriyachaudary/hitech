@@ -23,7 +23,7 @@ const ProductItem = (props: any) => {
       style={{
         padding: normalized(6),
         borderWidth: 1,
-        borderColor: AppColors.grey.greyLevel2,
+        borderColor: AppColors.grey.greyLevel1,
         borderRadius: normalized(8),
         flex: 0.5,
         marginTop: normalized(10),

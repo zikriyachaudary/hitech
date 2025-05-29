@@ -85,3 +85,24 @@ export const placeOrderReq = async (params: any, onComplete: any) => {
     onComplete({ status: false, message: AppStrings.Network.someThingError });
   }
 };
+
+export const updateOrderStatusReq = async (obj: any, onComplete: any) => {
+  try {
+    firestore()
+      .collection(Collections.ORDER_COLLECTION)
+      .doc(obj?.orderId)
+      .update(obj)
+      .then(() => {
+        onComplete({ status: true, message: "Order Updated Successfully" });
+      })
+      .catch((e) => {
+        onComplete({
+          status: false,
+          message: AppStrings.Network.someThingError,
+        });
+      });
+  } catch (error) {
+    console.log("order update Status error -->>>  ", error);
+    onComplete({ status: false, message: AppStrings.Network.someThingError });
+  }
+};

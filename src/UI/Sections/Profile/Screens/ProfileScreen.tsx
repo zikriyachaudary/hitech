@@ -9,8 +9,9 @@ import {
 import React, { useState } from "react";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import {
+  setDispatchedOrders,
   setNotiList,
-  setOrderList,
+  setPendingOrders,
   setProductList,
   setTab,
   setUserData,
@@ -51,10 +52,11 @@ const ProfileScreen = (props: ScreenProps) => {
   const onLogoutPress = () => {
     dispatch(setUserData(null));
     dispatch(setTab(0));
-    dispatch(setOrderList([]));
+    dispatch(setPendingOrders([]));
+    dispatch(setDispatchedOrders([]));
     dispatch(setNotiList([]));
     dispatch(setProductList([]));
-    setUserDataInAsync({ isRtl: true });
+    setUserDataInAsync({ isRtl: selector?.isRtl });
   };
   const dispatch = useDispatch();
   return (

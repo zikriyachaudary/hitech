@@ -15,5 +15,8 @@ export interface IReduxState {
   showNoti: boolean;
   productsList: any;
   notificationsList: any;
-  orderList: any;
+  pendingOrdersList: any;
+  dispatchedOrdersList: any;
+  addressList: any;
+  ordersList: any;
 }

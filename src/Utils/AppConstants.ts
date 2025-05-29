@@ -266,12 +266,7 @@ export const adminProfileList = [
     rtlTxt: "اپنی پروفائل میں ترمیم کریں",
     leftIcon: AppImages.Profile.ProfileIcon,
   },
-  {
-    id: 7,
-    text: "Change Password",
-    rtlTxt: "پاس ورڈ تبدیل کریں",
-    leftIcon: AppImages.Profile.password,
-  },
+
   {
     id: 6,
     text: "Select Language",

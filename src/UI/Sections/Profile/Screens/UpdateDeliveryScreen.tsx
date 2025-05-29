@@ -112,7 +112,6 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
               message: item ? "Address Updated" : "Address Added",
             })
           );
-          console.log("resp --->>>  ", resp);
           props?.navigation?.goBack();
           dispatch(setIsLoader(false));
         } else {
@@ -176,8 +175,10 @@ const UpdateDeliveryScreen = (props: ScreenProps) => {
               onRightIconPress: () => {
                 // Handle delete action here
               },
-              rightIconCont: {
-                // backgroundColor: "green",
+              rightIconCont: { marginHorizontal: normalized(10) },
+              rightIconStyle: {
+                width: normalized(20),
+                height: normalized(20),
               },
             }
           : {})}

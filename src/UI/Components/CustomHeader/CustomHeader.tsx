@@ -105,7 +105,7 @@ const CustomHeader = (props: any) => {
 const styles = StyleSheet.create({
   container: {
     marginTop: 10,
-    height: normalized(50),
+    height: normalized(40),
     alignItems: "center",
     // justifyContent: "space-between",
     marginHorizontal: normalized(15),

@@ -35,7 +35,7 @@ const AddressItem = (props: any) => {
           duration: 200,
         });
       }}
-      activeOpacity={0.7}
+      activeOpacity={1}
     >
       <TouchableOpacity
         activeOpacity={0.7}

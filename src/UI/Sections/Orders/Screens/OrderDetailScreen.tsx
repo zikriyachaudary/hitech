@@ -1,4 +1,5 @@
 import {
+  LayoutAnimation,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -6,24 +7,27 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import {
   AppColors,
   AppFonts,
   AppHorizontalMargin,
   normalized,
   ScreenProps,
-  ScreenSize,
 } from "../../../../Utils/AppConstants";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import AppImageViewer from "../../../Components/AppImageView";
 import LinearGradient from "react-native-linear-gradient";
 import { Routes } from "../../../../Utils/Routes";
-import FilledButton from "../../../Components/CustomButton/FilledButton";
-import UnFilledButton from "../../../Components/CustomButton/UnFilledButton";
+import { AppStrings, ORDER_STATUS } from "../../../../Utils/AppStrings";
+import { updateOrderStatusReq } from "../../../../Network/Services/ProductServices";
+import {
+  setIsLoader,
+  setShowToast,
+} from "../../../../Redux/Reducers/AppReducers";
 
 const OrderDetailScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -31,7 +35,36 @@ const OrderDetailScreen = (props: ScreenProps) => {
   );
   const isRtl = selector?.isRtl;
   const item = props?.route?.params?.item;
-  console.log("item?.products ----  ", item?.products);
+  const [orderStatus, setOrderStatus] = useState(item?.orderStatus);
+  const dispatch = useDispatch();
+
+  const updateOrderStatus = (status: any) => {
+    dispatch(setIsLoader(true));
+    updateOrderStatusReq(
+      { orderId: item?.orderId, orderStatus: status },
+      (resp: any) => {
+        if (resp?.status) {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.success,
+              message: isRtl
+                ? "آرڈر کی حالت اپ ڈیٹ ہو گئی ہے"
+                : "Order Status Updated",
+            })
+          );
+          dispatch(setIsLoader(false));
+        } else {
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.warning,
+              message: AppStrings.Network.someThingError,
+            })
+          );
+          dispatch(setIsLoader(false));
+        }
+      }
+    );
+  };
 
   return (
     <View style={AppStyles.MainStyle}>
@@ -86,7 +119,7 @@ const OrderDetailScreen = (props: ScreenProps) => {
           <Text style={styles.headTxt}>
             {isRtl ? "آرڈر کی تفصیلات" : "Order Details"}
           </Text>
-          {item?.products?.map((product, index) => (
+          {item?.products?.map((product: any, index: any) => (
             <>
               <TouchableOpacity
                 activeOpacity={0.8}
@@ -131,7 +164,7 @@ const OrderDetailScreen = (props: ScreenProps) => {
                 </View>
                 <View style={styles.verDiv} />
                 <Text style={styles.countTxt} numberOfLines={1}>
-                  X{product?.count}
+                  {`X ${product?.count}`}
                 </Text>
               </TouchableOpacity>
               {item?.products?.length - 1 != index && (
@@ -139,17 +172,77 @@ const OrderDetailScreen = (props: ScreenProps) => {
               )}
             </>
           ))}
-          <View
-            style={{
-              width: ScreenSize.width - normalized(80),
-              alignSelf: "center",
-              backgroundColor: AppColors.black.black,
-              height: normalized(0.8),
-              marginVertical: normalized(10),
-            }}
-          />
         </View>
-        <UnFilledButton label={"Dispatched"} />
+        <View style={styles.mainBtnCont}>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              if (orderStatus == ORDER_STATUS.Order_Placed) return;
+              setOrderStatus(ORDER_STATUS.Order_Placed);
+              LayoutAnimation.configureNext(
+                LayoutAnimation.Presets.easeInEaseOut
+              );
+              updateOrderStatus(ORDER_STATUS.Order_Placed);
+            }}
+            style={[
+              styles.btnCont,
+              {
+                backgroundColor:
+                  orderStatus == ORDER_STATUS.Order_Placed
+                    ? AppColors.themeColor.dark
+                    : AppColors.white.white,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.btnTxt,
+                {
+                  color:
+                    orderStatus == ORDER_STATUS.Order_Placed
+                      ? AppColors.white.white
+                      : AppColors.themeColor.dark,
+                },
+              ]}
+            >
+              Pending
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() => {
+              if (orderStatus == ORDER_STATUS.Dispatched) return;
+              setOrderStatus(ORDER_STATUS.Dispatched);
+              LayoutAnimation.configureNext(
+                LayoutAnimation.Presets.easeInEaseOut
+              );
+              updateOrderStatus(ORDER_STATUS.Dispatched);
+            }}
+            style={[
+              styles.btnCont,
+              {
+                backgroundColor:
+                  orderStatus == ORDER_STATUS.Dispatched
+                    ? AppColors.themeColor.dark
+                    : AppColors.white.white,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.btnTxt,
+                {
+                  color:
+                    orderStatus == ORDER_STATUS.Dispatched
+                      ? AppColors.white.white
+                      : AppColors.themeColor.dark,
+                },
+              ]}
+            >
+              Dispatched
+            </Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   );
@@ -170,7 +263,7 @@ const styles = StyleSheet.create({
     padding: normalized(10),
   },
   divider: {
-    backgroundColor: AppColors.grey.greyLevel8,
+    backgroundColor: AppColors.grey.greyLevel4,
     height: normalized(0.5),
     borderRadius: normalized(2),
     width: normalized(200),
@@ -218,5 +311,25 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.black.black,
     marginHorizontal: AppHorizontalMargin,
     marginVertical: normalized(5),
+  },
+  btnCont: {
+    flex: 1,
+    height: normalized(35),
+    borderRadius: normalized(80),
+    borderWidth: 2,
+    borderColor: AppColors.themeColor.dark,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  mainBtnCont: {
+    alignItems: "center",
+    flexDirection: "row",
+    flex: 1,
+    gap: normalized(20),
+    marginHorizontal: normalized(30),
+  },
+  btnTxt: {
+    fontSize: normalized(14),
+    fontFamily: AppFonts.PoppinsSemiBold,
   },
 });
