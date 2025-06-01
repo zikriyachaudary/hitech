@@ -81,9 +81,18 @@ export const ADMN_TYPE = {
 export const USER_TYPE = {
   Silver: "Silver",
   Gold: "Gold",
+  Admin: "Admin",
 };
 
 export const ORDER_STATUS = {
   Order_Placed: "Order_Placed",
   Dispatched: "Dispatched",
+  Returned: "Returned",
+};
+
+export const NOTIFICATIONS_TYPES = {
+  Order_Placed: "Order_Placed",
+  Order_Dispatched: "Order_Dispatched",
+  Account_Upgraded: "Account_Upgraded",
+  payment_Received: "Payment_Received",
 };

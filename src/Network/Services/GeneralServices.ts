@@ -123,3 +123,17 @@ export const getAllOrdersList = async (onComplete: any) => {
     onComplete({ status: false, error: error });
   }
 };
+
+export const fetchAdminDetailReq = async (onComplete: any) => {
+  try {
+    const querySnapshot = await firestore()
+      .collection(Collections.ADMIN_COLLECTION)
+      .get();
+    querySnapshot.forEach((doc) => {
+      onComplete(doc.data());
+    });
+  } catch (error) {
+    onComplete(null);
+    console.error("Error fetching vendor data", error);
+  }
+};

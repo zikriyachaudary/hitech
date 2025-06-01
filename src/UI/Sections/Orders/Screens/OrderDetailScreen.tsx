@@ -89,6 +89,7 @@ const OrderDetailScreen = (props: ScreenProps) => {
         }}
       />
       <ScrollView>
+        <Text style={styles.orderId}>{`Order ID: LKSJDF-ASDF`}</Text>
         <View style={styles.userMainCont}>
           <Text style={styles.headTxt}>
             {isRtl ? "کسٹمر کی تفصیلات" : "Customer Details"}
@@ -167,7 +168,7 @@ const OrderDetailScreen = (props: ScreenProps) => {
                   {`X ${product?.count}`}
                 </Text>
               </TouchableOpacity>
-              {item?.products?.length - 1 != index && (
+              {item?.products?.length - 1 == index && (
                 <View style={styles.prodductDiv} />
               )}
             </>

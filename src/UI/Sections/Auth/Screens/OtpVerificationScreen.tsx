@@ -21,7 +21,7 @@ import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import CodeInput from "../../Home/Components/OTPInput";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setIsLoader,
   setShowToast,
@@ -37,6 +37,7 @@ import { AppStrings } from "../../../../Utils/AppStrings";
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 import { Routes } from "../../../../Utils/Routes";
 import auth from "@react-native-firebase/auth";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const OtpVerificationScreen = (props: ScreenProps) => {
   const [emailOtp, setEmailOtp] = useState("");
@@ -48,6 +49,10 @@ const OtpVerificationScreen = (props: ScreenProps) => {
   const isResetPasswordScreen =
     props?.route?.params?.isResetPasswordScreen || false;
   const isEmail = props?.route?.params?.isEmail || false;
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
 
   function onAuthStateChanged(user: any) {}
   useEffect(() => {
@@ -58,6 +63,7 @@ const OtpVerificationScreen = (props: ScreenProps) => {
   const onSubmit = async () => {
     try {
       if (emailOtp?.length < 6 && numberOtp?.length < 6) return;
+      dispatch(setIsLoader(true));
       const resp = await phoneVerification.confirm(numberOtp);
       const emailOtpRes = await verifyEmailOtp({
         recipientEmail: signupObj?.email,
@@ -65,8 +71,10 @@ const OtpVerificationScreen = (props: ScreenProps) => {
       });
       if (!resp?.user?.uid) {
         setNumberOtpError("Invalid Code");
+        dispatch(setIsLoader(false));
       }
       if (!emailOtpRes?.status) {
+        dispatch(setIsLoader(false));
         setEmailOtpError("Invalid Code");
       }
       if (resp?.user?.uid && emailOtpRes?.status) {
@@ -143,7 +151,7 @@ const OtpVerificationScreen = (props: ScreenProps) => {
           setEmailOtpError("Invalid Code");
         } else {
           props?.navigation?.navigate(Routes.Auth.newPasswordScreen, {
-            email: props?.route?.params?.email,
+            phoneNumber: props?.route?.params?.email,
             isPhoneNumber: true,
           });
         }
@@ -208,7 +216,7 @@ const OtpVerificationScreen = (props: ScreenProps) => {
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
       <CustomHeader
-        Text={"OTP Verification"}
+        Text={isRtl ? "او ٹی پی کی تصدیق" : "OTP Verification"}
         onPress={() => props?.navigation?.goBack()}
       />
       <ScrollView

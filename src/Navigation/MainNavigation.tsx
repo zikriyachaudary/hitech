@@ -20,6 +20,7 @@ import LanguageScreen from "../UI/Sections/Profile/Screens/LanguageScreen";
 import GoldNSilverScreen from "../UI/Sections/Home/Screens/GoldNSilverScreen";
 import UserOrderDetailScreen from "../UI/Sections/Home/Screens/UserOrderDetailScreen";
 import OrderDetailScreen from "../UI/Sections/Orders/Screens/OrderDetailScreen";
+import ChangePasswordScreen from "../UI/Sections/Profile/Screens/ChangePasswordScreen";
 
 const MainStack = createStackNavigator();
 
@@ -87,6 +88,10 @@ const MainNavigation = () => {
       <MainStack.Screen
         name={Routes.Home.OrderDetailScreen}
         component={OrderDetailScreen}
+      />
+      <MainStack.Screen
+        name={Routes.Home.ChangePassword}
+        component={ChangePasswordScreen}
       />
     </MainStack.Navigator>
   );

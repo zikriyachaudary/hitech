@@ -118,7 +118,6 @@ const Login = (props: ScreenProps) => {
       isAdmin,
       key: result?.type == "email" ? "email" : "phoneNumber",
     };
-    console.log("params obj --->>  ", paramsObj);
 
     dispatch(setIsLoader(true));
     await loginRequest(paramsObj, async (response) => {

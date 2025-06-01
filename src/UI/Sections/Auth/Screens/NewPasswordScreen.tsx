@@ -10,16 +10,28 @@ import {
   ScreenProps,
 } from "../../../../Utils/AppConstants";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
+import {
+  setIsLoader,
+  setShowToast,
+} from "../../../../Redux/Reducers/AppReducers";
+import { AppStrings } from "../../../../Utils/AppStrings";
+import FilledButton from "../../../Components/CustomButton/FilledButton";
+import { updateUserPasswordReq } from "../../../../Network/Services/AuthServices";
 
 const NewPasswordScreen = (props: ScreenProps) => {
-  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const confirmPasswordRef = useRef();
   const [passwordError, setPasswordError] = useState("");
-
+  const { isEmail, isPhoneNumber, email, phoneNumber } =
+    props?.route?.params || {};
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
   const dispatch = useDispatch();
+  const isRtl = selector?.isRtl;
 
   const focusNextField = (inputRef: any) => {
     if (inputRef?.current) {
@@ -27,19 +39,75 @@ const NewPasswordScreen = (props: ScreenProps) => {
     }
   };
 
+  const updatePassword = () => {
+    let isFormValid = true;
+    if (!password) {
+      setPasswordError("Please Enter Password");
+      isFormValid = false;
+    }
+    if (password?.length < 8) {
+      setPasswordError("Password must be atleast 8 characters long");
+      isFormValid = false;
+    }
+    if (!confirmPassword) {
+      setPasswordError("Please Enter Password");
+      isFormValid = false;
+    }
+    if (confirmPassword?.length < 8) {
+      setPasswordError("Password must be atleast 8 characters long");
+      isFormValid = false;
+    }
+    if (password != confirmPassword) {
+      setPasswordError("Passwords does not match");
+      isFormValid = false;
+    }
+    if (!isFormValid) {
+      return;
+    }
+    dispatch(setIsLoader(true));
+    const obj = {
+      secretId: password,
+      ...(isEmail && { email }),
+      ...(isPhoneNumber && { phoneNumber }),
+    };
+    dispatch(setIsLoader(true));
+    updateUserPasswordReq(obj, (resp: any) => {
+      if (resp?.status) {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.success,
+            message: isRtl
+              ? "پاس ورڈ اپ ڈیٹ ہو گیا ہے"
+              : "Password Updated Successfully",
+          })
+        );
+        props?.navigation?.pop(3);
+        dispatch(setIsLoader(false));
+      } else {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.warning,
+            message: AppStrings.Network.someThingError,
+          })
+        );
+        dispatch(setIsLoader(false));
+      }
+    });
+  };
+
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
       <CustomHeader
-        Text={"Set New Password"}
+        Text={isRtl ? "نیا پاس ورڈ سیٹ کریں" : "Set New Password"}
         onPress={() => props?.navigation?.goBack()}
       />
       <View style={styles.topContainerChild}>
         <View style={styles.inputCont}>
-          <Text style={styles.inputText}>{"Passowrd"}</Text>
+          <Text style={styles.inputText}>{isRtl ? "پاس ورڈ" : "Password"}</Text>
           <CustomInput
             onSubmitEditing={() => focusNextField(confirmPasswordRef)}
-            placeHold={"Password"}
+            placeHold={isRtl ? "پاس ورڈ" : "Password"}
             showLastIcon={true}
             rightIcon={AppImages.Auth.hideEye}
             secureEntry={true}
@@ -54,10 +122,12 @@ const NewPasswordScreen = (props: ScreenProps) => {
       </View>
       <View style={styles.topContainerChild}>
         <View style={styles.inputCont}>
-          <Text style={styles.inputText}>{"Confirm Passowrd"}</Text>
+          <Text style={styles.inputText}>
+            {isRtl ? "پاس ورڈ کی تصدیق کریں" : "Confirm Password"}
+          </Text>
           <CustomInput
             ref={confirmPasswordRef}
-            placeHold={"Confirm Password"}
+            placeHold={isRtl ? "پاس ورڈ کی تصدیق کریں" : "Confirm Password"}
             showLastIcon={true}
             rightIcon={AppImages.Auth.hideEye}
             secureEntry={true}
@@ -69,7 +139,12 @@ const NewPasswordScreen = (props: ScreenProps) => {
             errorMsg={passwordError}
           />
         </View>
-      </View>{" "}
+      </View>
+
+      <FilledButton
+        label={isRtl ? "پاس ورڈ اپ ڈیٹ کریں" : "Update Password"}
+        onPress={() => updatePassword()}
+      />
     </View>
   );
 };
@@ -93,6 +168,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: normalized(10),
     alignItems: "center",
+    marginHorizontal: normalized(20),
   },
   inputCont: {
     marginTop: normalized(20),

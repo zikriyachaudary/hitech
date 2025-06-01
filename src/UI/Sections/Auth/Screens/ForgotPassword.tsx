@@ -21,7 +21,7 @@ import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import auth from "@react-native-firebase/auth";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setIsAlertShow,
   setIsLoader,
@@ -35,17 +35,20 @@ import {
   sendEmailOtp,
 } from "../../../../Network/Services/AuthServices";
 import { Routes } from "../../../../Utils/Routes";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const ForgetPassword = (props: any) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
   const [email, setEmail] = useState<string>("");
   const dispatch = useDispatch();
   const [emailError, setEmailError] = useState<string>("");
+  const isRtl = selector?.isRtl;
 
   const onForgotPass = async () => {
     let isFormValid = true;
     const result = validateInput(email);
-    console.log("result ---  ", result);
-
     if (!email) {
       setEmailError("Please enter an Email / Phone Number");
       isFormValid = false;
@@ -68,8 +71,6 @@ const ForgetPassword = (props: any) => {
       dispatch(setIsLoader(true));
       if (result?.type == "phone") {
         const number = formatPhoneNumber(email);
-        console.log("phoneNumber ---- ", number);
-
         await isEmailAlreadyRegistered(
           number,
           "phoneNumber",
@@ -104,8 +105,6 @@ const ForgetPassword = (props: any) => {
           email?.toLocaleLowerCase(),
           "email",
           async (res: any) => {
-            console.log("resp --->>> ", res);
-
             if (res?.status) {
               const isOtpSend = await sendEmailOtp({
                 recipientEmail: email,
@@ -150,7 +149,7 @@ const ForgetPassword = (props: any) => {
       <SafeAreaView />
       <CustomHeader
         onPress={() => props?.navigation?.goBack()}
-        Text={"Reset Passowrd"}
+        Text={isRtl ? "پاس ورڈ ری سیٹ کریں" : "Reset Password"}
       />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -162,10 +161,14 @@ const ForgetPassword = (props: any) => {
           style={{ flex: 1, paddingHorizontal: AppHorizontalMargin }}
         >
           <Text style={styles.descText}>
-            {`We’ll send you a one time password on your email Or Phone Number `}
+            {isRtl
+              ? "ہم آپ کو ایک وقتی پاس ورڈ آپ کے ای میل یا فون نمبر پر بھیجیں گے۔"
+              : "We’ll send you a one time password on your email or phone number."}{" "}
           </Text>
 
-          <Text style={styles.inputText}>{"Email / Phone Number"}</Text>
+          <Text style={styles.inputText}>
+            {isRtl ? "ای میل / فون نمبر" : "Email / Phone Number"}
+          </Text>
           <CustomInput
             placeHold={""}
             showLastIcon={true}
@@ -181,7 +184,7 @@ const ForgetPassword = (props: any) => {
 
           <FilledButton
             mainContainer={{ marginVertical: hv(30) }}
-            label={"Reset Password"}
+            label={isRtl ? "پاس ورڈ ری سیٹ کریں" : "Reset Password"}
             onPress={onForgotPass}
           />
         </ScrollView>

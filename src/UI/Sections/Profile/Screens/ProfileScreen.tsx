@@ -101,6 +101,8 @@ const ProfileScreen = (props: ScreenProps) => {
             });
           } else if (id == 6) {
             props?.navigation?.navigate(Routes.Home.Language);
+          } else if (id == 7) {
+            props?.navigation?.navigate(Routes.Home.ChangePassword);
           }
         }}
       />

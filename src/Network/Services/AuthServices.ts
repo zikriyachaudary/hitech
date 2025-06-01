@@ -5,6 +5,7 @@ import CommonDataManager from "../../Utils/CommonManager";
 import { BASE_URL } from "../Url";
 import { ApiResponseHandler } from "./ApiResponseHandler";
 import Api from "./Api";
+import { formatPhoneNumber } from "../../Utils/Helper";
 
 export const userSignupRequest = async (
   userInput: any,
@@ -77,8 +78,6 @@ export const loginRequest = async (
   userInput: any,
   complete: (userObj: any) => void
 ) => {
-  console.log("userInputuserInput  ---00-0-----  ", userInput);
-
   try {
     firestore()
       .collection(
@@ -349,8 +348,6 @@ export const isEmailAlreadyRegistered = async (
   query = "email",
   onComplete: any
 ) => {
-  console.log("email re ---->>>  ", email);
-
   try {
     const snapshot = await firestore()
       .collection(Collections.CUSTOMERS_COLLECTION)
@@ -389,4 +386,76 @@ export const verifyEmailOtp = async <T>(
   const method = "POST";
   let apiRequest = await Api(urlForApiCall, method, params);
   return apiRequest;
+};
+
+export const updateUserPasswordReq = async (obj: any, onComplete: any) => {
+  try {
+    const { secretId, email, phoneNumber } = obj;
+    const collectionRef = firestore().collection(
+      Collections.CUSTOMERS_COLLECTION
+    );
+
+    let query;
+
+    if (email) {
+      query = collectionRef.where("email", "==", email);
+    } else if (phoneNumber) {
+      query = collectionRef.where(
+        "phoneNumber",
+        "==",
+        formatPhoneNumber(phoneNumber)
+      );
+    } else {
+      onComplete({
+        status: false,
+        message: "No identifier provided for update",
+      });
+      return;
+    }
+
+    const snapshot = await query.get();
+
+    if (!snapshot.empty) {
+      const docRef = snapshot.docs[0].ref;
+
+      await docRef.update({ secretId });
+
+      onComplete({
+        status: true,
+        message: "Password Updated Successfully",
+      });
+    } else {
+      onComplete({
+        status: false,
+        message: "User not found",
+      });
+    }
+  } catch (error) {
+    console.log("Password update error -->>>", error);
+    onComplete({
+      status: false,
+      message: AppStrings.Network.someThingError,
+    });
+  }
+};
+
+export const changePasswordReq = async (obj: any, onComplete: any) => {
+  try {
+    firestore()
+      .collection(Collections.CUSTOMERS_COLLECTION)
+      .doc(obj?.userId)
+      .update({ secretId: obj?.secretId })
+      .then(() => {
+        onComplete({ status: true, message: "Password Updated Successfully" });
+      })
+      .catch((e) => {
+        onComplete({
+          status: false,
+          message: AppStrings.Network.someThingError,
+        });
+      });
+  } catch (error) {
+    console.log("order update Status error -->>>  ", error);
+    onComplete({ status: false, message: AppStrings.Network.someThingError });
+  }
 };

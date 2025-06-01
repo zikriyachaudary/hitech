@@ -41,8 +41,6 @@ import {
 import { setUserDataInAsync } from "../../../../Utils/AsyncStorage";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import SocialAuthManager from "../../../../Hooks/SocialAuthManager";
-import appleAuth from "@invertase/react-native-apple-authentication";
-import SocialBtnComp from "../../../Components/SocialButton/GoogleButton";
 import AppImagePicker from "../../../Components/CustomModal/AppImagePicker";
 import { formatPhoneNumber } from "../../../../Utils/Helper";
 import auth from "@react-native-firebase/auth";
@@ -89,9 +87,7 @@ const SignUpScreen = (props: any) => {
     }
   };
 
-  function onAuthStateChanged(user: any) {
-    console.log("user ---->>>>   ", user);
-  }
+  function onAuthStateChanged(user: any) {}
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber;
@@ -173,6 +169,7 @@ const SignUpScreen = (props: any) => {
                 const isOtpSend = await sendEmailOtp({
                   recipientEmail: obj?.email,
                 });
+
                 if (confirmation && isOtpSend?.status) {
                   props?.navigation?.navigate(
                     Routes.Auth.otpVerificationScreen,
@@ -181,6 +178,7 @@ const SignUpScreen = (props: any) => {
                       phoneVerification: confirmation,
                     }
                   );
+                  dispatch(setIsLoader(false));
                 } else {
                   dispatch(
                     setShowToast({
@@ -188,6 +186,7 @@ const SignUpScreen = (props: any) => {
                       message: "Network Error",
                     })
                   );
+                  dispatch(setIsLoader(false));
                 }
               }
             }
@@ -196,6 +195,7 @@ const SignUpScreen = (props: any) => {
       }
     );
   };
+  // dispatch(setIsLoader(false));
 
   const socialAuthReq = async (type: string) => {
     dispatch(setIsLoader(true));

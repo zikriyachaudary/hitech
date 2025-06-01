@@ -114,6 +114,7 @@ const OTPScreen = (props: ScreenProps) => {
       adminId: adminObj?.adminId
         ? adminObj?.adminId
         : CommonDataManager.getSharedInstance().makeid(8).toString(),
+      superAdminId: selector?.userData?.userId,
     };
     let isEmailMatch = false;
     const list: any = await fetchAdminListReq(selector?.userData?.adminId);

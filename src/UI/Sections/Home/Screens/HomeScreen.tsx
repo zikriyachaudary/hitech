@@ -78,6 +78,7 @@ const HomeScreen = (props: ScreenProps) => {
   };
 
   useEffect(() => {
+    if(selector?.userData?.isAdmin) return;
     fetchProductsReq();
   }, [isFocused]);
 
@@ -117,8 +118,6 @@ const HomeScreen = (props: ScreenProps) => {
         );
       }
     });
-    console.log("filter ----  ", filtered);
-
     setFilterProductList(filtered);
   };
 

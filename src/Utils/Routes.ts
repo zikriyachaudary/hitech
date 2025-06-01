@@ -25,6 +25,7 @@ export const Routes = {
     UpdateDelivery: "UpdateDelivery",
     EditProfile: "EditProfile",
     Language: "Language",
+    ChangePassword: "ChangePassword",
   },
   Admin: {
     ManageCategories: "ManageCategories",
