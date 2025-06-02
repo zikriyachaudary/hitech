@@ -21,6 +21,7 @@ import GoldNSilverScreen from "../UI/Sections/Home/Screens/GoldNSilverScreen";
 import UserOrderDetailScreen from "../UI/Sections/Home/Screens/UserOrderDetailScreen";
 import OrderDetailScreen from "../UI/Sections/Orders/Screens/OrderDetailScreen";
 import ChangePasswordScreen from "../UI/Sections/Profile/Screens/ChangePasswordScreen";
+import PaymentMethodScreen from "../UI/Sections/Cart/Screens/PaymentMethodScreen";
 
 const MainStack = createStackNavigator();
 
@@ -92,6 +93,10 @@ const MainNavigation = () => {
       <MainStack.Screen
         name={Routes.Home.ChangePassword}
         component={ChangePasswordScreen}
+      />
+      <MainStack.Screen
+        name={Routes.Home.PaymentMethodScreen}
+        component={PaymentMethodScreen}
       />
     </MainStack.Navigator>
   );

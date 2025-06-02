@@ -96,6 +96,8 @@ export const updateOrderStatusReq = async (obj: any, onComplete: any) => {
         onComplete({ status: true, message: "Order Updated Successfully" });
       })
       .catch((e) => {
+        console.log("error on update status --->>>   ", e);
+
         onComplete({
           status: false,
           message: AppStrings.Network.someThingError,

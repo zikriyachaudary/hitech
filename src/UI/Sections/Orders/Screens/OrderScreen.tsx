@@ -32,6 +32,7 @@ import {
 import { Routes } from "../../../../Utils/Routes";
 import { ORDER_STATUS } from "../../../../Utils/AppStrings";
 import SimpleHeader from "../../../Components/CustomHeader/SimpleHeader";
+import { useIsFocused } from "@react-navigation/native";
 
 const OrderScreen = (props: ScreenProps) => {
   const selector = useSelector((state: any) => state.SliceReducer);
@@ -52,6 +53,7 @@ const OrderScreen = (props: ScreenProps) => {
   const buttons = isRtl ? ["نامکمل", "بھیجے گئے"] : ["Pending", "Dispatched"];
   const onCLick = (i: any) =>
     scrollViewRef?.current?.scrollTo({ x: i * width });
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     if (selector?.userData?.isAdmin) {
@@ -59,7 +61,7 @@ const OrderScreen = (props: ScreenProps) => {
     } else {
       fetchOrders();
     }
-  }, []);
+  }, [isFocused]);
 
   const fetchOrders = async () => {
     !selector?.ordersList[0] && dispatch(setIsLoader(true));
@@ -84,6 +86,8 @@ const OrderScreen = (props: ScreenProps) => {
         const dispatchedOrders = resp?.data?.filter(
           (order: any) => order.orderStatus == ORDER_STATUS.Dispatched
         );
+        console.log("dispatchedOrders -----   ", dispatchedOrders?.length);
+
         setPendingOrdersList(pendingOrders);
         setDispatchedOrdersList(dispatchedOrders);
         dispatch(setPendingOrders(pendingOrders));
@@ -154,7 +158,7 @@ const OrderScreen = (props: ScreenProps) => {
         <SimpleHeader Text={isRtl ? "تمام آرڈرز" : "Order History"} />
       )}
 
-      {userData?.isAdmim ? (
+      {userData?.isAdmin ? (
         <View style={styles.container}>
           <View style={{ padding: 5, paddingTop: 0 }}>
             <ButtonContainer
@@ -288,7 +292,7 @@ const OrderScreen = (props: ScreenProps) => {
                           ]}
                         >
                           {userData?.isAdmin
-                            ? x === "Pending" || "نامکمل"
+                            ? x == "Pending"
                               ? isRtl
                                 ? "فی الحال کوئی زیر التواء آرڈرز موجود نہیں ہیں۔ براہ کرم بعد میں دوبارہ چیک کریں یا موجودہ آرڈرز کو بھیجے گئے سیکشن سے منظم کریں۔"
                                 : "No pending orders found at the moment. Please check back later or manage existing orders from the Dispatched section."
@@ -329,8 +333,33 @@ const OrderScreen = (props: ScreenProps) => {
                 style={styles.cont}
               >
                 {!selector?.userData?.isAdmin && (
-                  <View style={styles.statusCont}>
-                    <Text style={styles.statusTxt}>
+                  <View
+                    style={[
+                      styles.statusCont,
+                      {
+                        backgroundColor:
+                          item?.orderStatus == ORDER_STATUS.Order_Placed
+                            ? AppColors.orange.light
+                            : AppColors.green.light,
+                        borderColor:
+                          item?.orderStatus == ORDER_STATUS.Order_Placed
+                            ? AppColors.orange.dark
+                            : AppColors.green.dark,
+                        borderWidth: 1,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.statusTxt,
+                        {
+                          color:
+                            item?.orderStatus == ORDER_STATUS.Order_Placed
+                              ? AppColors.orange.dark
+                              : AppColors.green.dark,
+                        },
+                      ]}
+                    >
                       {item?.orderStatus == ORDER_STATUS.Order_Placed
                         ? "Order Placed"
                         : "Dispatched"}

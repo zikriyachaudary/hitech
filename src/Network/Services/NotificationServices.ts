@@ -5,6 +5,8 @@ import firestore from "@react-native-firebase/firestore";
 
 export const sendPushNotificationReq = async (params: any) => {
   try {
+    console.log("params -----   ", params);
+
     const urlForApiCall = BASE_URL + "sendPushNotification";
     const method = "POST";
     let apiRequest = await Api(urlForApiCall, method, params);

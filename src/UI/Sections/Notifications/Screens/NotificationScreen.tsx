@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import {
@@ -21,215 +21,39 @@ import {
 } from "../../../../Utils/AppConstants";
 import AppImageViewer from "../../../Components/AppImageView";
 import moment from "moment";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import ProfilePlaceHolderComp from "../Components/ProfilePlaceHolder";
 import SimpleHeader from "../../../Components/CustomHeader/SimpleHeader";
+import { fetchNotificationReq } from "../../../../Network/Services/NotificationServices";
+import {
+  setIsLoader,
+  setNotiList,
+} from "../../../../Redux/Reducers/AppReducers";
 
 const NotificationScreen = (props: ScreenProps) => {
   const selector = useSelector((state: any) => state.SliceReducer);
-
+  const dispatch = useDispatch();
+  const [notificationList, setNotificationsList] = useState(
+    selector?.notificationsList
+  );
   const flatListRef = useRef<any>(null);
 
-  const notificationList = [
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-    {
-      title: "New Order Placed",
-      des: "The anonymous person placed the order",
-      notificationId: "46Fg67u",
-      type: "Order",
-      sender: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Zikriya Chaudary",
-      },
-      reciever: {
-        id: "45Uyh8",
-        profile:
-          "https://firebasestorage.googleapis.com:443/v0/b/zippy-6ae4c.appspot.com/o/1sxbDfF61C4FB7-1D05-4A75-B973-BF2D3FE292A9.jpg?alt=media&token=59f7c57a-076f-4a99-a69c-b801f132c185",
-        name: "Haroon Haider",
-      },
-    },
-  ];
+  useEffect(() => {
+    fetchNotificationsList();
+  }, []);
+
+  const fetchNotificationsList = async () => {
+    notificationList?.length == 0 && dispatch(setIsLoader(true));
+    await fetchNotificationReq(selector?.userData?.userId, (resp: any) => {
+      if (resp?.status) {
+        dispatch(setIsLoader(false));
+        setNotificationsList(resp?.data);
+        dispatch(setNotiList(resp?.data));
+      } else {
+        dispatch(setIsLoader(false));
+      }
+    });
+  };
 
   return (
     <View style={AppStyles.MainStyle}>
@@ -269,23 +93,25 @@ const NotificationScreen = (props: ScreenProps) => {
                   )}
                   <View style={{ marginStart: 10 }}>
                     <Text style={styles.name}>{item?.title}</Text>
-                    <Text style={styles.message} numberOfLines={2}>
-                      {item?.des}
-                    </Text>
+                    <Text style={styles.message}>{item?.body}</Text>
                   </View>
                 </View>
                 {item?.createdAt && (
                   <Text style={styles.timeTxt}>
-                    {moment(item?.createdAt, "YYYY/MM/DD").format("DD/MM/YYYY")}
+                    {moment(item?.createdAts).format("DD MMM")}
                   </Text>
                 )}
               </TouchableOpacity>
-              <View
-                style={{
-                  backgroundColor: AppColors.grey.greyLevel3,
-                  height: 0.5,
-                }}
-              />
+              {notificationList?.length - 1 != index && (
+                <View
+                  style={{
+                    backgroundColor: AppColors.grey.greyLevel3,
+                    height: 0.5,
+                    marginVertical: normalized(10),
+                    marginHorizontal: normalized(50),
+                  }}
+                />
+              )}
             </>
           );
         }}
@@ -333,7 +159,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-start",
     alignItems: "center",
-    // maxWidth: 230,
   },
   name: {
     fontSize: normalized(14),
@@ -346,15 +171,14 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     color: AppColors.black.black,
     fontFamily: AppFonts.PoppinsMedium,
-    // minWidth: normalized(300),
-    marginTop: 3,
+    marginTop: normalized(3),
+    width: "95%",
   },
   timeTxt: {
     fontSize: normalized(12),
     fontWeight: "400",
     color: AppColors.black.black,
     fontFamily: AppFonts.PoppinsMedium,
-    width: 80,
     position: "absolute",
     top: 0,
     right: 0,

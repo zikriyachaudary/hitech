@@ -192,6 +192,10 @@ export const AppImages = {
     orders: require("../UI/assets/Images/User/orders.png"),
     amount: require("../UI/assets/Images/User/amount.png"),
   },
+  payments: {
+    jazzcash: require("../UI/assets/Images/payment/jazzcash.png"),
+    easypaisa: require("../UI/assets/Images/payment/easypaisa.png"),
+  },
 };
 
 export const lottieAnimation = {

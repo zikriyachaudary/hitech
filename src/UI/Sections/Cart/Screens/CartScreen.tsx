@@ -91,8 +91,10 @@ const CartScreen = (props: ScreenProps) => {
       products: selector?.cartDetail,
       userDetail: selector?.userData,
       orderId: CommonDataManager.getSharedInstance().makeid(1),
-      createdAd: new Date(),
+      createdAt: new Date(),
     };
+    props?.navigation?.navigate(Routes.Home.PaymentMethodScreen, { data: obj });
+    return;
     dispatch(setIsLoader(true));
     await placeOrderReq(obj, (resp: any) => {
       if (resp?.status) {

@@ -39,7 +39,7 @@ const ProductHeader = (props: any) => {
       )}
       {props.title && <Text style={styles.titleTxt}>{props.title}</Text>}
       {props.rightIcon && (
-        <TouchableOpacity onPress={props?.onRightIconPress} activeOpacity={0.7}>
+        <TouchableOpacity onPress={props?.onRightIconPress} activeOpacity={0.8}>
           {props?.cartDetail?.length > 0 && (
             <View style={styles.countCont}>
               <Text style={styles.count}>{props?.cartDetail?.length}</Text>
@@ -67,7 +67,10 @@ const styles = StyleSheet.create({
     height: normalized(50),
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: normalized(20),
+    marginHorizontal: normalized(10),
+    borderWidth: 1,
+    borderColor: AppColors.grey.greyLevel2,
+    borderRadius: normalized(100),
   },
   arrowImage: {
     width: normalized(30),
@@ -77,14 +80,14 @@ const styles = StyleSheet.create({
   imageCont: {
     width: normalized(45),
     height: normalized(45),
-    backgroundColor: AppColors.white.white,
     justifyContent: "center",
     alignItems: "center",
   },
   cartImg: {
-    width: normalized(30),
-    height: normalized(30),
+    width: normalized(23),
+    height: normalized(23),
     resizeMode: "contain",
+    marginRight: normalized(15),
   },
   titleTxt: {
     fontSize: normalized(15),
@@ -92,19 +95,19 @@ const styles = StyleSheet.create({
     color: AppColors.black.black,
   },
   countCont: {
-    width: normalized(15),
-    height: normalized(15),
+    width: normalized(13),
+    height: normalized(13),
     borderRadius: normalized(15 / 2),
     backgroundColor: AppColors.themeColor.dark,
     position: "absolute",
-    right: normalized(-10),
-    top: normalized(-10),
+    right: normalized(5),
+    bottom: normalized(-5),
     alignItems: "center",
     justifyContent: "center",
   },
   count: {
     color: AppColors.white.white,
-    fontSize: normalized(11),
+    fontSize: normalized(10),
     fontFamily: AppFonts.PoppinsSemiBold,
   },
 });

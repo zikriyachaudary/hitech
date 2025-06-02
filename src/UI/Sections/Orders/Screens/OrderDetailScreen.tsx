@@ -22,28 +22,60 @@ import { AppRootStore } from "../../../../Redux/store/AppStore";
 import AppImageViewer from "../../../Components/AppImageView";
 import LinearGradient from "react-native-linear-gradient";
 import { Routes } from "../../../../Utils/Routes";
-import { AppStrings, ORDER_STATUS } from "../../../../Utils/AppStrings";
+import {
+  AppStrings,
+  NOTIFICATIONS_TYPES,
+  ORDER_STATUS,
+} from "../../../../Utils/AppStrings";
 import { updateOrderStatusReq } from "../../../../Network/Services/ProductServices";
 import {
   setIsLoader,
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
+import NotificationManager from "../../../../Hooks/NotificationsManager";
+import CommonDataManager from "../../../../Utils/CommonManager";
 
 const OrderDetailScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const userData = selector?.userData;
   const isRtl = selector?.isRtl;
   const item = props?.route?.params?.item;
   const [orderStatus, setOrderStatus] = useState(item?.orderStatus);
   const dispatch = useDispatch();
+  const { updateNotificationFunc } = NotificationManager();
 
   const updateOrderStatus = (status: any) => {
     dispatch(setIsLoader(true));
+    const notificatinObj = {
+      title: `Order Dispatched`,
+      body: `Your Order has been dispatched having Order ID ${item?.orderId}`,
+      createdAt: new Date(),
+      notificationId: CommonDataManager.getSharedInstance().makeid(3),
+      type: NOTIFICATIONS_TYPES.Order_Dispatched,
+      sender: {
+        email: userData?.email,
+        name: userData?.fullName
+          ? userData?.fullName
+          : userData?.firstName + " " + userData?.lastName,
+        profile: userData?.profileImage,
+        userId: userData?.adminId,
+      },
+      reciver: {
+        email: item?.userDetail?.email,
+        name: item?.userDetail?.fullName,
+        profile: item?.userDetail?.profileImage || item?.userDetail?.profile,
+        userId: item?.userDetail?.userId,
+      },
+    };
+    console.log("notificatinObj --0-----    ", notificatinObj);
+
     updateOrderStatusReq(
       { orderId: item?.orderId, orderStatus: status },
-      (resp: any) => {
+      async (resp: any) => {
         if (resp?.status) {
+          await updateNotificationFunc(notificatinObj);
           dispatch(
             setShowToast({
               type: AppStrings.ToastType.success,
@@ -89,7 +121,7 @@ const OrderDetailScreen = (props: ScreenProps) => {
         }}
       />
       <ScrollView>
-        <Text style={styles.orderId}>{`Order ID: LKSJDF-ASDF`}</Text>
+        <Text style={styles.orderId}>{`Order ID: ${item?.orderId}`}</Text>
         <View style={styles.userMainCont}>
           <Text style={styles.headTxt}>
             {isRtl ? "کسٹمر کی تفصیلات" : "Customer Details"}
@@ -332,5 +364,11 @@ const styles = StyleSheet.create({
   btnTxt: {
     fontSize: normalized(14),
     fontFamily: AppFonts.PoppinsSemiBold,
+  },
+  orderId: {
+    color: AppColors.black.black,
+    fontSize: normalized(13),
+    fontFamily: AppFonts.PoppinsMedium,
+    alignSelf: "center",
   },
 });

@@ -44,25 +44,20 @@ const NotificationManager = () => {
     });
   };
 
-  const createNotificationObject = (
-    singleObj: any,
-    title: any,
-    description: any
-  ) => ({
-    ...singleObj,
-    title,
-    des: description,
-  });
-
   const updateNotificationFunc = async (singleObj: any) => {
     const { sender, reciver } = singleObj;
+    console.log("singleObj -----   Before -------  ", singleObj);
+
     if (!sender?.userId) {
       return;
     }
+
     if (
       singleObj?.type === NOTIFICATIONS_TYPES.payment_Received ||
       singleObj?.type == NOTIFICATIONS_TYPES.Order_Placed
     ) {
+      console.log(" ------- here -------");
+
       const adminNotification = { ...singleObj };
       await updateNotificationList(
         singleObj?.reciver?.userId,
@@ -85,7 +80,7 @@ const NotificationManager = () => {
                 message: {
                   token: fcmToken,
                   notification: {
-                    body: adminNotification?.des,
+                    body: adminNotification?.body,
                     title: adminNotification?.title,
                   },
                   data: {
@@ -104,16 +99,24 @@ const NotificationManager = () => {
       singleObj?.type === NOTIFICATIONS_TYPES.Order_Dispatched ||
       singleObj?.type === NOTIFICATIONS_TYPES.Account_Upgraded
     ) {
-      await updateNotificationList(singleObj?.reciver?.userId, singleObj);
+      console.log("singleObj -----   ", singleObj);
 
-      if (singleObj?.userId) {
-        const fcmToken = await fetchFCMTokenById(singleObj?.userId);
+      await updateNotificationList(singleObj?.reciver?.userId, singleObj);
+      console.log(
+        "singleObj?.reciver?.userId -------   ",
+        singleObj?.reciver?.userId
+      );
+
+      if (singleObj?.reciver?.userId) {
+        const fcmToken = await fetchFCMTokenById(singleObj?.reciver?.userId);
+        console.log("fcmToken ------   ", fcmToken);
+
         if (fcmToken) {
           const pushNotificationBody = {
             message: {
               token: fcmToken,
               notification: {
-                body: singleObj?.des,
+                body: singleObj?.body,
                 title: singleObj?.title,
               },
               data: {
@@ -121,6 +124,8 @@ const NotificationManager = () => {
               },
             },
           };
+          console.log("pushNotificationBody -----    ", pushNotificationBody);
+
           const response: any = await sendPushNotificationReq(
             pushNotificationBody
           );
@@ -135,23 +140,3 @@ const NotificationManager = () => {
 };
 
 export default NotificationManager;
-
-// {
-//   title: ,
-//   body: ,
-//   createdAd: ,
-//   notificationId: ,
-//   notificationType: ,
-//   receiver: {
-//     email: ,
-//     name: ,
-//     profile: ,
-//     userId: ,
-//   }
-//   sender: {
-//     email: ,
-//     name: ,
-//     profile: ,
-//     userId: ,
-//   }
-// }
