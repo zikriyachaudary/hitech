@@ -69,13 +69,12 @@ const OrderDetailScreen = (props: ScreenProps) => {
         userId: item?.userDetail?.userId,
       },
     };
-    console.log("notificatinObj --0-----    ", notificatinObj);
-
     updateOrderStatusReq(
       { orderId: item?.orderId, orderStatus: status },
       async (resp: any) => {
         if (resp?.status) {
-          await updateNotificationFunc(notificatinObj);
+          status == ORDER_STATUS.Dispatched &&
+            (await updateNotificationFunc(notificatinObj));
           dispatch(
             setShowToast({
               type: AppStrings.ToastType.success,

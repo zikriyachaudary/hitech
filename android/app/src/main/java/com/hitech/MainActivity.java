@@ -1,4 +1,4 @@
-package com.hitech_rtl;
+package com.bikepartshub;
 
 import android.os.Bundle;
 import com.facebook.react.ReactActivity;

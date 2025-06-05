@@ -99,13 +99,7 @@ const NotificationManager = () => {
       singleObj?.type === NOTIFICATIONS_TYPES.Order_Dispatched ||
       singleObj?.type === NOTIFICATIONS_TYPES.Account_Upgraded
     ) {
-      console.log("singleObj -----   ", singleObj);
-
       await updateNotificationList(singleObj?.reciver?.userId, singleObj);
-      console.log(
-        "singleObj?.reciver?.userId -------   ",
-        singleObj?.reciver?.userId
-      );
 
       if (singleObj?.reciver?.userId) {
         const fcmToken = await fetchFCMTokenById(singleObj?.reciver?.userId);

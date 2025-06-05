@@ -75,9 +75,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.hitech_rtl"
+    namespace "com.bikepartshub"
     defaultConfig {
-        applicationId "com.hitech_rtl"
+        applicationId "com.bikepartshub"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 9

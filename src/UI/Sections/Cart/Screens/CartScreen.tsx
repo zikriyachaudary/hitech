@@ -53,7 +53,7 @@ const CartScreen = (props: ScreenProps) => {
   const [locationError, setLocationError] = useState("");
 
   const [deliveryAdd, setDeliveryAdd] = useState<any>(
-    props?.route?.params?.address || null
+    props?.route?.params?.address ? props?.route?.params?.address : null
   );
   const getUserAddress = () => {
     dispatch(setIsLoader(true));
@@ -159,7 +159,9 @@ const CartScreen = (props: ScreenProps) => {
                         {isRtl ? "ڈلیوری کا پتہ" : "Delivery Address"}
                       </Text>
                       <Text numberOfLines={2} style={styles.addressTxt}>
-                        {deliveryAdd?.address || "Select Delivery Address"}
+                        {deliveryAdd?.address
+                          ? deliveryAdd?.address
+                          : "Select Delivery Address"}
                       </Text>
                     </View>
                     <TouchableOpacity

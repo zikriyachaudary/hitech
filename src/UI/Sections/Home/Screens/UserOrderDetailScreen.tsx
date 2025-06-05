@@ -21,7 +21,11 @@ import { AppStyles } from "../../../../Utils/AppStyles";
 import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import AppImageViewer from "../../../Components/AppImageView";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
-import { AppStrings, USER_TYPE } from "../../../../Utils/AppStrings";
+import {
+  AppStrings,
+  NOTIFICATIONS_TYPES,
+  USER_TYPE,
+} from "../../../../Utils/AppStrings";
 import { Routes } from "../../../../Utils/Routes";
 import { useDispatch, useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
@@ -30,13 +34,17 @@ import {
   setIsLoader,
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
+import CommonDataManager from "../../../../Utils/CommonManager";
+import NotificationManager from "../../../../Hooks/NotificationsManager";
 
 const UserOrderDetailScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+  const userData = selector?.userData;
   const isRtl = selector?.isRtl;
   const dispatch = useDispatch();
+  const { updateNotificationFunc } = NotificationManager();
 
   const item = props?.route?.params?.item;
 
@@ -58,12 +66,34 @@ const UserOrderDetailScreen = (props: ScreenProps) => {
   }, []);
 
   const onSwitchUser = async () => {
+    const notificatinObj = {
+      title: `Account Upgraded`,
+      body: `Your account has been upgraded. You are now Gold Member of High Tech Solutions.`,
+      createdAt: new Date(),
+      notificationId: CommonDataManager.getSharedInstance().makeid(3),
+      type: NOTIFICATIONS_TYPES.Account_Upgraded,
+      sender: {
+        email: userData?.email,
+        name: userData?.fullName
+          ? userData?.fullName
+          : userData?.firstName + " " + userData?.lastName,
+        profile: userData?.profileImage,
+        userId: userData?.adminId,
+      },
+      reciver: {
+        email: item?.email,
+        name: item?.fullName,
+        profile: item?.profileImage || item?.profile,
+        userId: item?.userId,
+      },
+    };
     dispatch(setIsLoader(true));
     await updatedUserReq(
       item?.id,
       { userType: USER_TYPE.Gold },
-      (resp: any) => {
+      async (resp: any) => {
         if (resp?.status) {
+          await updateNotificationFunc(notificatinObj);
           dispatch(
             setShowToast({
               type: AppStrings.ToastType.success,
