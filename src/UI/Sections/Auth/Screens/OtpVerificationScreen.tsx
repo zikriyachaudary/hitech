@@ -62,7 +62,9 @@ const OtpVerificationScreen = (props: ScreenProps) => {
 
   const onSubmit = async () => {
     try {
-      if (emailOtp?.length < 6 && numberOtp?.length < 6) return;
+      if (emailOtp?.length < 6 && numberOtp?.length < 6) {
+        return;
+      }
       dispatch(setIsLoader(true));
       const resp = await phoneVerification.confirm(numberOtp);
       const emailOtpRes = await verifyEmailOtp({
@@ -79,44 +81,40 @@ const OtpVerificationScreen = (props: ScreenProps) => {
       }
       if (resp?.user?.uid && emailOtpRes?.status) {
         try {
-          await uploadMedia(signupObj?.profilePath, async (url) => {
-            if (url) {
-              const paramsObj: any = {
-                fullName: signupObj?.fullName,
-                email: signupObj?.email,
-                phoneNumber: signupObj?.phoneNumber,
-                password: signupObj?.password,
-                profileImage: url,
-              };
+          const profilePath = signupObj?.profilePath;
+          const handleSignup = async (url: string) => {
+            const paramsObj: any = {
+              fullName: signupObj?.fullName,
+              email: signupObj?.email,
+              phoneNumber: signupObj?.phoneNumber,
+              password: signupObj?.password,
+              profileImage: url,
+            };
 
-              await userSignupRequest(paramsObj, (response) => {
-                if (response?.status) {
-                  setUserDataInAsync(response?.data);
-                  dispatch(setUserData(response?.data));
-                  dispatch(setIsLoader(false));
-                } else {
-                  let errorMessage = response?.message
-                    ? response?.message
-                    : "Something went wrong";
-                  dispatch(
-                    setShowToast({
-                      type: AppStrings.ToastType.error,
-                      message: errorMessage,
-                    })
-                  );
-                  dispatch(setIsLoader(false));
-                }
-              });
-            } else {
+            await userSignupRequest(paramsObj, (response) => {
+              if (response?.status) {
+                setUserDataInAsync(response?.data);
+                dispatch(setUserData(response?.data));
+              } else {
+                dispatch(
+                  setShowToast({
+                    type: AppStrings.ToastType.error,
+                    message: response?.message || "Something went wrong",
+                  })
+                );
+              }
               dispatch(setIsLoader(false));
-              dispatch(
-                setShowToast({
-                  type: AppStrings.ToastType.error,
-                  message: AppStrings.Network.someThingError,
-                })
-              );
-            }
-          });
+            });
+          };
+          if (profilePath) {
+            await uploadMedia(profilePath, async (url: any) => {
+              await handleSignup(url);
+            });
+          } else {
+            await handleSignup(
+              "https://firebasestorage.googleapis.com/v0/b/hitech-b1558.firebasestorage.app/o/Guest-user-removebg-preview.png?alt=media&token=050f86a0-d92a-4fe3-871e-36a4910e40e8"
+            );
+          }
         } catch (e) {
           dispatch(setIsLoader(false));
           console.log("error...", e);
@@ -128,7 +126,9 @@ const OtpVerificationScreen = (props: ScreenProps) => {
   };
 
   const onResetPassword = async () => {
-    if (emailOtp?.length < 5) return;
+    if (emailOtp?.length < 5) {
+      return;
+    }
     try {
       dispatch(setIsLoader(true));
       if (isEmail) {

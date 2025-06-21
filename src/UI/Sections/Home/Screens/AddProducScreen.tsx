@@ -50,6 +50,7 @@ import {
   uploadProductToFireStore,
 } from "../../../../Network/Services/ProductServices";
 import moment from "moment";
+import { removeBackground } from "react-native-background-remover";
 
 const AddProducScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -169,7 +170,9 @@ const AddProducScreen = (props: ScreenProps) => {
 
   const fetchCategories = () => {
     try {
-      if (categoryList?.length == 0) dispatch(setIsLoader(true));
+      if (categoryList?.length == 0) {
+        dispatch(setIsLoader(true));
+      }
       fetchCatListReq((resp: any) => {
         if (resp?.status) {
           setCategoryList(resp?.data);
@@ -240,7 +243,7 @@ const AddProducScreen = (props: ScreenProps) => {
       }
     } else {
       if (!productPrice) {
-        newErrors["productPrice"] = isRtl ? "* لازمی" : "* Required";
+        newErrors.productPrice = isRtl ? "* لازمی" : "* Required";
         isFormValid = false;
       }
       if (!goldenPrice) {
@@ -344,7 +347,7 @@ const AddProducScreen = (props: ScreenProps) => {
       }
     });
     await Promise.all(uploadTasks);
-    obj["images"] = productImagesList;
+    obj.images = productImagesList;
 
     if (productDetail?.id) {
       dispatch(setIsLoader(true));
@@ -418,6 +421,11 @@ const AddProducScreen = (props: ScreenProps) => {
     }
   };
 
+  // const bg = removeBackground(
+  //   "file:///storage/emulated/0/Android/data/com.hitech_rtl/files/Pictures/bca95aa1-8891-4567-b1d6-a81dc6bd60f6.jpg"
+  // );
+  // console.log("imageList ----   ", bg);
+
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
@@ -462,6 +470,7 @@ const AddProducScreen = (props: ScreenProps) => {
           showsVerticalScrollIndicator={false}
         >
           {/* <View style={styles.Container}> */}
+
           <View style={{ flex: 1 }}>
             <Text style={styles.label}>{"Product Name"}</Text>
             <CustomInput

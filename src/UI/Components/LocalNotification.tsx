@@ -1,17 +1,17 @@
-import React, {useEffect} from 'react';
-import {View, Text, TouchableWithoutFeedback, Image} from 'react-native';
+import React, { useEffect } from "react";
+import { View, Text, TouchableWithoutFeedback, Image } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
-} from 'react-native-reanimated';
-import {AppColors, AppImages, normalized} from '../../Utils/AppConstants';
-import {useSelector} from 'react-redux';
-import {AppRootStore} from '../../Redux/store/AppStore';
+} from "react-native-reanimated";
+import { AppColors, AppImages, normalized } from "../../Utils/AppConstants";
+import { useSelector } from "react-redux";
+import { AppRootStore } from "../../Redux/store/AppStore";
 
 const LocalNotification = (props: any) => {
   const selector: any = useSelector(
-    (state: AppRootStore) => state.SliceReducer,
+    (state: AppRootStore) => state.SliceReducer
   );
   const translationY = useSharedValue(-130);
   useEffect(() => {
@@ -35,14 +35,14 @@ const LocalNotification = (props: any) => {
       paddingHorizontal: 10,
       backgroundColor: AppColors.white.white,
       borderWidth: 1,
-      borderColor: '#C2C2C2',
-      justifyContent: 'center',
+      borderColor: "#C2C2C2",
+      justifyContent: "center",
       transform: [
         {
           translateY: translationY.value,
         },
       ],
-      flexDirection: 'row',
+      flexDirection: "row",
       paddingVertical: 5,
     };
   });
@@ -50,7 +50,8 @@ const LocalNotification = (props: any) => {
     <TouchableWithoutFeedback
       onPress={() => {
         props.openView();
-      }}>
+      }}
+    >
       <Animated.View style={animatedStyle}>
         <Image
           style={{
@@ -66,23 +67,26 @@ const LocalNotification = (props: any) => {
           style={{
             flex: 1,
             marginLeft: 10,
-            justifyContent: 'center',
-          }}>
+            justifyContent: "center",
+          }}
+        >
           <Text
             numberOfLines={1}
             style={{
               fontSize: normalized(12),
               color: AppColors.black.black,
-              fontWeight: '500',
-            }}>
+              fontWeight: "500",
+            }}
+          >
             {selector?.pushObj._title}
           </Text>
           <Text
             numberOfLines={1}
             style={{
               fontSize: 12,
-              color: '#8B8E91',
-            }}>
+              color: "#8B8E91",
+            }}
+          >
             {selector?.pushObj?._body}
           </Text>
         </View>

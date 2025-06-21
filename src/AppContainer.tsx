@@ -22,6 +22,8 @@ import {
 import { notifications } from "react-native-firebase-push-notifications";
 import LocalNotification from "./UI/Components/LocalNotification";
 import { updateFCMTokenReq } from "./Network/Services/AuthServices";
+import notifee, { AndroidImportance, EventType } from "@notifee/react-native";
+import messaging from "@react-native-firebase/messaging";
 
 const AppContainer = () => {
   const selector: any = useSelector(
@@ -31,6 +33,8 @@ const AppContainer = () => {
 
   useEffect(() => {
     getCategoryList();
+    createNotificationChannel();
+    showNotification();
   }, []);
 
   const getCategoryList = async () => {
@@ -43,9 +47,50 @@ const AppContainer = () => {
 
   useEffect(() => {
     if (selector?.userData) {
-      registerDevice();
+      // registerDevice();
     }
   }, [selector?.userData]);
+
+  ////////  Notiffee -------------->
+
+  async function createNotificationChannel() {
+    await notifee.createChannel({
+      id: "default",
+      name: "Default Channel",
+      importance: AndroidImportance.HIGH,
+    });
+  }
+
+  // Show Notification simple
+
+  const showNotification = async () => {
+    await notifee.displayNotification({
+      title: "Hello",
+      body: "This is not a test notification",
+      android: {
+        channelId: "default",
+      },
+      ios: {
+        sound: "default",
+      },
+    });
+
+    notifee.onForegroundEvent(({ type, detail }) => {
+      if (type === EventType.PRESS) {
+        console.log("Notification pressed", detail.notification);
+      }
+    });
+
+    messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+      await notifee.displayNotification({
+        title: remoteMessage.notification?.title,
+        body: remoteMessage.notification?.body,
+        android: {
+          channelId: "default",
+        },
+      });
+    });
+  };
 
   ////////Push notification-------->
 

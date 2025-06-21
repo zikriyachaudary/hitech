@@ -69,6 +69,7 @@ const ForgetPassword = (props: any) => {
     }
     try {
       dispatch(setIsLoader(true));
+
       if (result?.type == "phone") {
         const number = formatPhoneNumber(email);
         await isEmailAlreadyRegistered(
@@ -79,6 +80,7 @@ const ForgetPassword = (props: any) => {
               const phoneVerification = await auth().signInWithPhoneNumber(
                 number
               );
+
               if (phoneVerification) {
                 props?.navigation?.navigate(Routes.Auth.otpVerificationScreen, {
                   isResetPasswordScreen: true,
@@ -86,6 +88,7 @@ const ForgetPassword = (props: any) => {
                   isEmail: false,
                   phoneVerification,
                 });
+                dispatch(setIsLoader(false));
               } else {
                 dispatch(
                   setShowToast({
@@ -93,13 +96,14 @@ const ForgetPassword = (props: any) => {
                     message: AppStrings.Network.someThingError,
                   })
                 );
+                dispatch(setIsLoader(false));
               }
             } else {
               setEmailError("Phone Number does not Registered before.");
+              dispatch(setIsLoader(false));
             }
           }
         );
-        dispatch(setIsLoader(false));
       } else {
         await isEmailAlreadyRegistered(
           email?.toLocaleLowerCase(),
@@ -109,6 +113,7 @@ const ForgetPassword = (props: any) => {
               const isOtpSend = await sendEmailOtp({
                 recipientEmail: email,
               });
+
               if (isOtpSend?.status) {
                 props?.navigation?.navigate(Routes.Auth.otpVerificationScreen, {
                   isResetPasswordScreen: true,
@@ -130,7 +135,6 @@ const ForgetPassword = (props: any) => {
             }
           }
         );
-        dispatch(setIsLoader(false));
       }
     } catch (error: any) {
       dispatch(
@@ -140,7 +144,7 @@ const ForgetPassword = (props: any) => {
         })
       );
     } finally {
-      dispatch(setIsLoader(false));
+      // dispatch(setIsLoader(false));
     }
   };
 

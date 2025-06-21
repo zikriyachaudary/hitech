@@ -115,7 +115,9 @@ const PaymentMethodScreen = (props: ScreenProps) => {
       isFormValid = false;
     }
 
-    if (!isFormValid) return;
+    if (!isFormValid) {
+      return;
+    }
 
     dispatch(setIsLoader(true));
 
@@ -126,7 +128,7 @@ const PaymentMethodScreen = (props: ScreenProps) => {
         return;
       }
       const notificatinObj = {
-        title: `Payment Recieved`,
+        title: "Payment Recieved",
         body: `Payment Recieved against Order ID ${data?.orderId}`,
         createdAt: new Date(),
         notificationId: CommonDataManager.getSharedInstance().makeid(3),
@@ -275,7 +277,9 @@ const PaymentMethodScreen = (props: ScreenProps) => {
             keyboardType={"number-pad"}
             setValue={(val: string) => {
               const numericVal = val.replace(/\D/g, "");
-              if (numericVal.length > 11) return;
+              if (numericVal.length > 11) {
+                return;
+              }
 
               setAccNumber(numericVal);
               setAccNumberError("");

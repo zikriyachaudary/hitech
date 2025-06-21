@@ -65,6 +65,7 @@ const NotificationScreen = (props: ScreenProps) => {
         ref={flatListRef}
         keyExtractor={(index, item) => `${index}`}
         showsVerticalScrollIndicator={false}
+        ListFooterComponent={() => <View style={{ height: normalized(40) }} />}
         renderItem={({ item, index }: any) => {
           return (
             <>

@@ -56,7 +56,7 @@ const LogoutModal = (props: any) => {
             </Text>
             <Text style={styles.label}>
               {props?.type === Modal_Type.deleteAccount
-                ? `Are you sure you want to permanently delete your account? This action is irreversible, and all your data will be permanently lost.`
+                ? "Are you sure you want to permanently delete your account? This action is irreversible, and all your data will be permanently lost."
                 : "Are you sure you want to logout?"}
             </Text>
 

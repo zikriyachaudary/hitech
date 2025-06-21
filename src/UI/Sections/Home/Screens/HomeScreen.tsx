@@ -78,7 +78,9 @@ const HomeScreen = (props: ScreenProps) => {
   };
 
   useEffect(() => {
-    if(selector?.userData?.isAdmin) return;
+    if (selector?.userData?.isAdmin) {
+      return;
+    }
     fetchProductsReq();
   }, [isFocused]);
 
@@ -101,7 +103,9 @@ const HomeScreen = (props: ScreenProps) => {
 
     const lowerValue = value.toLowerCase();
 
-    if (productsList?.length == 0) return;
+    if (productsList?.length == 0) {
+      return;
+    }
 
     const filtered = productsList.filter((product: any) => {
       if (isRtl) {

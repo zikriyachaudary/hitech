@@ -1,18 +1,23 @@
-import React from 'react';
-import {StyleSheet, StatusBar, View} from 'react-native';
+import React from "react";
+import { StyleSheet, StatusBar, View } from "react-native";
 interface Props {
   backgroundColor: string;
   barStyle?: any;
   statusBarHeight?: any;
 }
-const AppStatusBar = ({backgroundColor, barStyle, statusBarHeight}: Props) => {
+const AppStatusBar = ({
+  backgroundColor,
+  barStyle,
+  statusBarHeight,
+}: Props) => {
   return (
     <View
       style={[
         styles.statusBar,
-        {backgroundColor: backgroundColor},
+        { backgroundColor: backgroundColor },
         statusBarHeight,
-      ]}>
+      ]}
+    >
       <StatusBar backgroundColor={backgroundColor} barStyle={barStyle} />
     </View>
   );

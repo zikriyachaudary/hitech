@@ -1,8 +1,8 @@
-import { configureStore } from '@reduxjs/toolkit';
-import AppReducer from '../Reducers/AppReducers';
+import { configureStore } from "@reduxjs/toolkit";
+import AppReducer from "../Reducers/AppReducers";
 
 export const store = configureStore({
-  reducer: {SliceReducer: AppReducer},
+  reducer: { SliceReducer: AppReducer },
 });
 
 export type AppRootStore = ReturnType<typeof store.getState>;

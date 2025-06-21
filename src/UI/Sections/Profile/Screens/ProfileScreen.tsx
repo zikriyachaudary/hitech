@@ -22,6 +22,7 @@ import {
   adminProfileList,
   AppColors,
   AppFonts,
+  guestProfileList,
   hv,
   Modal_Type,
   normalized,
@@ -81,7 +82,13 @@ const ProfileScreen = (props: ScreenProps) => {
       </Text>
 
       <ProfileList
-        List={isAdmin ? adminProfileList : profileBarList}
+        List={
+          isAdmin
+            ? adminProfileList
+            : userData?.isGuestUser
+            ? guestProfileList
+            : profileBarList
+        }
         setValue={(id: any) => {
           if (id == 1) {
             props?.navigation?.navigate(Routes.Home.EditProfile);

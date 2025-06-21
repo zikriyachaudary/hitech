@@ -34,7 +34,7 @@ const Api = async (
   if (method === "GET") {
     structure.params = body;
   } else {
-    structure["data"] = body;
+    structure.data = body;
   }
 
   return axios(structure)

@@ -3,7 +3,7 @@
 buildscript {
     ext {
         buildToolsVersion = "33.0.0"
-        minSdkVersion = 29
+        minSdkVersion = 26
         compileSdkVersion = 34
         targetSdkVersion = 34
         ndkVersion = "23.1.7779620"
@@ -31,4 +31,14 @@ buildscript {
             }
         }
     }
+    allprojects {
+  configurations.all {
+    resolutionStrategy {
+      force 'androidx.work:work-runtime:2.8.0'
+      force 'androidx.work:work-runtime-ktx:2.8.0'
+    }
+   resolutionStrategy.force 'com.android.support:support-v4:24.0.0'
+
+  }
+}
 }

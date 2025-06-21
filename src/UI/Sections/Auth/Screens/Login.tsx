@@ -19,7 +19,11 @@ import {
 } from "../../../../Utils/AppConstants";
 import { AppStyles } from "../../../../Utils/AppStyles";
 import { Routes } from "../../../../Utils/Routes";
-import { AppStrings, SocialTypeStrings } from "../../../../Utils/AppStrings";
+import {
+  AppStrings,
+  SocialTypeStrings,
+  USER_TYPE,
+} from "../../../../Utils/AppStrings";
 import { useDispatch, useSelector } from "react-redux";
 import {
   setIsLoader,
@@ -42,6 +46,7 @@ import SocialAuthManager from "../../../../Hooks/SocialAuthManager";
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import { formatPhoneNumber, validateInput } from "../../../../Utils/Helper";
+import UnFilledButton from "../../../Components/CustomButton/UnFilledButton";
 
 const Login = (props: ScreenProps) => {
   const { gmailLoginRequest, appleAuthReq } = SocialAuthManager();
@@ -382,6 +387,24 @@ const Login = (props: ScreenProps) => {
                   ) : null}
                 </View> */}
               </>
+            )}
+            {!isAdmin && (
+              <UnFilledButton
+                label={"Continue as Guest User"}
+                onPress={() => {
+                  let obj = {
+                    fullName: "Guest User",
+                    isGuestUser: true,
+                    profileImage:
+                      "https://firebasestorage.googleapis.com/v0/b/hitech-b1558.firebasestorage.app/o/Guest-user-removebg-preview.png?alt=media&token=050f86a0-d92a-4fe3-871e-36a4910e40e8",
+                    userType: USER_TYPE.Silver,
+                    phoneNumber: "N/A",
+                    userId: "123456",
+                  };
+                  setUserDataInAsync(obj);
+                  dispatch(setUserData(obj));
+                }}
+              />
             )}
           </ScrollView>
         </KeyboardAvoidingView>

@@ -41,7 +41,9 @@ const AddAdminScreen = (props: ScreenProps) => {
   const [adminList, setAdminList] = useState([]);
 
   useEffect(() => {
-    if (selector?.userData?.userId) fetchAdminList();
+    if (selector?.userData?.userId) {
+      fetchAdminList();
+    }
   }, [isFocused]);
 
   const fetchAdminList = async () => {

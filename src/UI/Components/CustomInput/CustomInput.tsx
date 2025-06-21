@@ -56,7 +56,7 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
         <TextInput
           ref={ref}
           editable={
-            typeof props?.isEditable == "boolean" ? props?.isEditable : true
+            typeof props?.isEditable === "boolean" ? props?.isEditable : true
           }
           placeholderTextColor={
             props.placeHolderColor || AppColors.grey.greyLevel9
@@ -67,7 +67,7 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
             ...props.textInputStyle,
             textAlign: isRtl ? "right" : "left",
             color:
-              typeof props?.isEditable == "boolean" && !props?.isEditable
+              typeof props?.isEditable === "boolean" && !props?.isEditable
                 ? AppColors.grey.greyLevel9
                 : AppColors.black.black,
             paddingLeft: isRtl ? normalized(5) : normalized(12),

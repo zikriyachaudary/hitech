@@ -70,10 +70,13 @@ const CartScreen = (props: ScreenProps) => {
     });
   };
 
+  console.log("selector?.cartDetail ----  ", selector?.cartDetail);
+
   useEffect(() => {
     getUserAddress();
-    if (props?.route?.params?.address != undefined)
+    if (props?.route?.params?.address != undefined) {
       setDeliveryAdd(props?.route?.params?.address);
+    }
   }, [isFocused]);
 
   let productList = useSelector((state: any) => state.SliceReducer.cartDetail);
@@ -136,47 +139,49 @@ const CartScreen = (props: ScreenProps) => {
             renderItem={({ item, index }) => {
               return index == 1 ? (
                 <>
-                  <View
-                    style={{
-                      ...styles.deliveryCont,
-                      backgroundColor: !locationError
-                        ? AppColors.grey.light
-                        : AppColors.red.pink,
-                    }}
-                  >
+                  {!userData?.isGuestUser && (
                     <View
                       style={{
-                        flex: 1,
+                        ...styles.deliveryCont,
+                        backgroundColor: !locationError
+                          ? AppColors.grey.light
+                          : AppColors.red.pink,
                       }}
                     >
-                      <Text
+                      <View
                         style={{
-                          ...styles.title,
-                          marginRight: isRtl ? normalized(10) : 0,
-                          textAlign: isRtl ? "right" : "left",
+                          flex: 1,
                         }}
                       >
-                        {isRtl ? "ڈلیوری کا پتہ" : "Delivery Address"}
-                      </Text>
-                      <Text numberOfLines={2} style={styles.addressTxt}>
-                        {deliveryAdd?.address
-                          ? deliveryAdd?.address
-                          : "Select Delivery Address"}
-                      </Text>
+                        <Text
+                          style={{
+                            ...styles.title,
+                            marginRight: isRtl ? normalized(10) : 0,
+                            textAlign: isRtl ? "right" : "left",
+                          }}
+                        >
+                          {isRtl ? "ڈلیوری کا پتہ" : "Delivery Address"}
+                        </Text>
+                        <Text numberOfLines={2} style={styles.addressTxt}>
+                          {deliveryAdd?.address
+                            ? deliveryAdd?.address
+                            : "Select Delivery Address"}
+                        </Text>
+                      </View>
+                      <TouchableOpacity
+                        style={styles.editIcon}
+                        activeOpacity={0.7}
+                        onPress={() => {
+                          props?.navigation?.navigate(
+                            Routes.Home.DeliveryAddress,
+                            { fromCartScreen: true }
+                          );
+                        }}
+                      >
+                        <Image source={AppImages.Products.editIcon} />
+                      </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                      style={styles.editIcon}
-                      activeOpacity={0.7}
-                      onPress={() => {
-                        props?.navigation?.navigate(
-                          Routes.Home.DeliveryAddress,
-                          { fromCartScreen: true }
-                        );
-                      }}
-                    >
-                      <Image source={AppImages.Products.editIcon} />
-                    </TouchableOpacity>
-                  </View>
+                  )}
                   {locationError && (
                     <Text
                       style={{
@@ -338,62 +343,72 @@ const CartScreen = (props: ScreenProps) => {
                 Add Payment Method
               </Text>
             )} */}
+            {userData?.isGuestUser ? (
+              <View style={styles.bottomCont}>
+                <Text style={styles.nameTxt}>
+                  You Cannot place order in Guest Mode
+                </Text>
+                <View style={{ height: normalized(15) }} />
+              </View>
+            ) : (
+              <>
+                <View
+                  style={[
+                    styles.bottomCont,
+                    { flexDirection: isRtl ? "row-reverse" : "row" },
+                  ]}
+                >
+                  <Text style={styles.leftTxt}>{isRtl ? "روپے" : "Price"}</Text>
+                  <Text style={styles.rightTxt}>
+                    {`Rs. ${getProductsTotalPrice(false)}`}
+                  </Text>
+                </View>
+                <View
+                  style={[
+                    styles.bottomCont,
+                    { flexDirection: isRtl ? "row-reverse" : "row" },
+                  ]}
+                >
+                  <Text
+                    style={{
+                      ...styles.leftTxt,
+                      textAlign: isRtl ? "right" : "left",
+                    }}
+                  >
+                    {isRtl ? "ڈلیوری چارجز" : "Delivery Charges"}
+                  </Text>
+                  <Text style={styles.rightTxt}>Rs. 200</Text>
+                </View>
 
-            <View
-              style={[
-                styles.bottomCont,
-                { flexDirection: isRtl ? "row-reverse" : "row" },
-              ]}
-            >
-              <Text style={styles.leftTxt}>{isRtl ? "روپے" : "Price"}</Text>
-              <Text style={styles.rightTxt}>
-                {`Rs. ${getProductsTotalPrice(false)}`}
-              </Text>
-            </View>
-            <View
-              style={[
-                styles.bottomCont,
-                { flexDirection: isRtl ? "row-reverse" : "row" },
-              ]}
-            >
-              <Text
-                style={{
-                  ...styles.leftTxt,
-                  textAlign: isRtl ? "right" : "left",
-                }}
-              >
-                {isRtl ? "ڈلیوری چارجز" : "Delivery Charges"}
-              </Text>
-              <Text style={styles.rightTxt}>Rs. 200</Text>
-            </View>
-
-            <View
-              style={[
-                styles.bottomCont,
-                { flexDirection: isRtl ? "row-reverse" : "row" },
-              ]}
-            >
-              <Text style={styles.leftTxt}>
-                {isRtl ? "ٹوٹل" : "Total (incl. DC)"}
-              </Text>
-              <Text style={styles.rightTxt}>
-                {`Rs. ${getProductsTotalPrice(true)}`}
-              </Text>
-            </View>
-            <FilledButton
-              label={isRtl ? "آگے بڑھیں" : "Proceed"}
-              onPress={() => {
-                if (!deliveryAdd) {
-                  setLocationError(
-                    isRtl
-                      ? "براہ کرم ڈلیوری ایڈریس منتخب کریں"
-                      : "Please select delivery address"
-                  );
-                  return;
-                }
-                placeOrder();
-              }}
-            />
+                <View
+                  style={[
+                    styles.bottomCont,
+                    { flexDirection: isRtl ? "row-reverse" : "row" },
+                  ]}
+                >
+                  <Text style={styles.leftTxt}>
+                    {isRtl ? "ٹوٹل" : "Total (incl. DC)"}
+                  </Text>
+                  <Text style={styles.rightTxt}>
+                    {`Rs. ${getProductsTotalPrice(true)}`}
+                  </Text>
+                </View>
+                <FilledButton
+                  label={isRtl ? "آگے بڑھیں" : "Proceed"}
+                  onPress={() => {
+                    if (!deliveryAdd) {
+                      setLocationError(
+                        isRtl
+                          ? "براہ کرم ڈلیوری ایڈریس منتخب کریں"
+                          : "Please select delivery address"
+                      );
+                      return;
+                    }
+                    placeOrder();
+                  }}
+                />
+              </>
+            )}
           </View>
         </>
       ) : (

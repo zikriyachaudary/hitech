@@ -24,7 +24,7 @@ const ProductSliderComp = (props: any) => {
 
   return (
     <>
-      <View style={styles.innerCont}></View>
+      <View style={styles.innerCont} />
 
       {props?.productImagesList?.length > 0 ? (
         <View>

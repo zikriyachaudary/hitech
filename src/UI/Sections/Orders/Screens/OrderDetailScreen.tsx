@@ -49,7 +49,7 @@ const OrderDetailScreen = (props: ScreenProps) => {
   const updateOrderStatus = (status: any) => {
     dispatch(setIsLoader(true));
     const notificatinObj = {
-      title: `Order Dispatched`,
+      title: "Order Dispatched",
       body: `Your Order has been dispatched having Order ID ${item?.orderId}`,
       createdAt: new Date(),
       notificationId: CommonDataManager.getSharedInstance().makeid(3),
@@ -209,7 +209,9 @@ const OrderDetailScreen = (props: ScreenProps) => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-              if (orderStatus == ORDER_STATUS.Order_Placed) return;
+              if (orderStatus == ORDER_STATUS.Order_Placed) {
+                return;
+              }
               setOrderStatus(ORDER_STATUS.Order_Placed);
               LayoutAnimation.configureNext(
                 LayoutAnimation.Presets.easeInEaseOut
@@ -243,7 +245,9 @@ const OrderDetailScreen = (props: ScreenProps) => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-              if (orderStatus == ORDER_STATUS.Dispatched) return;
+              if (orderStatus == ORDER_STATUS.Dispatched) {
+                return;
+              }
               setOrderStatus(ORDER_STATUS.Dispatched);
               LayoutAnimation.configureNext(
                 LayoutAnimation.Presets.easeInEaseOut

@@ -62,7 +62,7 @@ export const Reducer = createSlice({
       state.cartDetail = action.payload;
     },
     setAdminUsersList: (state, action) => {
-      state.cartDetail = action.payload;
+      state.adminUsersList = action.payload;
     },
     setProductCategoryList: (state, action) => {
       state.productCategoryList = action.payload;

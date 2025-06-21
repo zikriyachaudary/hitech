@@ -49,7 +49,9 @@ const ManageCategories = (props: ScreenProps) => {
 
   const fetchCat = async () => {
     try {
-      if (categoryList?.length == 0) dispatch(setIsLoader(true));
+      if (categoryList?.length == 0) {
+        dispatch(setIsLoader(true));
+      }
       fetchCatListReq((resp: any) => {
         if (resp?.status) {
           setCategoryList(resp?.data);

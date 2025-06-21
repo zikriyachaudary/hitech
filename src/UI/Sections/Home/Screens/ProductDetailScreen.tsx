@@ -36,7 +36,9 @@ const ProductDetailScreen = (props: ScreenProps) => {
   );
 
   const getItemPrice = (item: any, isGoldenUser: any) => {
-    if (!item) return "N/A";
+    if (!item) {
+      return "N/A";
+    }
 
     if (isGoldenUser) {
       return item.goldenPrice || item?.sizeNPrice?.[0]?.goldenPrice || "N/A";

@@ -36,7 +36,9 @@ export default class CommonDataManager {
   };
 
   capitalizeEachWord = (str: any) => {
-    if (!str) return "";
+    if (!str) {
+      return "";
+    }
     return str
       .split(" ")
       .map((word: any) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -278,7 +280,9 @@ export default class CommonDataManager {
   };
   // remove empty lines at the end and start of a string
   removeEmptyLines = (str: any) => {
-    if (!str) return "";
+    if (!str) {
+      return "";
+    }
     str = str.trim();
     return str.replace(/^\s+|\s+$/g, "");
   };

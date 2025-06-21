@@ -79,14 +79,24 @@ const AddCategoryScreen = (props: ScreenProps) => {
 
   const handlePublish = () => {
     let isFormValid = true;
-    if (category?.trimEnd() == "") isFormValid = false;
-    if (subCategories.every((sub) => sub?.name?.trim() == ""))
+    if (category?.trimEnd() == "") {
       isFormValid = false;
-    if (subCategories?.length == 0) isFormValid = false;
-    if (RtlCategory?.trimEnd() == "") isFormValid = false;
-    if (rtlSubCategories.every((sub) => sub?.name?.trim() == ""))
+    }
+    if (subCategories.every((sub) => sub?.name?.trim() == "")) {
       isFormValid = false;
-    if (rtlSubCategories?.length == 0) isFormValid = false;
+    }
+    if (subCategories?.length == 0) {
+      isFormValid = false;
+    }
+    if (RtlCategory?.trimEnd() == "") {
+      isFormValid = false;
+    }
+    if (rtlSubCategories.every((sub) => sub?.name?.trim() == "")) {
+      isFormValid = false;
+    }
+    if (rtlSubCategories?.length == 0) {
+      isFormValid = false;
+    }
     if (!isFormValid) {
       dispatch(
         setIsAlertShow({

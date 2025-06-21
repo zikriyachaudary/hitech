@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
+  Linking,
   Platform,
   SafeAreaView,
   ScrollView,
@@ -95,10 +96,7 @@ const SignUpScreen = (props: any) => {
 
   const onSignUpPress = async () => {
     let isFormValid = true;
-    if (!selectedImage) {
-      setSelectedImageError("Please select Profile Picture");
-      isFormValid = false;
-    }
+
     if (!firstName) {
       setFirstNameError("Please Enter first Name");
       isFormValid = false;
@@ -298,6 +296,7 @@ const SignUpScreen = (props: any) => {
               />
             </TouchableOpacity>
           )}
+          <Text style={styles.optionalTxt}>{"(Optional)"}</Text>
           {selectedImageError && (
             <Text
               style={{
@@ -501,7 +500,9 @@ const SignUpScreen = (props: any) => {
               <Text
                 style={styles.privacyTxt}
                 onPress={() => {
-                  // Linking.openURL('https://zipp-y.com/privacy-policy/');
+                  Linking.openURL(
+                    "https://hitechsolutions.store/TermsAndCondition/"
+                  );
                 }}
               >
                 {" "}
@@ -511,7 +512,9 @@ const SignUpScreen = (props: any) => {
               <Text
                 style={styles.privacyTxt}
                 onPress={() => {
-                  // Linking.openURL('https://zipp-y.com/terms-conditions/');
+                  Linking.openURL(
+                    "https://hitechsolutions.store/PrivacyPolicy/"
+                  );
                 }}
               >
                 {" "}
@@ -524,11 +527,11 @@ const SignUpScreen = (props: any) => {
             label={"Create Account"}
             onPress={() => onSignUpPress()}
           />
-          <View style={styles.midCont}>
-            <View style={styles.line}></View>
+          {/* <View style={styles.midCont}>
+            <View style={styles.line} />
             <Text style={styles.signinText}>{"SignUp with"}</Text>
-            <View style={styles.line}></View>
-          </View>
+            <View style={styles.line} />
+          </View> */}
 
           {/* <View
             style={{
@@ -789,6 +792,11 @@ const styles = StyleSheet.create({
     width: normalized(30),
     height: normalized(30),
     resizeMode: "contain",
+  },
+  optionalTxt: {
+    fontSize: normalized(13),
+    color: AppColors.grey.greyLevel4,
+    alignSelf: "center",
   },
 });
 

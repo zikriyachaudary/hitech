@@ -67,8 +67,8 @@ const UserOrderDetailScreen = (props: ScreenProps) => {
 
   const onSwitchUser = async () => {
     const notificatinObj = {
-      title: `Account Upgraded`,
-      body: `Your account has been upgraded. You are now Gold Member of High Tech Solutions.`,
+      title: "Account Upgraded",
+      body: "Your account has been upgraded. You are now Gold Member of High Tech Solutions.",
       createdAt: new Date(),
       notificationId: CommonDataManager.getSharedInstance().makeid(3),
       type: NOTIFICATIONS_TYPES.Account_Upgraded,
@@ -250,7 +250,7 @@ const UserOrderDetailScreen = (props: ScreenProps) => {
           {item?.orders.map((item: any, index: any) => (
             <View style={styles.orderCont}>
               <View style={styles.txtCont}>
-                <Text style={styles.orderTitle}>{`Order ID - `}</Text>
+                <Text style={styles.orderTitle}>{"Order ID - "}</Text>
                 <Text style={styles.title}>{item?.orderId}</Text>
               </View>
               {item?.products.map((item: any, index: any) => (

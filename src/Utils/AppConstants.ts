@@ -242,12 +242,12 @@ export const profileBarList = [
     rtlTxt: "میری ٹوکری",
     leftIcon: AppImages.Profile.cart,
   },
-  {
-    id: 6,
-    text: "Select Language",
-    rtlTxt: "زبان منتخب کریں",
-    leftIcon: AppImages.Profile.language,
-  },
+  // {
+  //   id: 6,
+  //   text: "Select Language",
+  //   rtlTxt: "زبان منتخب کریں",
+  //   leftIcon: AppImages.Profile.language,
+  // },
   {
     id: 4,
     text: "Delete Account",
@@ -271,12 +271,21 @@ export const adminProfileList = [
     leftIcon: AppImages.Profile.ProfileIcon,
   },
 
+  // {
+  //   id: 6,
+  //   text: "Select Language",
+  //   rtlTxt: "زبان منتخب کریں",
+  //   leftIcon: AppImages.Profile.language,
+  // },
   {
-    id: 6,
-    text: "Select Language",
-    rtlTxt: "زبان منتخب کریں",
-    leftIcon: AppImages.Profile.language,
+    id: 5,
+    text: "Log out",
+    rtlTxt: "لاگ آؤٹ",
+    leftIcon: AppImages.Profile.LogoutIcon,
   },
+];
+
+export const guestProfileList = [
   {
     id: 5,
     text: "Log out",

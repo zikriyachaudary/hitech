@@ -25,7 +25,7 @@ export const userSignupRequest = async (
           userId: id,
         };
 
-        delete loginObj["password"];
+        delete loginObj.password;
 
         await firestore()
           .collection(Collections.CUSTOMERS_COLLECTION)
@@ -185,7 +185,7 @@ export const createNewSocialUser = async (userInput: any, getResponse: any) => {
     ...userInput,
     userId: id,
   };
-  delete loginObj["password"];
+  delete loginObj.password;
   await firestore()
     .collection(Collections.CUSTOMERS_COLLECTION)
     .doc(id)
