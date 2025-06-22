@@ -22,6 +22,7 @@ import WelcomeScreen from "./src/UI/Sections/Welcome/Screens/WelcomeScreen";
 import LinearGradient from "react-native-linear-gradient";
 import { AppStyles } from "./src/Utils/AppStyles";
 import { ScreenSize } from "./src/Utils/AppConstants";
+import WebRtc from "./webrtc/WebRtc";
 const App = () => {
   const dispatch = useDispatch();
   const [fetching, setFetching] = useState(true);
@@ -79,7 +80,7 @@ const App = () => {
         flex: 1,
       }}
     >
-      <StatusBar
+      {/* <StatusBar
         animated={true}
         backgroundColor="#fff"
         barStyle={"dark-content"}
@@ -87,7 +88,9 @@ const App = () => {
       />
       <NavigationContainer>
         <AppContainer />
-      </NavigationContainer>
+      </NavigationContainer> */}
+
+      <WebRtc />
     </View>
   );
 };
