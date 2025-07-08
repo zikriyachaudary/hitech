@@ -117,9 +117,11 @@ const DeliveryAddressScreen = (props: ScreenProps) => {
                 item={item}
                 changeDefaultAddress={() => {
                   if (props?.route?.params?.fromCartScreen) {
-                    props?.navigation?.navigate(Routes.Home.cartScreen, {
-                      address: item,
-                    });
+                    props?.navigation?.goBack();
+                    props?.route?.params?.atBack(item);
+                    // props?.navigation?.navigate(Routes.Home.cartScreen, {
+                    //   address: item,
+                    // });
                   } else {
                     changeDefaultAddress(index, item);
                   }

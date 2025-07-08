@@ -33,8 +33,8 @@ const AppContainer = () => {
 
   useEffect(() => {
     getCategoryList();
-    createNotificationChannel();
-    showNotification();
+    // createNotificationChannel();
+    // showNotification();
   }, []);
 
   const getCategoryList = async () => {
@@ -47,7 +47,7 @@ const AppContainer = () => {
 
   useEffect(() => {
     if (selector?.userData) {
-      // registerDevice();
+      registerDevice();
     }
   }, [selector?.userData]);
 

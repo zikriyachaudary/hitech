@@ -70,72 +70,73 @@ const ForgetPassword = (props: any) => {
     try {
       dispatch(setIsLoader(true));
 
-      if (result?.type == "phone") {
-        const number = formatPhoneNumber(email);
-        await isEmailAlreadyRegistered(
-          number,
-          "phoneNumber",
-          async (res: any) => {
-            if (res?.status) {
-              const phoneVerification = await auth().signInWithPhoneNumber(
-                number
-              );
+      // if (result?.type == 'phone') {
+      //   const number = formatPhoneNumber(email);
+      //   await isEmailAlreadyRegistered(
+      //     number,
+      //     'phoneNumber',
+      //     async (res: any) => {
+      //       if (res?.status) {
+      //         const phoneVerification = await auth().signInWithPhoneNumber(
+      //           number,
+      //         );
 
-              if (phoneVerification) {
-                props?.navigation?.navigate(Routes.Auth.otpVerificationScreen, {
-                  isResetPasswordScreen: true,
-                  email: email,
-                  isEmail: false,
-                  phoneVerification,
-                });
-                dispatch(setIsLoader(false));
-              } else {
-                dispatch(
-                  setShowToast({
-                    type: AppStrings.ToastType.error,
-                    message: AppStrings.Network.someThingError,
-                  })
-                );
-                dispatch(setIsLoader(false));
-              }
+      //         if (phoneVerification) {
+      //           props?.navigation?.navigate(Routes.Auth.otpVerificationScreen, {
+      //             isResetPasswordScreen: true,
+      //             email: email,
+      //             isEmail: false,
+      //             phoneVerification,
+      //           });
+      //           dispatch(setIsLoader(false));
+      //         } else {
+      //           dispatch(
+      //             setShowToast({
+      //               type: AppStrings.ToastType.error,
+      //               message: AppStrings.Network.someThingError,
+      //             }),
+      //           );
+      //           dispatch(setIsLoader(false));
+      //         }
+      //       } else {
+      //         setEmailError('Phone Number does not Registered before.');
+      //         dispatch(setIsLoader(false));
+      //       }
+      //     },
+      //   );
+      // } else {
+      await isEmailAlreadyRegistered(
+        email?.toLocaleLowerCase(),
+        "email",
+        async (res: any) => {
+          if (res?.status) {
+            const isOtpSend = await sendEmailOtp({
+              recipientEmail: email,
+            });
+
+            if (isOtpSend?.status) {
+              props?.navigation?.navigate(Routes.Auth.otpVerificationScreen, {
+                isResetPasswordScreen: true,
+                email: email,
+                isEmail: true,
+              });
+              dispatch(setIsLoader(false));
             } else {
-              setEmailError("Phone Number does not Registered before.");
+              dispatch(
+                setShowToast({
+                  type: AppStrings.ToastType.error,
+                  message: AppStrings.Network.tryAgainLater,
+                })
+              );
               dispatch(setIsLoader(false));
             }
+          } else {
+            setEmailError("Email deost not Registered before");
+            dispatch(setIsLoader(false));
           }
-        );
-      } else {
-        await isEmailAlreadyRegistered(
-          email?.toLocaleLowerCase(),
-          "email",
-          async (res: any) => {
-            if (res?.status) {
-              const isOtpSend = await sendEmailOtp({
-                recipientEmail: email,
-              });
-
-              if (isOtpSend?.status) {
-                props?.navigation?.navigate(Routes.Auth.otpVerificationScreen, {
-                  isResetPasswordScreen: true,
-                  email: email,
-                  isEmail: true,
-                });
-                dispatch(setIsLoader(false));
-              } else {
-                dispatch(
-                  setShowToast({
-                    type: AppStrings.ToastType.error,
-                    message: AppStrings.Network.tryAgainLater,
-                  })
-                );
-                dispatch(setIsLoader(false));
-              }
-            } else {
-              setEmailError("Email deost not Registered before");
-            }
-          }
-        );
-      }
+        }
+      );
+      // }
     } catch (error: any) {
       dispatch(
         setIsAlertShow({
@@ -171,7 +172,8 @@ const ForgetPassword = (props: any) => {
           </Text>
 
           <Text style={styles.inputText}>
-            {isRtl ? "ای میل / فون نمبر" : "Email / Phone Number"}
+            {/* {isRtl ? "ای میل / فون نمبر" : "Email / Phone Number"} */}
+            {isRtl ? "ای میل " : "Email "}
           </Text>
           <CustomInput
             placeHold={""}

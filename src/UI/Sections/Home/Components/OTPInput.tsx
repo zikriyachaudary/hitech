@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   },
   textinputStyles: {
     flex: 1,
-    fontSize: -1,
+    fontSize: 14,
     opacity: 0,
     textAlign: "left",
   },

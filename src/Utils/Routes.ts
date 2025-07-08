@@ -27,6 +27,7 @@ export const Routes = {
     Language: "Language",
     ChangePassword: "ChangePassword",
     PaymentMethodScreen: "PaymentMethodScreen",
+    RecieptScreen: "RecieptScreen",
   },
   Admin: {
     ManageCategories: "ManageCategories",

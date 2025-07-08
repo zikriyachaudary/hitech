@@ -32,6 +32,7 @@ import { AppStrings, NOTIFICATIONS_TYPES } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import { fetchAdminDetailReq } from "../../../../Network/Services/GeneralServices";
 import NotificationManager from "../../../../Hooks/NotificationsManager";
+import { Routes } from "../../../../Utils/Routes";
 
 const PaymentMethodScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -155,8 +156,17 @@ const PaymentMethodScreen = (props: ScreenProps) => {
               message: resp?.message,
             })
           );
+
           dispatch(setTab(0));
-          props?.navigation?.pop(3);
+          // props?.navigation?.pop(3);
+          props?.navigation?.navigate(Routes.Home.RecieptScreen, {
+            item: {
+              ...data,
+              phoneNumber: accNumber,
+              paymentMethod: selectedWallet,
+              paymentTime: new Date(),
+            },
+          });
           dispatch(updateCartDetail([]));
           dispatch(setIsLoader(false));
         } else {

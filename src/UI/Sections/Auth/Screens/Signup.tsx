@@ -25,7 +25,11 @@ import {
 import CustomInput from "../../../Components/CustomInput/CustomInput";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
 import { Routes } from "../../../../Utils/Routes";
-import { AppStrings, SocialTypeStrings } from "../../../../Utils/AppStrings";
+import {
+  AppStrings,
+  SocialTypeStrings,
+  USER_TYPE,
+} from "../../../../Utils/AppStrings";
 import { useDispatch } from "react-redux";
 import {
   setIsLoader,
@@ -115,9 +119,11 @@ const SignUpScreen = (props: any) => {
     }
     if (!phoneNumber) {
       setPhoneError("Please Enter Phone Number");
+      isFormValid = false;
     }
     if (phoneNumber.length < 10) {
       setPhoneError("Phone Number Should be 10 digits Long.");
+      isFormValid = false;
     }
     if (!password) {
       setPasswordError("Please Enter Password");
@@ -146,6 +152,7 @@ const SignUpScreen = (props: any) => {
       phoneNumber: number,
       password: password,
       profilePath: selectedImage,
+      userType: USER_TYPE.Silver,
     };
     await isEmailAlreadyRegistered(
       email?.toLocaleLowerCase(),
@@ -169,6 +176,7 @@ const SignUpScreen = (props: any) => {
                 });
 
                 if (confirmation && isOtpSend?.status) {
+                  // if (isOtpSend?.status) {
                   props?.navigation?.navigate(
                     Routes.Auth.otpVerificationScreen,
                     {

@@ -120,7 +120,7 @@ const OrderScreen = (props: ScreenProps) => {
             style={styles.btn}
             onPress={() => onClick(i)}
           >
-            <Text>{btn}</Text>
+            <Text style={{ color: AppColors.black.black }}>{btn}</Text>
           </TouchableOpacity>
         ))}
         <Animated.View

@@ -27,6 +27,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
       android:icon="@mipmap/ic_launcher"
       android:roundIcon="@mipmap/ic_launcher"
       android:allowBackup="false"
+      android:requestLegacyExternalStorage="true"
       android:theme="@style/AppTheme">
       <activity
         android:name=".MainActivity"

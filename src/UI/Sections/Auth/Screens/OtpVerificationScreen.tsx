@@ -54,11 +54,11 @@ const OtpVerificationScreen = (props: ScreenProps) => {
   );
   const isRtl = selector?.isRtl;
 
-  function onAuthStateChanged(user: any) {}
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber;
-  }, []);
+  // function onAuthStateChanged(user: any) {}
+  // useEffect(() => {
+  //   const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+  //   return subscriber;
+  // }, []);
 
   const onSubmit = async () => {
     try {
@@ -66,20 +66,21 @@ const OtpVerificationScreen = (props: ScreenProps) => {
         return;
       }
       dispatch(setIsLoader(true));
-      const resp = await phoneVerification.confirm(numberOtp);
+      // const resp = await phoneVerification.confirm(numberOtp);
       const emailOtpRes = await verifyEmailOtp({
         recipientEmail: signupObj?.email,
         OTP: emailOtp,
       });
-      if (!resp?.user?.uid) {
-        setNumberOtpError("Invalid Code");
-        dispatch(setIsLoader(false));
-      }
+      // if (!resp?.user?.uid) {
+      //   setNumberOtpError('Invalid Code');
+      //   dispatch(setIsLoader(false));
+      // }
       if (!emailOtpRes?.status) {
         dispatch(setIsLoader(false));
         setEmailOtpError("Invalid Code");
       }
-      if (resp?.user?.uid && emailOtpRes?.status) {
+      // if (resp?.user?.uid && emailOtpRes?.status) {
+      if (emailOtpRes?.status) {
         try {
           const profilePath = signupObj?.profilePath;
           const handleSignup = async (url: string) => {
@@ -88,7 +89,8 @@ const OtpVerificationScreen = (props: ScreenProps) => {
               email: signupObj?.email,
               phoneNumber: signupObj?.phoneNumber,
               password: signupObj?.password,
-              profileImage: url,
+              profileImage: url ?? "",
+              userType: signupObj?.userType,
             };
 
             await userSignupRequest(paramsObj, (response) => {
@@ -303,8 +305,8 @@ const OtpVerificationScreen = (props: ScreenProps) => {
               </Text>
             </View> */}
             <View style={{ height: normalized(15) }} />
-            <Text style={styles.header}>Phone Number OTP</Text>
-            <CodeInput
+            {/* <Text style={styles.header}>Phone Number OTP</Text> */}
+            {/* <CodeInput
               codeLength={6}
               cellSize={normalized(50)}
               cellSpacing={normalized(8)}
@@ -326,7 +328,7 @@ const OtpVerificationScreen = (props: ScreenProps) => {
                 }
               }}
               keyboardType={"number-pad"}
-            />
+            /> */}
             {/* <View style={styles.txtCont}>
               <Text>Didn't get a code?</Text>
               <Text onPress={() => {}} style={styles.resendTxt}>

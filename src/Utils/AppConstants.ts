@@ -195,6 +195,7 @@ export const AppImages = {
   payments: {
     jazzcash: require("../UI/assets/Images/payment/jazzcash.png"),
     easypaisa: require("../UI/assets/Images/payment/easypaisa.png"),
+    stamp: require("../UI/assets/Images/payment/stamp.png"),
   },
 };
 

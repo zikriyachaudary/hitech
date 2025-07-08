@@ -174,7 +174,13 @@ const CartScreen = (props: ScreenProps) => {
                         onPress={() => {
                           props?.navigation?.navigate(
                             Routes.Home.DeliveryAddress,
-                            { fromCartScreen: true }
+                            {
+                              fromCartScreen: true,
+                              atBack: (address: any) => {
+                                setDeliveryAdd(address);
+                                setLocationError("");
+                              },
+                            }
                           );
                         }}
                       >
