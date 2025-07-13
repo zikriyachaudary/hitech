@@ -100,6 +100,9 @@ const Login = (props: ScreenProps) => {
       } else if (result.type === "phone") {
         setEmailError("Phone number must be exactly 11 digits long.");
         isFormValid = false;
+      } else if (result.type === "username") {
+        setEmailError("Invalid Userame");
+        isFormValid = false;
       }
     }
     if (!password) {
@@ -121,7 +124,12 @@ const Login = (props: ScreenProps) => {
           : email.toLocaleLowerCase(),
       password: password,
       isAdmin,
-      key: result?.type == "email" ? "email" : "phoneNumber",
+      key:
+        result?.type == "email"
+          ? "email"
+          : result?.type == "username"
+          ? "username"
+          : "phoneNumber",
     };
 
     dispatch(setIsLoader(true));

@@ -50,13 +50,21 @@ const EditProfileScreen = (props: ScreenProps) => {
   const isRtl = selector?.isRtl;
 
   const [email, setEmail] = useState<string>(userData?.email || "");
-  const [firstName, setFirstName] = useState<string>(userData?.firstName || "");
-  const [lastName, setLastName] = useState<string>(userData?.lastName || "");
+  const fullName = userData?.fullName || "";
+  const [firstName, setFirstName] = useState<string>(
+    fullName.split(" ")[0] || ""
+  );
+  const [lastName, setLastName] = useState<string>(
+    fullName.split(" ").slice(1).join(" ") || ""
+  );
+  const [username, setUsername] = useState<string>(userData?.username || "");
+
   const firstNameRef = useRef();
   const lastNameRef = useRef();
   const dobRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
+  const usernameRef = useRef();
   const [selectedImage, setSelectedImage] = useState<any>(
     userData?.profileImage || userData?.profile || ""
   );
@@ -325,7 +333,7 @@ const EditProfileScreen = (props: ScreenProps) => {
               </Text>
               <CustomInput
                 ref={lastNameRef}
-                onSubmitEditing={() => focusNextField(dobRef)}
+                onSubmitEditing={() => focusNextField(usernameRef)}
                 placeHold={isRtl ? "آخری نام درج کریں" : "Last Name"}
                 placeHolderColor={AppColors.grey.greyLevel4}
                 value={lastName}
@@ -335,6 +343,23 @@ const EditProfileScreen = (props: ScreenProps) => {
                 }}
                 keyboardType="default"
                 errorMsg={lastNameError}
+              />
+            </View>
+          </View>
+
+          <View style={styles.topContainerChild}>
+            <View style={styles.inputCont}>
+              <Text style={styles.inputText}>
+                {isRtl ? "ای میل" : "Username"}
+              </Text>
+              <CustomInput
+                ref={usernameRef}
+                onSubmitEditing={() => focusNextField(emailRef)}
+                placeHold={isRtl ? "ای میل درج کریں" : "Enter Email Address"}
+                placeHolderColor={AppColors.grey.greyLevel4}
+                value={username}
+                setValue={(val: string) => {}}
+                isEditable={false}
               />
             </View>
           </View>

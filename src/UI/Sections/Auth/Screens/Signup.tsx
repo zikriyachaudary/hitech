@@ -375,7 +375,7 @@ const SignUpScreen = (props: any) => {
               <Text style={styles.inputText}>{"Last Name"}</Text>
               <CustomInput
                 ref={lastNameRef}
-                onSubmitEditing={() => focusNextField(dobRef)}
+                onSubmitEditing={() => focusNextField(usernameRef)}
                 placeHold={"Last Name"}
                 placeHolderColor={AppColors.grey.greyLevel4}
                 value={lastName}
@@ -394,7 +394,7 @@ const SignUpScreen = (props: any) => {
               <Text style={styles.inputText}>{"Username"}</Text>
               <CustomInput
                 ref={usernameRef}
-                onSubmitEditing={() => focusNextField(passwordRef)}
+                onSubmitEditing={() => focusNextField(emailRef)}
                 placeHold={"Enter Username"}
                 placeHolderColor={AppColors.grey.greyLevel4}
                 value={username}
@@ -512,7 +512,7 @@ const SignUpScreen = (props: any) => {
               }}
             >
               <TextInput
-                onSubmitEditing={() => focusNextField(emailRef)}
+                onSubmitEditing={() => focusNextField(passwordRef)}
                 placeholder={"3XXXXXXXX"}
                 placeholderTextColor={AppColors.grey.greyLevel9}
                 keyboardType="number-pad"

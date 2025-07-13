@@ -37,11 +37,15 @@ export const formatPhoneNumber = (phoneNumber: any) => {
 
 export const validateInput = (value: any) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const phoneRegex = /^(\+?[0-9]{11,13})$/;
+  const phoneRegex = /^03[0-9]{9}$/; // Pakistani format
+  const usernameRegex = /^[a-zA-Z0-9_]{6,25}$/; // 6-25 chars
+
   if (emailRegex.test(value)) {
     return { type: "email", isValid: true };
   } else if (phoneRegex.test(value)) {
     return { type: "phone", isValid: true };
+  } else if (usernameRegex.test(value)) {
+    return { type: "username", isValid: true };
   } else {
     return { type: "invalid", isValid: false };
   }
