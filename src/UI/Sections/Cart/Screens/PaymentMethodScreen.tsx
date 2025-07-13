@@ -33,6 +33,7 @@ import CommonDataManager from "../../../../Utils/CommonManager";
 import { fetchAdminDetailReq } from "../../../../Network/Services/GeneralServices";
 import NotificationManager from "../../../../Hooks/NotificationsManager";
 import { Routes } from "../../../../Utils/Routes";
+import CardDetailsFormPage from "./CardDetailFormPage";
 
 const PaymentMethodScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -43,6 +44,7 @@ const PaymentMethodScreen = (props: ScreenProps) => {
   const userData = selector?.userData;
   const dispatch = useDispatch();
   const data = props?.route?.params?.data;
+  const paymentMethod = props?.route?.params?.paymentMethod;
   const [selectedWallet, setSelectedWallet] = useState("");
   const [cnic, setCnic] = useState("");
   const [accNumber, setAccNumber] = useState("");
@@ -57,6 +59,7 @@ const PaymentMethodScreen = (props: ScreenProps) => {
       inputRef?.current?.focus();
     }
   };
+  console.log("props?.route?.params ----->>>  ", props?.route?.params);
 
   const handleCnicChange = (value: string, prevValue: string, setCnic: any) => {
     let raw = value.replace(/\D/g, "").slice(0, 13);
@@ -181,7 +184,6 @@ const PaymentMethodScreen = (props: ScreenProps) => {
       });
     });
   };
-
   return (
     <View
       style={[
@@ -193,84 +195,10 @@ const PaymentMethodScreen = (props: ScreenProps) => {
       <View style={{ flex: 1 }}>
         <CustomHeader
           onPress={() => props?.navigation?.goBack()}
-          Text={isRtl ? "ادائیگی کے طریقے" : "Payment Methods"}
+          Text={isRtl ? "ادائیگی" : "Payment"}
         />
         <View style={{ flex: 1, marginHorizontal: normalized(20) }}>
-          <Text
-            style={[styles.walletHead, { textAlign: isRtl ? "right" : "left" }]}
-          >
-            {isRtl ? "والیٹ منتخب کریں" : "Select Wallet"}
-          </Text>
-
-          <View
-            style={[
-              styles.paymentMethods,
-              { flexDirection: isRtl ? "row-reverse" : "row" },
-            ]}
-          >
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => {
-                setSelectedWallet("JazzCash"), setWalletError(false);
-              }}
-              style={[
-                styles.methodItemCont,
-                {
-                  borderColor: walletError
-                    ? AppColors.red.dark
-                    : selectedWallet === "JazzCash"
-                    ? AppColors.green.dark
-                    : AppColors.grey.greyLevel2,
-                  backgroundColor: walletError
-                    ? AppColors.red.pink
-                    : AppColors.white.white,
-                },
-              ]}
-            >
-              {selectedWallet === "JazzCash" && (
-                <View style={styles.tickImgCont}>
-                  <Image source={AppImages.Home.tick} style={styles.tickImg} />
-                </View>
-              )}
-              <Image
-                source={AppImages.payments.jazzcash}
-                style={styles.bankImg}
-              />
-              <Text>{isRtl ? "جاز کیش" : "JazzCash"}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={() => {
-                setSelectedWallet("EasyPaisa"), setWalletError(false);
-              }}
-              style={[
-                styles.methodItemCont,
-                {
-                  borderColor: walletError
-                    ? AppColors.red.dark
-                    : selectedWallet === "EasyPaisa"
-                    ? AppColors.green.dark
-                    : AppColors.grey.greyLevel2,
-                  backgroundColor: walletError
-                    ? AppColors.red.pink
-                    : AppColors.white.white,
-                },
-              ]}
-            >
-              {selectedWallet === "EasyPaisa" && (
-                <View style={styles.tickImgCont}>
-                  <Image source={AppImages.Home.tick} style={styles.tickImg} />
-                </View>
-              )}
-              <Image
-                source={AppImages.payments.easypaisa}
-                style={styles.bankImg}
-              />
-              <Text>{isRtl ? "ایزی پیسہ" : "EasyPaisa"}</Text>
-            </TouchableOpacity>
-          </View>
-
+          <Image source={paymentMethod?.image} style={styles.bankImg} />
           <Text
             style={[
               styles.simpleHeader,
@@ -339,8 +267,8 @@ export default PaymentMethodScreen;
 
 const styles = StyleSheet.create({
   bankImg: {
-    width: normalized(80),
-    height: normalized(80),
+    width: normalized(30),
+    height: normalized(30),
     resizeMode: "contain",
     margin: normalized(8),
   },
@@ -350,7 +278,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.white.white,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: normalized(20),
+    paddingHorizontal: normalized(10),
     paddingVertical: normalized(10),
   },
   paymentMethods: {

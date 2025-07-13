@@ -39,6 +39,7 @@ import CommonDataManager from "../../../../Utils/CommonManager";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import { fetchAddressReq } from "../../../../Network/Services/AddressServices";
 import { useIsFocused } from "@react-navigation/native";
+import PaymentMethodModal from "../Components/PaymentMethodModal";
 
 const CartScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -51,6 +52,7 @@ const CartScreen = (props: ScreenProps) => {
     CartManager();
   const dispatch = useDispatch();
   const [locationError, setLocationError] = useState("");
+  const [isShowPaymentModal, setIsShowPaymentModal] = useState(false);
 
   const [deliveryAdd, setDeliveryAdd] = useState<any>(
     props?.route?.params?.address ? props?.route?.params?.address : null
@@ -70,8 +72,6 @@ const CartScreen = (props: ScreenProps) => {
     });
   };
 
-  console.log("selector?.cartDetail ----  ", selector?.cartDetail);
-
   useEffect(() => {
     getUserAddress();
     if (props?.route?.params?.address != undefined) {
@@ -81,7 +81,7 @@ const CartScreen = (props: ScreenProps) => {
 
   let productList = useSelector((state: any) => state.SliceReducer.cartDetail);
 
-  const placeOrder = async () => {
+  const placeOrder = async (selectedMethod: any) => {
     const obj = {
       deliveryDetails: {
         generalAddress: deliveryAdd?.address,
@@ -96,7 +96,13 @@ const CartScreen = (props: ScreenProps) => {
       orderId: CommonDataManager.getSharedInstance().makeid(1),
       createdAt: new Date(),
     };
-    props?.navigation?.navigate(Routes.Home.PaymentMethodScreen, { data: obj });
+    props?.navigation?.navigate(
+      selectedMethod?.id == 1 || selectedMethod?.id == 2
+        ? Routes.Home.PaymentMethodScreen
+        : Routes.Home.CardDetailFormPage,
+      { data: { ...obj, ...selectedMethod } }
+    );
+
     return;
     dispatch(setIsLoader(true));
     await placeOrderReq(obj, (resp: any) => {
@@ -410,7 +416,8 @@ const CartScreen = (props: ScreenProps) => {
                       );
                       return;
                     }
-                    placeOrder();
+                    setIsShowPaymentModal(true);
+                    // placeOrder();
                   }}
                 />
               </>
@@ -501,6 +508,18 @@ const CartScreen = (props: ScreenProps) => {
           }}
         />
       )}
+      <PaymentMethodModal
+        isVisible={isShowPaymentModal}
+        onClose={() => {
+          setIsShowPaymentModal(false);
+        }}
+        onContinue={(val: any) => {
+          setIsShowPaymentModal(false);
+          setTimeout(() => {
+            placeOrder(val);
+          }, 400);
+        }}
+      />
     </View>
   );
 };

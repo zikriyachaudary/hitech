@@ -28,6 +28,7 @@ export const Routes = {
     ChangePassword: "ChangePassword",
     PaymentMethodScreen: "PaymentMethodScreen",
     RecieptScreen: "RecieptScreen",
+    CardDetailFormPage: "CardDetailFormPage",
   },
   Admin: {
     ManageCategories: "ManageCategories",

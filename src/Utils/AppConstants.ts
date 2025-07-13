@@ -196,6 +196,10 @@ export const AppImages = {
     jazzcash: require("../UI/assets/Images/payment/jazzcash.png"),
     easypaisa: require("../UI/assets/Images/payment/easypaisa.png"),
     stamp: require("../UI/assets/Images/payment/stamp.png"),
+    card: require("../UI/assets/Images/payment/card.png"),
+    shield: require("../UI/assets/Images/payment/shield.png"),
+    user: require("../UI/assets/Images/payment/user.png"),
+    lock: require("../UI/assets/Images/payment/lock.png"),
   },
 };
 

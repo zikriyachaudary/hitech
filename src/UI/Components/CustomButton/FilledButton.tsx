@@ -20,7 +20,15 @@ const FilledButton = (props: any) => {
       activeOpacity={0.7}
       disabled={props?.isDisable}
     >
-      <View style={{ ...styles.Container, ...props.mainContainer }}>
+      <View
+        style={{
+          ...styles.Container,
+          ...props.mainContainer,
+          backgroundColor: props?.isDisable
+            ? AppColors.grey.greyLevel2
+            : AppColors.themeColor.dark,
+        }}
+      >
         {props?.isLoader ? (
           <ActivityIndicator color={AppColors.white.white} />
         ) : (
@@ -33,7 +41,6 @@ const FilledButton = (props: any) => {
 
 const styles = StyleSheet.create({
   Container: {
-    backgroundColor: AppColors.themeColor.dark,
     borderRadius: normalized(30),
     alignItems: "center",
     justifyContent: "center",
