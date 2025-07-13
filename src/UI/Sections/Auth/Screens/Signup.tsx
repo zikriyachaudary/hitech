@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   KeyboardAvoidingView,
   Linking,
@@ -30,7 +31,7 @@ import {
   SocialTypeStrings,
   USER_TYPE,
 } from "../../../../Utils/AppStrings";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   setIsLoader,
   setShowToast,
@@ -38,6 +39,7 @@ import {
 } from "../../../../Redux/Reducers/AppReducers";
 import {
   checkUserInCollection,
+  checkUsernameReq,
   getSocialAuthReq,
   isEmailAlreadyRegistered,
   sendEmailOtp,
@@ -49,8 +51,13 @@ import SocialAuthManager from "../../../../Hooks/SocialAuthManager";
 import AppImagePicker from "../../../Components/CustomModal/AppImagePicker";
 import { formatPhoneNumber } from "../../../../Utils/Helper";
 import auth from "@react-native-firebase/auth";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const SignUpScreen = (props: any) => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
   const { gmailLoginRequest, appleAuthReq } = SocialAuthManager();
   const [countryValues, setCountryValues] = useState<any>({
     code: "+92",
@@ -68,10 +75,14 @@ const SignUpScreen = (props: any) => {
   const emailRef = useRef();
   const passwordRef = useRef();
   const licenseRef = useRef();
+  const usernameRef = useRef();
   const [selectedImage, setSelectedImage] = useState<any>("");
   const [showImagePicker, setShowImagePicker] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [username, setUsername] = useState<string>("");
+  const [isAvailLoader, setIsAvailLoader] = useState(false);
+  const [isUsernameAvail, setIsUsernameAvaila] = useState<any>(false);
 
   ///error------->
   const [selectedImageError, setSelectedImageError] = useState("");
@@ -81,6 +92,7 @@ const SignUpScreen = (props: any) => {
   const [passwordError, setPasswordError] = useState("");
   const [checkError, setCheckError] = useState<any>("");
   const [phoneError, setPhoneError] = useState<any>("");
+  const [usernameError, setUsernameError] = useState<string>("");
 
   ////////
 
@@ -107,6 +119,14 @@ const SignUpScreen = (props: any) => {
     }
     if (!lastName) {
       setLastNameError("Please Enter last Name");
+      isFormValid = false;
+    }
+    if (!username) {
+      setUsernameError("Please Enter Username");
+      isFormValid = false;
+    }
+    if (username?.length < 6) {
+      setUsernameError("Username must be 6 digits long.");
       isFormValid = false;
     }
     if (!email) {
@@ -202,6 +222,25 @@ const SignUpScreen = (props: any) => {
     );
   };
   // dispatch(setIsLoader(false));
+
+  const checkUsername = () => {
+    try {
+      setIsAvailLoader(true);
+      checkUsernameReq(username, (resp: any) => {
+        if (resp?.status) {
+          setIsUsernameAvaila(true);
+          setIsAvailLoader(false);
+        } else {
+          setIsUsernameAvaila(false);
+          setIsAvailLoader(false);
+          setUsernameError(resp?.message);
+        }
+      });
+    } catch (error) {
+      console.log("error check username --->>>  ", error);
+      setIsAvailLoader(false);
+    }
+  };
 
   const socialAuthReq = async (type: string) => {
     dispatch(setIsLoader(true));
@@ -352,6 +391,65 @@ const SignUpScreen = (props: any) => {
 
           <View style={styles.topContainerChild}>
             <View style={styles.inputCont}>
+              <Text style={styles.inputText}>{"Username"}</Text>
+              <CustomInput
+                ref={usernameRef}
+                onSubmitEditing={() => focusNextField(passwordRef)}
+                placeHold={"Enter Username"}
+                placeHolderColor={AppColors.grey.greyLevel4}
+                value={username}
+                setValue={(val: string) => {
+                  const lowercase = val?.toLowerCase();
+                  setUsername(lowercase);
+                  setUsernameError("");
+                  setIsUsernameAvaila(false);
+                }}
+                showLastIcon={isUsernameAvail}
+                rightIcon={AppImages.Home.tick}
+                errorMsg={usernameError}
+                isSuccess={isUsernameAvail}
+              />
+            </View>
+          </View>
+
+          {!isUsernameAvail && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                checkUsername();
+              }}
+              style={[
+                styles.isCheckCont,
+                {
+                  alignSelf: isRtl ? "flex-start" : "flex-end",
+                },
+              ]}
+            >
+              {isAvailLoader ? (
+                <ActivityIndicator
+                  color={AppColors.themeColor.dark}
+                  size={"small"}
+                />
+              ) : (
+                <Text
+                  style={[
+                    styles.checkTxt,
+                    {
+                      color:
+                        username?.length >= 6
+                          ? AppColors.themeColor.dark
+                          : AppColors.grey.greyLevel2,
+                    },
+                  ]}
+                >
+                  {isRtl ? "دستیابی چیک کریں" : "Check Availability"}
+                </Text>
+              )}
+            </TouchableOpacity>
+          )}
+
+          <View style={styles.topContainerChild}>
+            <View style={styles.inputCont}>
               <Text style={styles.inputText}>{"Email"}</Text>
               <CustomInput
                 ref={emailRef}
@@ -378,7 +476,7 @@ const SignUpScreen = (props: any) => {
               ...styles.phoneContChild,
               borderColor: phoneError
                 ? AppColors.red.dark
-                : AppColors.grey.greyLevel9,
+                : AppColors.grey.greyLevel2,
               backgroundColor: phoneError
                 ? AppColors.red.pink
                 : AppColors.white.white,
@@ -805,6 +903,15 @@ const styles = StyleSheet.create({
     fontSize: normalized(13),
     color: AppColors.grey.greyLevel4,
     alignSelf: "center",
+  },
+  isCheckCont: {
+    marginTop: normalized(7),
+    marginBottom: normalized(-20),
+  },
+  checkTxt: {
+    fontSize: normalized(12),
+    fontFamily: AppFonts.PoppinsMedium,
+    textDecorationLine: "underline",
   },
 });
 

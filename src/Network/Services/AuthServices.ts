@@ -459,3 +459,34 @@ export const changePasswordReq = async (obj: any, onComplete: any) => {
     onComplete({ status: false, message: AppStrings.Network.someThingError });
   }
 };
+
+export const checkUsernameReq = async (
+  username: string,
+  onComplete: (result: { status: boolean; message: string }) => void
+) => {
+  try {
+    const querySnapshot = await firestore()
+      .collection(Collections.CUSTOMERS_COLLECTION)
+      .where("username", "==", username)
+      .limit(1)
+      .get();
+
+    if (!querySnapshot.empty) {
+      onComplete({
+        status: false,
+        message: "Username is already taken",
+      });
+    } else {
+      onComplete({
+        status: true,
+        message: "Username is available",
+      });
+    }
+  } catch (error) {
+    console.log("checkUsernameReq error -->", error);
+    onComplete({
+      status: false,
+      message: AppStrings.Network.someThingError,
+    });
+  }
+};

@@ -31,7 +31,9 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
           ...styles.inputContainer,
           ...props.container,
           borderWidth: props?.isBorderBottom ? 0 : 1,
-          borderColor: !props?.errorMsg
+          borderColor: props?.isSuccess
+            ? AppColors.green.dark
+            : !props?.errorMsg
             ? AppColors.grey.greyLevel2
             : AppColors.red.dark,
           backgroundColor: !props?.errorMsg
@@ -101,7 +103,9 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
               style={{
                 width: normalized(24),
                 height: normalized(24),
-                tintColor: AppColors.themeColor.dark,
+                tintColor: props?.isSuccess
+                  ? AppColors.green.dark
+                  : AppColors.themeColor.dark,
               }}
               resizeMode="contain"
             />

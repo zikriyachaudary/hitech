@@ -16,7 +16,6 @@ import {
   AppFonts,
   AppHorizontalMargin,
   AppImages,
-  Categories,
   normalized,
   ScreenProps,
   ScreenSize,
@@ -38,7 +37,6 @@ const ManageCategories = (props: ScreenProps) => {
     (state: AppRootStore) => state.SliceReducer
   );
   const [categoryList, setCategoryList] = useState<any>([]);
-  const [subCategory, setSubCategory] = useState<any>(null);
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
   const isRtl = selector?.isRtl;
@@ -67,6 +65,7 @@ const ManageCategories = (props: ScreenProps) => {
       });
     } catch (error) {
       console.log("error --->>>  ", error);
+      dispatch(setIsLoader(false));
     }
   };
 
@@ -101,6 +100,7 @@ const ManageCategories = (props: ScreenProps) => {
           data={categoryList}
           keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={styles.contentCont}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item, index }) => (
             <TouchableOpacity
               style={styles.itemCont}
@@ -117,6 +117,9 @@ const ManageCategories = (props: ScreenProps) => {
                 {item?.rtlCategory}
               </Text>
             </TouchableOpacity>
+          )}
+          ListFooterComponent={() => (
+            <View style={{ height: normalized(40) }} />
           )}
         />
       ) : (
@@ -167,8 +170,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderColor: AppColors.themeColor.dark,
     borderRadius: normalized(8),
-    // height: normalized(40),
-    width: ScreenSize.width - normalized(15),
+    width: ScreenSize.width - normalized(40),
     justifyContent: "center",
     paddingHorizontal: normalized(10),
     paddingVertical: normalized(5),
@@ -177,9 +179,9 @@ const styles = StyleSheet.create({
     color: AppColors.black.black,
     fontSize: normalized(16),
     fontFamily: AppFonts.PoppinsMedium,
+    flex: 1,
   },
   contentCont: {
-    flex: 1,
     marginTop: normalized(20),
     alignItems: "center",
     gap: normalized(15),
@@ -187,7 +189,6 @@ const styles = StyleSheet.create({
   divider: {
     width: normalized(100),
     height: 0.8,
-    // backgroundColor: AppColors.grey.greyLevel3,
     alignSelf: "center",
     marginVertical: normalized(5),
   },

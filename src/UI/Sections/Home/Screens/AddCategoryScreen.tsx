@@ -197,7 +197,15 @@ const AddCategoryScreen = (props: ScreenProps) => {
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
       <CustomHeader
-        Text={isRtl ? "کیٹگری شامل کریں" : "Add Category"}
+        Text={
+          isRtl
+            ? item
+              ? "کیٹگری کو اپ ڈیٹ کریں"
+              : "کیٹگری شامل کریں"
+            : item
+            ? "Update Category"
+            : "Add Category"
+        }
         onPress={() => props?.navigation?.goBack()}
         rightIconCont={{
           width: normalized(33),
