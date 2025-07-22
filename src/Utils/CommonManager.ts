@@ -31,7 +31,7 @@ export default class CommonDataManager {
     if (!str) {
       return "";
     }
-    let firstChar = str.charAt(0);
+    let firstChar = str?.charAt(0);
     return firstChar.toUpperCase() + str.slice(1);
   };
 

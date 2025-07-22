@@ -60,7 +60,6 @@ const PaymentMethodScreen = (props: ScreenProps) => {
       inputRef?.current?.focus();
     }
   };
-  console.log("props?.route?.params ----->>>  ", props?.route?.params);
 
   const handleCnicChange = (value: string, prevValue: string, setCnic: any) => {
     let raw = value.replace(/\D/g, "").slice(0, 13);

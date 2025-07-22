@@ -10,7 +10,7 @@ import DispatchedOrdersScreen from "./DispatchedOrdersScreen";
 
 const Tab = createMaterialTopTabNavigator();
 
-const OrdersTopTabNav = (props: any) => {
+const OrdersTopTabNav = () => {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -38,23 +38,11 @@ const OrdersTopTabNav = (props: any) => {
     >
       <Tab.Screen
         name="Pending Orders"
-        children={() => (
-          <PendingOrdersScreen
-            pendingOrders={props?.pendingOrders}
-            handleRefresh={props?.handleRefresh}
-            refreshing={props?.refreshing}
-          />
-        )}
+        children={() => <PendingOrdersScreen />}
       />
       <Tab.Screen
         name="Dispatched Orders"
-        children={() => (
-          <DispatchedOrdersScreen
-            dispatchOrders={props?.dispatchOrders}
-            handleRefresh={props?.handleRefresh}
-            refreshing={props?.refreshing}
-          />
-        )}
+        children={() => <DispatchedOrdersScreen />}
       />
     </Tab.Navigator>
   );

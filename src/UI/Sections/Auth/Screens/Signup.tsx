@@ -190,18 +190,18 @@ const SignUpScreen = (props: any) => {
                 setPhoneError("Phone Number Already in Use");
                 dispatch(setIsLoader(false));
               } else {
-                const confirmation = await auth().signInWithPhoneNumber(number);
+                // const confirmation = await auth().signInWithPhoneNumber(number);
                 const isOtpSend = await sendEmailOtp({
                   recipientEmail: obj?.email,
                 });
 
-                if (confirmation && isOtpSend?.status) {
-                  // if (isOtpSend?.status) {
+                // if (confirmation && isOtpSend?.status) {
+                if (isOtpSend?.status) {
                   props?.navigation?.navigate(
                     Routes.Auth.otpVerificationScreen,
                     {
                       obj,
-                      phoneVerification: confirmation,
+                      // phoneVerification: confirmation,
                     }
                   );
                   dispatch(setIsLoader(false));
@@ -642,7 +642,7 @@ const SignUpScreen = (props: any) => {
           </View>
 
           <FilledButton
-            label={"Create Account"}
+            label={isRtl ? "اکاؤنٹ بنائیں" : "Create Account"}
             onPress={() => onSignUpPress()}
           />
           {/* <View style={styles.midCont}>

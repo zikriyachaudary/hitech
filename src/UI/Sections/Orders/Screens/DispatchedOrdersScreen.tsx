@@ -5,10 +5,16 @@ import {
   View,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
+  FlatList,
 } from "react-native";
 import moment from "moment";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
-import { AppColors, normalized } from "../../../../Utils/AppConstants";
+import {
+  AppColors,
+  AppFonts,
+  normalized,
+} from "../../../../Utils/AppConstants";
 import OrderItem from "../Components/OrderItem";
 import { Routes } from "../../../../Utils/Routes";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,113 +22,93 @@ import { AppRootStore } from "../../../../Redux/store/AppStore";
 import { groupOrdersByDate } from "../../../../Utils/Helper";
 import { getDispatchedOrdersList } from "../../../../Network/Services/GeneralServices";
 import { setDispatchedOrders } from "../../../../Redux/Reducers/AppReducers";
+import DatePicker from "react-native-date-picker";
 
-const DispatchedOrdersScreen = (props: any) => {
-  const [sections, setSections] = useState<any>([]);
-  const navigation: any = useNavigation();
+const DispatchOrdersScreen = () => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
   const dispatch = useDispatch();
+  const navigation: any = useNavigation();
   const isRtl = selector?.isRtl;
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [isEndReached, setIsEndReached] = useState(false);
-  const [lastDispatchedDoc, setLastDispatchedDoc] = useState<any>(null);
-  const [dispatchedOrdersList, setDispatchedOrdersList] = useState<any>([]);
   const isFocused = useIsFocused();
 
+  const [dispatchedOrdersList, setDispatchedOrdersList] = useState<any>([]);
+  const [selectedDate, setSelectedDate] = useState(
+    moment(Date.now()).format("DD MMM YYYY")
+  );
+  const maxDate = moment(Date.now()).format("YYYY-MM-DD");
+  const [isShowDateModal, setIsShowDateModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    const reduxList = selector?.dispatchedOrdersList || [];
+    fetchDispatchedOrders();
+  }, [selectedDate, isFocused]);
 
-    setDispatchedOrdersList(reduxList);
-    setSections(groupOrdersByDate(reduxList, isRtl));
-
-    // Always fetch fresh in background
-    fetchDispatchedOrders(true);
-  }, [isFocused, isRtl]);
-
-  const fetchDispatchedOrders = async (isInitial = false) => {
-    if (loadingMore || isEndReached) return;
-
-    if (isInitial) {
-      setIsEndReached(false);
-      setLastDispatchedDoc(null);
-    }
-
-    setLoadingMore(true);
-
-    await getDispatchedOrdersList(
-      (resp: any) => {
-        setLoadingMore(false);
-
-        if (resp.status) {
-          const newOrders = resp.data || [];
-
-          const mergedList = isInitial
-            ? newOrders
-            : [
-                ...dispatchedOrdersList,
-                ...newOrders.filter(
-                  (o: any) =>
-                    !dispatchedOrdersList.find((d: any) => d.id === o.id)
-                ),
-              ];
-
-          setDispatchedOrdersList(mergedList);
-          setSections(groupOrdersByDate(mergedList, isRtl));
-          setLastDispatchedDoc(resp.lastDoc || null);
-          dispatch(setDispatchedOrders(mergedList));
-
-          if (resp.isEnd || newOrders.length === 0) {
-            setIsEndReached(true);
-          }
-        }
-      },
-      isInitial ? null : lastDispatchedDoc,
-      12
-    );
+  const fetchDispatchedOrders = async () => {
+    setIsLoading(true);
+    await getDispatchedOrdersList(selectedDate, (resp: any) => {
+      if (resp.status) {
+        setDispatchedOrdersList(resp.data);
+        dispatch(setDispatchedOrders(resp.data));
+      }
+      setIsLoading(false);
+    });
   };
 
   return (
     <View style={styles.container}>
-      <SectionList
-        sections={sections}
-        keyExtractor={(item, index) => `${item?.id}_${index}`}
-        onEndReached={() => fetchDispatchedOrders(false)}
-        onEndReachedThreshold={0.3}
-        ListFooterComponent={
-          loadingMore ? (
-            <ActivityIndicator
-              color={AppColors.themeColor.dark}
-              size={"small"}
-              style={{ marginVertical: normalized(15), alignSelf: "center" }}
+      <TouchableOpacity
+        onPress={() => setIsShowDateModal(true)}
+        activeOpacity={0.8}
+        style={styles.dateCont}
+      >
+        <Text style={styles.dateTxt}>{selectedDate}</Text>
+      </TouchableOpacity>
+
+      {isLoading ? (
+        <View style={styles.loaderCont}>
+          <ActivityIndicator color={AppColors.themeColor.dark} size="large" />
+        </View>
+      ) : (
+        <FlatList
+          data={dispatchedOrdersList}
+          keyExtractor={(item, index) => `${item?.id}_${index}`}
+          contentContainerStyle={{
+            paddingBottom: normalized(50),
+            gap: normalized(10),
+          }}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <OrderItem
+              item={item}
+              onPress={() =>
+                navigation.navigate(Routes.Home.OrderDetailScreen, { item })
+              }
             />
-          ) : null
-        }
-        renderItem={({ item }) => (
-          <OrderItem
-            item={item}
-            onPress={() =>
-              navigation.navigate(Routes.Home.OrderDetailScreen, { item })
-            }
-          />
-        )}
-        renderSectionHeader={({ section: { title } }) => (
-          <View style={styles.rowCont}>
-            <View style={styles.horiDivider} />
-            <Text style={styles.sectionTitle}>{title}</Text>
-            <View style={styles.horiDivider} />
-          </View>
-        )}
-        contentContainerStyle={{
-          paddingBottom: normalized(50),
-          gap: normalized(10),
+          )}
+        />
+      )}
+
+      <DatePicker
+        modal
+        mode="date"
+        open={isShowDateModal}
+        date={new Date()}
+        maximumDate={new Date(maxDate)}
+        onConfirm={(date) => {
+          setIsShowDateModal(false);
+          setSelectedDate(moment(date).format("DD MMM YYYY"));
         }}
-        showsVerticalScrollIndicator={false}
+        onCancel={() => {
+          setIsShowDateModal(false);
+        }}
       />
     </View>
   );
 };
+
+export default DispatchOrdersScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -154,6 +140,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: normalized(30),
     backgroundColor: AppColors.white.white,
   },
+  loaderCont: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  dateCont: {
+    alignSelf: "flex-end",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: AppColors.white.white,
+    borderWidth: 1,
+    borderRadius: normalized(5),
+    borderColor: AppColors.grey.greyLevel2,
+    paddingHorizontal: normalized(12),
+    paddingVertical: normalized(4),
+    margin: normalized(15),
+  },
+  dateTxt: {
+    fontSize: normalized(12),
+    color: AppColors.black.black,
+    fontFamily: AppFonts.PoppinsSemiBold,
+  },
 });
-
-export default DispatchedOrdersScreen;

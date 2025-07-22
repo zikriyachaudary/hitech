@@ -1,124 +1,108 @@
 import {
   ActivityIndicator,
   FlatList,
-  SectionList,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Routes } from "../../../../Utils/Routes";
-import { AppColors, normalized } from "../../../../Utils/AppConstants";
+import {
+  AppColors,
+  AppFonts,
+  normalized,
+} from "../../../../Utils/AppConstants";
 import OrderItem from "../Components/OrderItem";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
-import { groupOrdersByDate } from "../../../../Utils/Helper";
 import { getPendingOrdersList } from "../../../../Network/Services/GeneralServices";
 import { setPendingOrders } from "../../../../Redux/Reducers/AppReducers";
+import DatePicker from "react-native-date-picker";
 
-const PendingOrdersScreen = (props: any) => {
+const PendingOrdersScreen = () => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
   const dispatch = useDispatch();
-  const [sections, setSections] = useState<any>([]);
   const navigation: any = useNavigation();
   const isRtl = selector?.isRtl;
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [isEndReached, setIsEndReached] = useState(false);
-  const [lastPendingDoc, setLastPendingDoc] = useState<any>(null);
   const [pendingOrdersList, setPendingOrdersList] = useState<any>([]);
   const isFocused = useIsFocused();
+  const [selectedDate, setSelectedDate] = useState(
+    moment(Date.now()).format("DD MMM YYYY")
+  );
+  const maxDate = moment(Date.now()).format("YYYY-MM-DD");
+  const [isShowDateModal, setIsShowDateModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    const reduxList = selector?.pendingOrdersList || [];
+    fetchPendingOrders();
+  }, [selectedDate, isFocused]);
 
-    setPendingOrdersList(reduxList);
-    setSections(groupOrdersByDate(reduxList, isRtl));
-
-    // Always fetch fresh in background
-    fetchPendingOrders(true);
-  }, [isFocused, isRtl]);
-
-  const fetchPendingOrders = async (isInitial = false) => {
-    if (loadingMore || isEndReached) return;
-
-    if (isInitial) {
-      setIsEndReached(false);
-      setLastPendingDoc(null);
-    }
-
-    setLoadingMore(true);
-
-    await getPendingOrdersList(
-      (resp: any) => {
-        setLoadingMore(false);
-
-        if (resp.status) {
-          const newOrders = resp.data || [];
-
-          const mergedList = isInitial
-            ? newOrders
-            : [
-                ...pendingOrdersList,
-                ...newOrders.filter(
-                  (o: any) => !pendingOrdersList.find((d: any) => d.id === o.id)
-                ),
-              ];
-
-          setPendingOrdersList(mergedList);
-          setSections(groupOrdersByDate(mergedList, isRtl));
-          setLastPendingDoc(resp.lastDoc || null);
-          dispatch(setPendingOrders(mergedList));
-
-          if (resp.isEnd || newOrders.length === 0) {
-            setIsEndReached(true);
-          }
-        }
-      },
-      isInitial ? null : lastPendingDoc,
-      12
-    );
+  const fetchPendingOrders = async () => {
+    setIsLoading(true);
+    await getPendingOrdersList(selectedDate, (resp: any) => {
+      if (resp.status) {
+        setPendingOrdersList(resp.data);
+        dispatch(setPendingOrders(resp.data));
+        setIsLoading(false);
+      } else {
+        setIsLoading(false);
+      }
+    });
   };
 
   return (
     <View style={styles.container}>
-      <SectionList
-        sections={sections}
-        keyExtractor={(item, index) => `${item?.id}_${index}`}
-        onEndReached={() => fetchPendingOrders(false)}
-        onEndReachedThreshold={0.3}
-        ListFooterComponent={
-          loadingMore ? (
-            <ActivityIndicator
-              color={AppColors.themeColor.dark}
-              size={"small"}
-              style={{ marginVertical: normalized(15), alignSelf: "center" }}
-            />
-          ) : null
-        }
-        renderItem={({ item }) => (
-          <OrderItem
-            item={item}
-            onPress={() =>
-              navigation.navigate(Routes.Home.OrderDetailScreen, { item })
-            }
-          />
-        )}
-        renderSectionHeader={({ section: { title } }) => (
-          <View style={styles.rowCont}>
-            <View style={styles.horiDivider} />
-            <Text style={styles.sectionTitle}>{title}</Text>
-            <View style={styles.horiDivider} />
-          </View>
-        )}
-        contentContainerStyle={{
-          paddingBottom: normalized(50),
-          gap: normalized(10),
+      <TouchableOpacity
+        onPress={() => {
+          setIsShowDateModal(true);
         }}
-        showsVerticalScrollIndicator={false}
+        activeOpacity={0.8}
+        style={styles.dateCont}
+      >
+        <Text style={styles.dateTxt}>{selectedDate}</Text>
+      </TouchableOpacity>
+
+      {isLoading ? (
+        <View style={styles.loaderCont}>
+          <ActivityIndicator color={AppColors.themeColor.dark} size={"large"} />
+        </View>
+      ) : (
+        <FlatList
+          data={pendingOrdersList}
+          keyExtractor={(item, index) => `${item?.id}_${index}`}
+          contentContainerStyle={{
+            paddingBottom: normalized(50),
+            gap: normalized(10),
+          }}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <OrderItem
+              item={item}
+              onPress={() =>
+                navigation.navigate(Routes.Home.OrderDetailScreen, { item })
+              }
+            />
+          )}
+        />
+      )}
+      <DatePicker
+        modal
+        mode="date"
+        open={isShowDateModal}
+        date={new Date()}
+        maximumDate={new Date(maxDate)}
+        onConfirm={(date) => {
+          setIsShowDateModal(false);
+          setSelectedDate(moment(date).format("DD MMM YYYY"));
+        }}
+        onCancel={() => {
+          setIsShowDateModal(false);
+        }}
       />
     </View>
   );
@@ -130,6 +114,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
+  },
+  loaderCont: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
   sectionTitle: {
     fontSize: normalized(16),
@@ -155,5 +144,22 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: normalized(30),
     backgroundColor: AppColors.white.white,
+  },
+  dateCont: {
+    alignSelf: "flex-end",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: AppColors.white.white,
+    borderWidth: 1,
+    borderRadius: normalized(5),
+    borderColor: AppColors.grey.greyLevel2,
+    paddingHorizontal: normalized(12),
+    paddingVertical: normalized(4),
+    margin: normalized(15),
+  },
+  dateTxt: {
+    fontSize: normalized(12),
+    color: AppColors.black.black,
+    fontFamily: AppFonts.PoppinsSemiBold,
   },
 });

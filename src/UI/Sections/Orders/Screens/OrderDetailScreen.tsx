@@ -149,6 +149,7 @@ const OrderDetailScreen = (props: ScreenProps) => {
         }}
       />
       <ScrollView>
+        <View style={{ height: normalized(20) }} />
         <Text style={styles.orderId}>{`Order ID: ${item?.orderId}`}</Text>
         <View style={styles.userMainCont}>
           <Text style={styles.headTxt}>
@@ -233,6 +234,10 @@ const OrderDetailScreen = (props: ScreenProps) => {
               )}
             </>
           ))}
+          <View style={styles.rowCont}>
+            <Text style={styles.userTxt}>Total Price</Text>
+            <Text style={styles.userTxt}>{item?.orderPrice}</Text>
+          </View>
         </View>
         <View style={styles.mainBtnCont}>
           <TouchableOpacity
@@ -380,8 +385,8 @@ const styles = StyleSheet.create({
   },
   prodductDiv: {
     height: normalized(0.5),
-    backgroundColor: AppColors.black.black,
-    marginHorizontal: AppHorizontalMargin,
+    backgroundColor: AppColors.black.lightBlack,
+    marginHorizontal: normalized(60),
     marginVertical: normalized(5),
   },
   btnCont: {
@@ -409,5 +414,12 @@ const styles = StyleSheet.create({
     fontSize: normalized(13),
     fontFamily: AppFonts.PoppinsMedium,
     alignSelf: "center",
+  },
+  rowCont: {
+    flexDirection: "row",
+    marginHorizontal: normalized(40),
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginVertical: normalized(10),
   },
 });

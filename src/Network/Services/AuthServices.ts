@@ -56,6 +56,37 @@ export const userSignupRequest = async (
   }
 };
 
+export const shopUserSignupRequest = async (
+  userInput: any,
+  getResponse: (userObj: any) => void
+) => {
+  let id = CommonDataManager.getSharedInstance().makeid(8);
+  try {
+    let loginObj = {
+      ...userInput,
+      secretId: userInput?.password,
+      userId: id,
+    };
+
+    delete loginObj.password;
+
+    await firestore()
+      .collection(Collections.CUSTOMERS_COLLECTION)
+      .doc(id)
+      .set(loginObj)
+      .then((docRef) => {
+        getResponse({ status: true, data: loginObj });
+      })
+      .catch((error) => {
+        console.log("Error at adding user ", error);
+        getResponse({ status: false, message: "" });
+      });
+  } catch (e) {
+    console.log(e);
+    getResponse({ status: false, message: e });
+  }
+};
+
 export const signinReqWithPhoneNumber = async (
   phoneNumber: any,
   getResponse: (userObj: any) => void

@@ -41,6 +41,7 @@ import { fetchAddressReq } from "../../../../Network/Services/AddressServices";
 import { useIsFocused } from "@react-navigation/native";
 import PaymentMethodModal from "../Components/PaymentMethodModal";
 import firestore from "@react-native-firebase/firestore";
+import moment from "moment";
 
 const CartScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -82,7 +83,7 @@ const CartScreen = (props: ScreenProps) => {
 
   let productList = useSelector((state: any) => state.SliceReducer.cartDetail);
 
-  const placeOrder = async (selectedMethod: any) => {
+  const onContinue = async (selectedMethod: any) => {
     const obj = {
       deliveryDetails: {
         generalAddress: deliveryAdd?.address,
@@ -129,6 +130,40 @@ const CartScreen = (props: ScreenProps) => {
       }
     });
   };
+
+  const placeOrder = async () => {
+    const obj = {
+      orderPrice: getProductsTotalPrice(false),
+      products: selector?.cartDetail,
+      userDetail: selector?.userData,
+      orderId: CommonDataManager.getSharedInstance().makeid(1),
+      createdAt: moment(Date.now()).format("DD MMM YYYY"),
+      orderStatus: ORDER_STATUS.Order_Placed,
+    };
+
+    dispatch(setIsLoader(true));
+    await placeOrderReq(obj, (resp: any) => {
+      if (resp?.status) {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.success,
+            message: resp?.message,
+          })
+        );
+        props?.navigation?.pop(2);
+        dispatch(updateCartDetail([]));
+        dispatch(setIsLoader(false));
+      } else {
+        dispatch(
+          setShowToast({
+            type: AppStrings.ToastType.error,
+            message: resp?.message,
+          })
+        );
+        dispatch(setIsLoader(false));
+      }
+    });
+  };
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
@@ -146,7 +181,7 @@ const CartScreen = (props: ScreenProps) => {
             renderItem={({ item, index }) => {
               return index == 1 ? (
                 <>
-                  {!userData?.isGuestUser && (
+                  {!userData?.isGuestUser && !userData?.isShopUser && (
                     <View
                       style={{
                         ...styles.deliveryCont,
@@ -358,40 +393,54 @@ const CartScreen = (props: ScreenProps) => {
             )} */}
             {userData?.isGuestUser ? (
               <View style={styles.bottomCont}>
-                <Text style={styles.nameTxt}>
-                  You Cannot place order in Guest Mode
+                <Text
+                  style={[
+                    styles.nameTxt,
+                    { textAlign: isRtl ? "right" : "left" },
+                  ]}
+                >
+                  {isRtl
+                    ? "مہمان موڈ میں آپ آرڈر نہیں دے سکتے"
+                    : "You cannot place order in Guest Mode"}
                 </Text>
+
                 <View style={{ height: normalized(15) }} />
               </View>
             ) : (
               <>
-                <View
-                  style={[
-                    styles.bottomCont,
-                    { flexDirection: isRtl ? "row-reverse" : "row" },
-                  ]}
-                >
-                  <Text style={styles.leftTxt}>{isRtl ? "روپے" : "Price"}</Text>
-                  <Text style={styles.rightTxt}>
-                    {`Rs. ${getProductsTotalPrice(false)}`}
-                  </Text>
-                </View>
-                <View
-                  style={[
-                    styles.bottomCont,
-                    { flexDirection: isRtl ? "row-reverse" : "row" },
-                  ]}
-                >
-                  <Text
-                    style={{
-                      ...styles.leftTxt,
-                      textAlign: isRtl ? "right" : "left",
-                    }}
+                {!userData?.isShopUser && (
+                  <View
+                    style={[
+                      styles.bottomCont,
+                      { flexDirection: isRtl ? "row-reverse" : "row" },
+                    ]}
                   >
-                    {isRtl ? "ڈلیوری چارجز" : "Delivery Charges"}
-                  </Text>
-                  <Text style={styles.rightTxt}>Rs. 200</Text>
-                </View>
+                    <Text style={styles.leftTxt}>
+                      {isRtl ? "روپے" : "Price"}
+                    </Text>
+                    <Text style={styles.rightTxt}>
+                      {`Rs. ${getProductsTotalPrice(false)}`}
+                    </Text>
+                  </View>
+                )}
+                {!userData?.isShopUser && (
+                  <View
+                    style={[
+                      styles.bottomCont,
+                      { flexDirection: isRtl ? "row-reverse" : "row" },
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        ...styles.leftTxt,
+                        textAlign: isRtl ? "right" : "left",
+                      }}
+                    >
+                      {isRtl ? "ڈلیوری چارجز" : "Delivery Charges"}
+                    </Text>
+                    <Text style={styles.rightTxt}>Rs. 200</Text>
+                  </View>
+                )}
 
                 <View
                   style={[
@@ -403,13 +452,23 @@ const CartScreen = (props: ScreenProps) => {
                     {isRtl ? "ٹوٹل" : "Total (incl. DC)"}
                   </Text>
                   <Text style={styles.rightTxt}>
-                    {`Rs. ${getProductsTotalPrice(true)}`}
+                    {`Rs. ${getProductsTotalPrice(
+                      userData?.isShopUser ? false : true
+                    )}`}
                   </Text>
                 </View>
                 <FilledButton
-                  label={isRtl ? "آگے بڑھیں" : "Proceed"}
+                  label={
+                    userData?.isShopUser
+                      ? isRtl
+                        ? "آرڈر دیں"
+                        : "Place Order"
+                      : isRtl
+                      ? "آگے بڑھیں"
+                      : "Proceed"
+                  }
                   onPress={() => {
-                    if (!deliveryAdd) {
+                    if (!userData?.isShopUser && !deliveryAdd) {
                       setLocationError(
                         isRtl
                           ? "براہ کرم ڈلیوری ایڈریس منتخب کریں"
@@ -417,8 +476,11 @@ const CartScreen = (props: ScreenProps) => {
                       );
                       return;
                     }
-                    setIsShowPaymentModal(true);
-                    // placeOrder();
+                    if (userData?.isShopUser) {
+                      placeOrder();
+                    } else {
+                      setIsShowPaymentModal(true);
+                    }
                   }}
                 />
               </>
@@ -517,7 +579,7 @@ const CartScreen = (props: ScreenProps) => {
         onContinue={(val: any) => {
           setIsShowPaymentModal(false);
           setTimeout(() => {
-            placeOrder(val);
+            onContinue(val);
           }, 400);
         }}
       />

@@ -140,54 +140,31 @@ export const fetchAdminDetailReq = async (onComplete: any) => {
   }
 };
 
-export const getDispatchedOrdersList = async (
-  onComplete: any,
-  lastDoc: FirebaseFirestoreTypes.DocumentSnapshot | null = null,
-  limitCount: number = 12
-) => {
+export const getDispatchedOrdersList = async (date: any, onComplete: any) => {
   try {
     let query = firestore()
       .collection(Collections.ORDER_COLLECTION)
-      .where("orderStatus", "==", ORDER_STATUS.Dispatched)
-      .orderBy("createdAt", "desc")
-      .limit(limitCount);
-
-    if (lastDoc) {
-      query = query.startAfter(lastDoc);
-    }
-
+      .where("createdAt", "==", date)
+      .where("orderStatus", "==", ORDER_STATUS.Dispatched);
     const snapshot = await query.get();
     const orders = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    console.log("snapshot.docs.length -->>>   ", snapshot.docs);
 
     onComplete({
       status: true,
       data: orders,
-      lastDoc: snapshot.docs[snapshot.docs.length - 1] || null,
-      isEnd: snapshot.empty,
     });
   } catch (error) {
-    console.log("getDispatchedOrdersList --->>>", error);
+    console.log("getPendingOrdersList --->>>", error);
     onComplete({ status: false, error });
   }
 };
 
-export const getPendingOrdersList = async (
-  onComplete: any,
-  lastDoc: FirebaseFirestoreTypes.DocumentSnapshot | null = null,
-  limitCount: number = 12
-) => {
+export const getPendingOrdersList = async (date: any, onComplete: any) => {
   try {
     let query = firestore()
       .collection(Collections.ORDER_COLLECTION)
-      .where("orderStatus", "!=", ORDER_STATUS.Dispatched)
-      .orderBy("orderStatus")
-      .orderBy("createdAt", "desc")
-      .limit(limitCount);
-
-    if (lastDoc) {
-      query = query.startAfter(lastDoc);
-    }
+      .where("createdAt", "==", date)
+      .where("orderStatus", "!=", ORDER_STATUS.Dispatched);
 
     const snapshot = await query.get();
     const orders = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
@@ -195,8 +172,6 @@ export const getPendingOrdersList = async (
     onComplete({
       status: true,
       data: orders,
-      lastDoc: snapshot.docs[snapshot.docs.length - 1] || null,
-      isEnd: snapshot.empty,
     });
   } catch (error) {
     console.log("getPendingOrdersList --->>>", error);

@@ -47,7 +47,6 @@ const ProductDetailScreen = (props: ScreenProps) => {
   const isRtl = selector?.isRtl;
   const isGoldenUser = selector?.userData?.userType == USER_TYPE.Gold;
   const item = props?.route?.params?.item;
-  console.log("Product Detail Item: ", item);
 
   const [count, setCount] = useState(1);
   const cartDetail = useSelector((state: any) => state.SliceReducer.cartDetail);
