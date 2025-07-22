@@ -304,9 +304,21 @@ const SignUpScreen = (props: any) => {
             paddingHorizontal: AppHorizontalMargin,
           }}
         >
-          <Text style={styles.topText}>{"Create an account"}</Text>
-          <Text style={styles.topTextDesc}>
-            {"Please Complete your profile for better experience."}
+          <Text
+            style={[styles.topText, { textAlign: isRtl ? "right" : "left" }]}
+          >
+            {isRtl ? "اکاؤنٹ بنائیں" : "Create an account"}
+          </Text>
+
+          <Text
+            style={[
+              styles.topTextDesc,
+              { textAlign: isRtl ? "right" : "left" },
+            ]}
+          >
+            {isRtl
+              ? "بہتر تجربے کے لیے براہ کرم اپنی پروفائل مکمل کریں۔"
+              : "Please complete your profile for better experience."}
           </Text>
 
           {selectedImage ? (

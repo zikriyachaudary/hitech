@@ -414,14 +414,14 @@ const Login = (props: ScreenProps) => {
               />
             )}
 
-            {/* {!isAdmin && (
+            {!isAdmin && (
               <UnFilledButton
-                label={"Shop User"}
+                label={isRtl ? "خریدار صارف" : "Shop User"}
                 onPress={() => {
                   props?.navigation?.navigate(Routes.Auth.shopUserSignupScreen);
                 }}
               />
-            )} */}
+            )}
           </ScrollView>
         </KeyboardAvoidingView>
         {!isAdmin && (
