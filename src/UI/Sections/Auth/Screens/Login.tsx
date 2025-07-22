@@ -88,7 +88,6 @@ const Login = (props: ScreenProps) => {
   const LogIn = async () => {
     let isFormValid = true;
     const result = validateInput(email);
-    console.log("result --->>> ", result);
 
     if (!email) {
       setEmailError("Please enter an Email / Phone Number");
@@ -414,6 +413,15 @@ const Login = (props: ScreenProps) => {
                 }}
               />
             )}
+
+            {/* {!isAdmin && (
+              <UnFilledButton
+                label={"Shop User"}
+                onPress={() => {
+                  props?.navigation?.navigate(Routes.Auth.shopUserSignupScreen);
+                }}
+              />
+            )} */}
           </ScrollView>
         </KeyboardAvoidingView>
         {!isAdmin && (

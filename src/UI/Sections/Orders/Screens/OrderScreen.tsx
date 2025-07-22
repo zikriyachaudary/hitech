@@ -156,301 +156,142 @@ const OrderScreen = (props: ScreenProps) => {
         <SimpleHeader Text={isRtl ? "تمام آرڈرز" : "Order History"} />
       )}
 
-      {userData?.isAdmin ? (
-        <View style={styles.container}>
-          <View style={{ padding: 5, paddingTop: 0 }}>
-            <ButtonContainer
-              buttons={buttons}
-              onClick={onCLick}
-              scrollX={scrollX}
-            />
-          </View>
-          <ScrollView
-            ref={scrollViewRef}
-            horizontal
-            pagingEnabled
-            decelerationRate="fast"
-            showsHorizontalScrollIndicator={false}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-              { useNativeDriver: false }
-            )}
-          >
-            {buttons.map((x) => {
-              return (
-                <View style={[styles.card]} key={x}>
-                  {(selector?.userData?.isAdmin &&
-                    (x === "Pending" ||
-                      (x == "نامکمل" && pendingOrdersList?.length > 0) ||
-                      (x === "Dispatched" &&
-                        dispatchedOrdersList?.length > 0))) ||
-                  (!selector?.userData?.isAdmin && ordersList?.length > 0) ? (
-                    <FlatList
-                      data={
-                        x === "Pending" || x == "نامکمل"
-                          ? pendingOrdersList
-                          : dispatchedOrdersList
-                      }
-                      keyExtractor={(item, index) => `${index}`}
-                      contentContainerStyle={{
-                        paddingBottom: normalized(45),
-                      }}
-                      showsVerticalScrollIndicator={false}
-                      renderItem={({ item, index }: any) => {
-                        return (
-                          <TouchableOpacity
-                            activeOpacity={0.8}
-                            onPress={() => {
-                              if (userData?.isAdmin) {
-                                props?.navigation?.navigate(
-                                  Routes.Home.OrderDetailScreen,
-                                  {
-                                    item,
-                                  }
-                                );
-                              }
-                            }}
-                            style={styles.cont}
-                          >
-                            {!selector?.userData?.isAdmin && (
-                              <View style={styles.statusCont}>
-                                <Text style={styles.statusTxt}>
-                                  {item?.orderStatus ==
-                                  ORDER_STATUS.Order_Placed
-                                    ? "Order Placed"
-                                    : "Dispatched"}
-                                </Text>
-                              </View>
-                            )}
-                            <View style={styles.txtCont}>
-                              <Text style={styles.title}>{"Order ID"}</Text>
-                              <View style={styles.divider} />
-                              <Text style={styles.title}>{item?.orderId}</Text>
-                            </View>
-                            {item?.products?.map((product: any, index: any) => (
-                              <React.Fragment key={index}>
-                                <View
-                                  style={[
-                                    styles.productCont,
-                                    {
-                                      flexDirection: isRtl
-                                        ? "row-reverse"
-                                        : "row",
-                                    },
-                                  ]}
-                                >
-                                  <AppImageViewer
-                                    style={styles.productImg}
-                                    source={{ uri: product?.images?.[0]?.url }}
-                                  />
-                                  <View
-                                    style={{
-                                      ...styles.divider,
-                                      height: normalized(20),
-                                      marginHorizontal: normalized(10),
-                                    }}
-                                  />
-                                  <Text
-                                    style={styles.productName}
-                                    numberOfLines={2}
-                                  >
-                                    {isRtl ? product?.rtlName : product?.name}
-                                  </Text>
-                                </View>
-                                {item?.products?.length - 1 !== index && (
-                                  <View style={styles.horiDivider} />
-                                )}
-                              </React.Fragment>
-                            ))}
-                            <View
-                              style={[
-                                styles.priceCont,
-                                {
-                                  alignSelf: isRtl ? "flex-start" : "flex-end",
-                                },
-                              ]}
-                            >
-                              <Text style={styles.priceTxt}>
-                                {isRtl
-                                  ? `${Math.floor(item?.orderPrice || 0)} روپے`
-                                  : `Rs. ${Math.floor(item?.orderPrice || 0)}`}
-                              </Text>
-                            </View>
-                          </TouchableOpacity>
-                        );
-                      }}
-                    />
-                  ) : (
-                    <View style={styles.emptyCont}>
-                      {isFetched && (
-                        <Text
-                          style={[
-                            styles.emptyTxt,
-                            { textAlign: isRtl ? "right" : "left" },
-                          ]}
-                        >
-                          {userData?.isGuestUser
-                            ? isRtl
-                              ? "مہمان موڈ میں آرڈر ہسٹری دستیاب نہیں ہے۔"
-                              : "Order History not available in Guest Mode."
-                            : userData?.isAdmin
-                            ? x == "Pending"
-                              ? isRtl
-                                ? "فی الحال کوئی زیر التواء آرڈرز موجود نہیں ہیں۔ براہ کرم بعد میں دوبارہ چیک کریں یا موجودہ آرڈرز کو بھیجے گئے سیکشن سے منظم کریں۔"
-                                : "No pending orders found at the moment. Please check back later or manage existing orders from the Dispatched section."
-                              : isRtl
-                              ? "فی الحال کوئی بھیجے گئے آرڈرز دستیاب نہیں ہیں۔ آرڈرز پراسیس ہونے کے بعد یہاں ظاہر ہوں گے۔"
-                              : "No dispatched orders available currently. Once orders are processed, they'll appear here."
-                            : isRtl
-                            ? "آپ نے ابھی تک کوئی آرڈر نہیں دیا۔ جب آپ خریداری کریں گے تو آپ کی آرڈر کی تفصیلات یہاں ظاہر ہوں گی۔ ابھی تلاش شروع کریں اور اپنی گاڑی کے لیے بہترین پارٹس تلاش کریں!"
-                            : "You have not placed an order yet. Once you make a purchase, your order details will appear here. Start exploring now and find the perfect parts for your vehicle!"}
-                        </Text>
-                      )}
-                    </View>
-                  )}
-                </View>
-              );
-            })}
-          </ScrollView>
-        </View>
-      ) : (
-        <FlatList
-          data={ordersList}
-          keyExtractor={(item, index) => `${index}`}
-          contentContainerStyle={{
-            paddingBottom: normalized(45),
-            ...(ordersList?.length === 0 && { flex: 1 }),
-          }}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item, index }: any) => {
-            return (
-              <TouchableOpacity
-                activeOpacity={0.8}
-                onPress={() => {
-                  if (userData?.isAdmin) {
-                    props?.navigation?.navigate(Routes.Home.OrderDetailScreen, {
-                      item,
-                    });
-                  }
-                }}
-                style={styles.cont}
-              >
-                {!selector?.userData?.isAdmin && (
-                  <View
-                    style={[
-                      styles.statusCont,
-                      {
-                        backgroundColor:
-                          item?.orderStatus == ORDER_STATUS.Order_Placed
-                            ? AppColors.orange.light
-                            : AppColors.green.light,
-                        borderColor:
-                          item?.orderStatus == ORDER_STATUS.Order_Placed
-                            ? AppColors.orange.dark
-                            : AppColors.green.dark,
-                        borderWidth: 1,
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.statusTxt,
-                        {
-                          color:
-                            item?.orderStatus == ORDER_STATUS.Order_Placed
-                              ? AppColors.orange.dark
-                              : AppColors.green.dark,
-                        },
-                      ]}
-                    >
-                      {item?.orderStatus == ORDER_STATUS.Order_Placed
-                        ? "Order Placed"
-                        : "Dispatched"}
-                    </Text>
-                  </View>
-                )}
-                <View style={styles.txtCont}>
-                  <Text style={styles.title}>{"Order ID"}</Text>
-                  <View style={styles.divider} />
-                  <Text style={styles.title}>{item?.orderId}</Text>
-                </View>
-                {item?.products?.map((product: any, index: any) => (
-                  <React.Fragment key={index}>
-                    <View
-                      style={[
-                        styles.productCont,
-                        {
-                          flexDirection: isRtl ? "row-reverse" : "row",
-                        },
-                      ]}
-                    >
-                      <AppImageViewer
-                        style={styles.productImg}
-                        source={{ uri: product?.images?.[0]?.url }}
-                      />
-                      <View
-                        style={{
-                          ...styles.divider,
-                          height: normalized(20),
-                          marginHorizontal: normalized(10),
-                        }}
-                      />
-                      <Text style={styles.productName} numberOfLines={2}>
-                        {isRtl ? product?.rtlName : product?.name}
-                      </Text>
-                    </View>
-                    {item?.products?.length - 1 !== index && (
-                      <View style={styles.horiDivider} />
-                    )}
-                  </React.Fragment>
-                ))}
+      <FlatList
+        data={ordersList}
+        keyExtractor={(item, index) => `${index}`}
+        contentContainerStyle={{
+          paddingBottom: normalized(45),
+          ...(ordersList?.length === 0 && { flex: 1 }),
+        }}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item, index }: any) => {
+          return (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                if (userData?.isAdmin) {
+                  props?.navigation?.navigate(Routes.Home.OrderDetailScreen, {
+                    item,
+                  });
+                }
+              }}
+              style={styles.cont}
+            >
+              {!selector?.userData?.isAdmin && (
                 <View
                   style={[
-                    styles.priceCont,
+                    styles.statusCont,
                     {
-                      alignSelf: isRtl ? "flex-start" : "flex-end",
+                      backgroundColor:
+                        item?.orderStatus == ORDER_STATUS.Order_Placed
+                          ? AppColors.orange.light
+                          : AppColors.green.light,
+                      borderColor:
+                        item?.orderStatus == ORDER_STATUS.Order_Placed
+                          ? AppColors.orange.dark
+                          : AppColors.green.dark,
+                      borderWidth: 1,
                     },
                   ]}
                 >
-                  <Text style={styles.priceTxt}>
-                    {isRtl
-                      ? `${Math.floor(item?.orderPrice || 0)} روپے`
-                      : `Rs. ${Math.floor(item?.orderPrice || 0)}`}
+                  <Text
+                    style={[
+                      styles.statusTxt,
+                      {
+                        color:
+                          item?.orderStatus == ORDER_STATUS.Order_Placed
+                            ? AppColors.orange.dark
+                            : AppColors.green.dark,
+                      },
+                    ]}
+                  >
+                    {item?.orderStatus == ORDER_STATUS.Order_Placed
+                      ? "Order Placed"
+                      : "Dispatched"}
                   </Text>
                 </View>
-              </TouchableOpacity>
-            );
-          }}
-          ListEmptyComponent={() => (
-            <View style={styles.emptyCont}>
-              {isFetched && (
-                <Text
-                  style={[
-                    styles.emptyTxt,
-                    { textAlign: isRtl ? "right" : "left" },
-                  ]}
-                >
-                  {userData?.isGuestUser
-                    ? isRtl
-                      ? "مہمان موڈ میں آرڈر ہسٹری دستیاب نہیں ہے۔"
-                      : "Order History not available in Guest Mode."
-                    : userData?.isAdmin
-                    ? x == "Pending"
-                      ? isRtl
-                        ? "فی الحال کوئی زیر التواء آرڈرز موجود نہیں ہیں۔ براہ کرم بعد میں دوبارہ چیک کریں یا موجودہ آرڈرز کو بھیجے گئے سیکشن سے منظم کریں۔"
-                        : "No pending orders found at the moment. Please check back later or manage existing orders from the Dispatched section."
-                      : isRtl
-                      ? "فی الحال کوئی بھیجے گئے آرڈرز دستیاب نہیں ہیں۔ آرڈرز پراسیس ہونے کے بعد یہاں ظاہر ہوں گے۔"
-                      : "No dispatched orders available currently. Once orders are processed, they'll appear here."
-                    : isRtl
-                    ? "آپ نے ابھی تک کوئی آرڈر نہیں دیا۔ جب آپ خریداری کریں گے تو آپ کی آرڈر کی تفصیلات یہاں ظاہر ہوں گی۔ ابھی تلاش شروع کریں اور اپنی گاڑی کے لیے بہترین پارٹس تلاش کریں!"
-                    : "You have not placed an order yet. Once you make a purchase, your order details will appear here. Start exploring now and find the perfect parts for your vehicle!"}
-                </Text>
               )}
-            </View>
-          )}
-        />
-      )}
+              <View style={styles.txtCont}>
+                <Text style={styles.title}>{"Order ID"}</Text>
+                <View style={styles.divider} />
+                <Text style={styles.title}>{item?.orderId}</Text>
+              </View>
+              {item?.products?.map((product: any, index: any) => (
+                <React.Fragment key={index}>
+                  <View
+                    style={[
+                      styles.productCont,
+                      {
+                        flexDirection: isRtl ? "row-reverse" : "row",
+                      },
+                    ]}
+                  >
+                    <AppImageViewer
+                      style={styles.productImg}
+                      source={{ uri: product?.images?.[0]?.url }}
+                    />
+                    <View
+                      style={{
+                        ...styles.divider,
+                        height: normalized(20),
+                        marginHorizontal: normalized(10),
+                      }}
+                    />
+                    <Text style={styles.productName} numberOfLines={2}>
+                      {isRtl ? product?.rtlName : product?.name}
+                    </Text>
+                  </View>
+                  {item?.products?.length - 1 !== index && (
+                    <View style={styles.horiDivider} />
+                  )}
+                </React.Fragment>
+              ))}
+              <View
+                style={[
+                  styles.priceCont,
+                  {
+                    alignSelf: isRtl ? "flex-start" : "flex-end",
+                  },
+                ]}
+              >
+                <Text style={styles.priceTxt}>
+                  {isRtl
+                    ? `${Math.floor(item?.orderPrice || 0)} روپے`
+                    : `Rs. ${Math.floor(item?.orderPrice || 0)}`}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          );
+        }}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyCont}>
+            {isFetched && (
+              <Text
+                style={[
+                  styles.emptyTxt,
+                  { textAlign: isRtl ? "right" : "left" },
+                ]}
+              >
+                {userData?.isGuestUser
+                  ? isRtl
+                    ? "مہمان موڈ میں آرڈر ہسٹری دستیاب نہیں ہے۔"
+                    : "Order History not available in Guest Mode."
+                  : userData?.isAdmin
+                  ? x == "Pending"
+                    ? isRtl
+                      ? "فی الحال کوئی زیر التواء آرڈرز موجود نہیں ہیں۔ براہ کرم بعد میں دوبارہ چیک کریں یا موجودہ آرڈرز کو بھیجے گئے سیکشن سے منظم کریں۔"
+                      : "No pending orders found at the moment. Please check back later or manage existing orders from the Dispatched section."
+                    : isRtl
+                    ? "فی الحال کوئی بھیجے گئے آرڈرز دستیاب نہیں ہیں۔ آرڈرز پراسیس ہونے کے بعد یہاں ظاہر ہوں گے۔"
+                    : "No dispatched orders available currently. Once orders are processed, they'll appear here."
+                  : isRtl
+                  ? "آپ نے ابھی تک کوئی آرڈر نہیں دیا۔ جب آپ خریداری کریں گے تو آپ کی آرڈر کی تفصیلات یہاں ظاہر ہوں گی۔ ابھی تلاش شروع کریں اور اپنی گاڑی کے لیے بہترین پارٹس تلاش کریں!"
+                  : "You have not placed an order yet. Once you make a purchase, your order details will appear here. Start exploring now and find the perfect parts for your vehicle!"}
+              </Text>
+            )}
+          </View>
+        )}
+      />
     </View>
   );
 };

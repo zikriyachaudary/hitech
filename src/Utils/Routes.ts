@@ -9,6 +9,7 @@ export const Routes = {
     otpVerificationScreen: "otpVerificationScreen",
     newPasswordScreen: "newPasswordScreen",
     subAdmin: "subAdmin",
+    shopUserSignupScreen: "ShopUserSignupScreen",
   },
   Main: {
     container: "Container",

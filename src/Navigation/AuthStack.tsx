@@ -12,6 +12,7 @@ import OTPScreen from "../UI/Sections/Home/Screens/OTPScreen";
 import WelcomeScreen from "../UI/Sections/Welcome/Screens/WelcomeScreen";
 import OtpVerificationScreen from "../UI/Sections/Auth/Screens/OtpVerificationScreen";
 import NewPasswordScreen from "../UI/Sections/Auth/Screens/NewPasswordScreen";
+import ShopUserSignupScreen from "../UI/Sections/Auth/Screens/ShopUserSignupScreen";
 
 const Stack = createStackNavigator();
 const AuthStack = () => {
@@ -42,6 +43,10 @@ const AuthStack = () => {
       <Stack.Screen
         name={Routes.Auth.newPasswordScreen}
         component={NewPasswordScreen}
+      />
+      <Stack.Screen
+        name={Routes.Auth.shopUserSignupScreen}
+        component={ShopUserSignupScreen}
       />
     </Stack.Navigator>
   );

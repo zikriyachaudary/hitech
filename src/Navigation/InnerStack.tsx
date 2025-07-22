@@ -37,6 +37,19 @@ export const OrderStack = () => {
   );
 };
 
+export const UserOrderStack = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName={Routes.Home.OrderScreen}
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name={Routes.Home.OrderScreen} component={OrderScreen} />
+    </Stack.Navigator>
+  );
+};
+
 export const NotificationStack = () => {
   return (
     <Stack.Navigator
@@ -74,4 +87,5 @@ export default {
   OrderStack,
   NotificationStack,
   ProfileStack,
+  UserOrderStack,
 };

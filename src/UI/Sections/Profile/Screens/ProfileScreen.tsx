@@ -38,6 +38,7 @@ import { Routes } from "../../../../Utils/Routes";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import ProfileList from "../Components/ProfileList";
 import SimpleHeader from "../../../Components/CustomHeader/SimpleHeader";
+import { updateFCMTokenReq } from "../../../../Network/Services/AuthServices";
 
 const ProfileScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -50,7 +51,7 @@ const ProfileScreen = (props: ScreenProps) => {
     type: "",
   });
 
-  const onLogoutPress = () => {
+  const onLogoutPress = async () => {
     dispatch(setUserData(null));
     dispatch(setTab(0));
     dispatch(setPendingOrders([]));
@@ -58,6 +59,7 @@ const ProfileScreen = (props: ScreenProps) => {
     dispatch(setNotiList([]));
     dispatch(setProductList([]));
     setUserDataInAsync({ isRtl: selector?.isRtl });
+    await updateFCMTokenReq(selector?.userData?.userId, "");
   };
   const dispatch = useDispatch();
   return (
