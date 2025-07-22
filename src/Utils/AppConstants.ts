@@ -200,6 +200,7 @@ export const AppImages = {
     shield: require("../UI/assets/Images/payment/shield.png"),
     user: require("../UI/assets/Images/payment/user.png"),
     lock: require("../UI/assets/Images/payment/lock.png"),
+    copy: require("../UI/assets/Images/payment/copy.png"),
   },
 };
 

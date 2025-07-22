@@ -23,9 +23,9 @@ const CartManager = () => {
   };
 
   const removeProductFromCart = (productId: any) => {
-    const updatedArr = cartDetail.filter(
-      (item: any) => item.productId !== productId
-    );
+    console.log("product id ---  ", cartDetail);
+
+    const updatedArr = cartDetail.filter((item: any) => item.id !== productId);
     dispatch(updateCartDetail(updatedArr));
   };
 

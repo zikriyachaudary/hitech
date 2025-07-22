@@ -81,7 +81,7 @@ const OrderScreen = (props: ScreenProps) => {
     await getAllOrdersList((resp: any) => {
       if (resp?.status) {
         const pendingOrders = resp?.data?.filter(
-          (order: any) => order.orderStatus == ORDER_STATUS.Order_Placed
+          (order: any) => order.orderStatus !== ORDER_STATUS.Dispatched
         );
         const dispatchedOrders = resp?.data?.filter(
           (order: any) => order.orderStatus == ORDER_STATUS.Dispatched

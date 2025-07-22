@@ -23,7 +23,7 @@ import { notifications } from "react-native-firebase-push-notifications";
 import LocalNotification from "./UI/Components/LocalNotification";
 import { updateFCMTokenReq } from "./Network/Services/AuthServices";
 import notifee, { AndroidImportance, EventType } from "@notifee/react-native";
-import messaging from "@react-native-firebase/messaging";
+// import messaging from "@react-native-firebase/messaging";
 
 const AppContainer = () => {
   const selector: any = useSelector(

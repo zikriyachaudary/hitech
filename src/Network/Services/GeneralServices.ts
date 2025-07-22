@@ -1,8 +1,10 @@
 import { Platform } from "react-native";
 import CommonDataManager from "../../Utils/CommonManager";
 import storage from "@react-native-firebase/storage";
-import firestore from "@react-native-firebase/firestore";
-import { AppStrings, Collections } from "../../Utils/AppStrings";
+import firestore, {
+  FirebaseFirestoreTypes,
+} from "@react-native-firebase/firestore";
+import { AppStrings, Collections, ORDER_STATUS } from "../../Utils/AppStrings";
 
 export const uploadMedia = async (
   uri: string,
@@ -135,5 +137,69 @@ export const fetchAdminDetailReq = async (onComplete: any) => {
   } catch (error) {
     onComplete(null);
     console.error("Error fetching vendor data", error);
+  }
+};
+
+export const getDispatchedOrdersList = async (
+  onComplete: any,
+  lastDoc: FirebaseFirestoreTypes.DocumentSnapshot | null = null,
+  limitCount: number = 12
+) => {
+  try {
+    let query = firestore()
+      .collection(Collections.ORDER_COLLECTION)
+      .where("orderStatus", "==", ORDER_STATUS.Dispatched)
+      .orderBy("createdAt", "desc")
+      .limit(limitCount);
+
+    if (lastDoc) {
+      query = query.startAfter(lastDoc);
+    }
+
+    const snapshot = await query.get();
+    const orders = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    console.log("snapshot.docs.length -->>>   ", snapshot.docs);
+
+    onComplete({
+      status: true,
+      data: orders,
+      lastDoc: snapshot.docs[snapshot.docs.length - 1] || null,
+      isEnd: snapshot.empty,
+    });
+  } catch (error) {
+    console.log("getDispatchedOrdersList --->>>", error);
+    onComplete({ status: false, error });
+  }
+};
+
+export const getPendingOrdersList = async (
+  onComplete: any,
+  lastDoc: FirebaseFirestoreTypes.DocumentSnapshot | null = null,
+  limitCount: number = 12
+) => {
+  try {
+    let query = firestore()
+      .collection(Collections.ORDER_COLLECTION)
+      .where("orderStatus", "!=", ORDER_STATUS.Dispatched)
+      .orderBy("orderStatus")
+      .orderBy("createdAt", "desc")
+      .limit(limitCount);
+
+    if (lastDoc) {
+      query = query.startAfter(lastDoc);
+    }
+
+    const snapshot = await query.get();
+    const orders = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+    onComplete({
+      status: true,
+      data: orders,
+      lastDoc: snapshot.docs[snapshot.docs.length - 1] || null,
+      isEnd: snapshot.empty,
+    });
+  } catch (error) {
+    console.log("getPendingOrdersList --->>>", error);
+    onComplete({ status: false, error });
   }
 };

@@ -5,6 +5,7 @@ import HomeScreen from "../UI/Sections/Home/Screens/HomeScreen";
 import OrderScreen from "../UI/Sections/Orders/Screens/OrderScreen";
 import NotificationScreen from "../UI/Sections/Notifications/Screens/NotificationScreen";
 import ProfileScreen from "../UI/Sections/Profile/Screens/ProfileScreen";
+import AdminOrdersScreen from "../UI/Sections/Orders/Screens/AdminOrdersScreen";
 const Stack = createNativeStackNavigator();
 
 export const HomeStack = () => {
@@ -28,7 +29,10 @@ export const OrderStack = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen name={Routes.Home.OrderScreen} component={OrderScreen} />
+      <Stack.Screen
+        name={Routes.Admin.OrdersScreen}
+        component={AdminOrdersScreen}
+      />
     </Stack.Navigator>
   );
 };

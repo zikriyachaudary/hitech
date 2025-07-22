@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   AppColors,
   AppFonts,
@@ -33,7 +33,7 @@ import CommonDataManager from "../../../../Utils/CommonManager";
 import { fetchAdminDetailReq } from "../../../../Network/Services/GeneralServices";
 import NotificationManager from "../../../../Hooks/NotificationsManager";
 import { Routes } from "../../../../Utils/Routes";
-import CardDetailsFormPage from "./CardDetailFormPage";
+import moment from "moment";
 
 const PaymentMethodScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -44,7 +44,8 @@ const PaymentMethodScreen = (props: ScreenProps) => {
   const userData = selector?.userData;
   const dispatch = useDispatch();
   const data = props?.route?.params?.data;
-  const paymentMethod = props?.route?.params?.paymentMethod;
+
+  const paymentMethod = props?.route?.params?.data?.paymentMethod;
   const [selectedWallet, setSelectedWallet] = useState("");
   const [cnic, setCnic] = useState("");
   const [accNumber, setAccNumber] = useState("");
@@ -85,11 +86,6 @@ const PaymentMethodScreen = (props: ScreenProps) => {
 
     const rawPhone = accNumber.replace(/\D/g, "");
     const rawCnic = cnic.replace(/\D/g, "");
-
-    if (!selectedWallet) {
-      setWalletError(true);
-      isFormValid = false;
-    }
 
     if (!accNumber) {
       setAccNumberError(
@@ -184,6 +180,44 @@ const PaymentMethodScreen = (props: ScreenProps) => {
       });
     });
   };
+
+  // ----------------->>>>
+
+  const dummyOrderTemplate = JSON.parse(JSON.stringify(data));
+
+  const placeDummyOrders = async () => {
+    const baseData = dummyOrderTemplate;
+    let batchSize = 5;
+
+    for (let i = 0; i < 25; i++) {
+      // Clone data deeply
+      const order = JSON.parse(JSON.stringify(baseData));
+
+      // Calculate weeks to subtract
+      const weeksAgo = Math.floor(i / batchSize);
+      const createdAtDate = moment().subtract(weeksAgo, "weeks").toISOString();
+
+      // Set new createdAt
+      order.createdAt = createdAtDate;
+
+      // Assign unique orderId
+      order.orderId = `dummy-order-${i + 1}-${Date.now()}`;
+
+      // Place order
+      await placeOrderReq(order, (resp: any) => {
+        if (resp.status) {
+          console.log(`Order ${i + 1} placed.`);
+        } else {
+          console.error(`Failed to place order ${i + 1}`);
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    // placeDummyOrders();
+  });
+
   return (
     <View
       style={[

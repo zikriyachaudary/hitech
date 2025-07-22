@@ -20,7 +20,6 @@ import CustomHeader from "../../../Components/CustomHeader/CustomHeader";
 import { useDispatch, useSelector } from "react-redux";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import AppImageViewer from "../../../Components/AppImageView";
-import LinearGradient from "react-native-linear-gradient";
 import { Routes } from "../../../../Utils/Routes";
 import {
   AppStrings,
@@ -29,7 +28,9 @@ import {
 } from "../../../../Utils/AppStrings";
 import { updateOrderStatusReq } from "../../../../Network/Services/ProductServices";
 import {
+  setDispatchedOrders,
   setIsLoader,
+  setPendingOrders,
   setShowToast,
 } from "../../../../Redux/Reducers/AppReducers";
 import NotificationManager from "../../../../Hooks/NotificationsManager";
@@ -39,6 +40,7 @@ const OrderDetailScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
+
   const userData = selector?.userData;
   const isRtl = selector?.isRtl;
   const item = props?.route?.params?.item;
@@ -75,6 +77,33 @@ const OrderDetailScreen = (props: ScreenProps) => {
         if (resp?.status) {
           status == ORDER_STATUS.Dispatched &&
             (await updateNotificationFunc(notificatinObj));
+          if (status === ORDER_STATUS.Dispatched) {
+            // Remove from pending list
+            const updatedPending = selector?.pendingOrdersList?.filter(
+              (order: any) => order.id !== item.id
+            );
+
+            // Add to dispatched list
+            const updatedDispatched = [
+              ...selector?.dispatchedOrdersList,
+              { ...item, orderStatus: ORDER_STATUS.Dispatched },
+            ];
+
+            dispatch(setPendingOrders(updatedPending));
+            dispatch(setDispatchedOrders(updatedDispatched));
+          } else {
+            // Remove from dispatched list
+            const updatedDispatched = selector?.dispatchedOrdersList?.filter(
+              (order: any) => order.id !== item.id
+            );
+
+            // Add to pending list
+            const updatedPending = [...selector?.pendingOrdersList, item];
+
+            dispatch(setDispatchedOrders(updatedDispatched));
+            dispatch(setPendingOrders(updatedPending));
+          }
+
           dispatch(
             setShowToast({
               type: AppStrings.ToastType.success,
@@ -209,7 +238,10 @@ const OrderDetailScreen = (props: ScreenProps) => {
           <TouchableOpacity
             activeOpacity={0.8}
             onPress={() => {
-              if (orderStatus == ORDER_STATUS.Order_Placed) {
+              if (
+                orderStatus == ORDER_STATUS.Order_Placed ||
+                orderStatus == ORDER_STATUS.Dispatched
+              ) {
                 return;
               }
               setOrderStatus(ORDER_STATUS.Order_Placed);
@@ -225,6 +257,10 @@ const OrderDetailScreen = (props: ScreenProps) => {
                   orderStatus == ORDER_STATUS.Order_Placed
                     ? AppColors.themeColor.dark
                     : AppColors.white.white,
+                borderColor:
+                  orderStatus == ORDER_STATUS.Order_Placed
+                    ? AppColors.themeColor.dark
+                    : AppColors.grey.greyLevel2,
               },
             ]}
           >
@@ -235,7 +271,7 @@ const OrderDetailScreen = (props: ScreenProps) => {
                   color:
                     orderStatus == ORDER_STATUS.Order_Placed
                       ? AppColors.white.white
-                      : AppColors.themeColor.dark,
+                      : AppColors.grey.greyLevel2,
                 },
               ]}
             >

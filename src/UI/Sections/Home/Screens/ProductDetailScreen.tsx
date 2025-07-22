@@ -27,9 +27,6 @@ import CartManager from "../../../../Hooks/CartManager";
 import { Routes } from "../../../../Utils/Routes";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import { AppStrings, USER_TYPE } from "../../../../Utils/AppStrings";
-import { fetchAddressReq } from "../../../../Network/Services/AddressServices";
-import { setShowToast } from "../../../../Redux/Reducers/AppReducers";
-
 const ProductDetailScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
@@ -50,13 +47,13 @@ const ProductDetailScreen = (props: ScreenProps) => {
   const isRtl = selector?.isRtl;
   const isGoldenUser = selector?.userData?.userType == USER_TYPE.Gold;
   const item = props?.route?.params?.item;
+  console.log("Product Detail Item: ", item);
 
   const [count, setCount] = useState(1);
   const cartDetail = useSelector((state: any) => state.SliceReducer.cartDetail);
   const { updateProductList } = CartManager();
 
   const [price, setPrice] = useState(getItemPrice(item, isGoldenUser));
-
   const [selectedSize, setSelectedSize] = useState(
     item?.isMultipleSizes ? item?.sizeNPrice[0]?.size : ""
   );
@@ -168,6 +165,7 @@ const ProductDetailScreen = (props: ScreenProps) => {
                 size: selectedSize,
               };
               updateProductList(updateItem);
+              console.log("Card -->>>  ", JSON.stringify(updateItem));
             }}
             mainContainer={{
               width: normalized(150),

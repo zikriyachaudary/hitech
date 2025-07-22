@@ -1,3 +1,4 @@
+import moment from "moment";
 import { AppColors } from "./AppConstants";
 
 export const generateRandomColor = (index: any) => {
@@ -91,4 +92,54 @@ export const validateExpiryDate = (expiry: string) => {
   const expiryDate = new Date(year, month); // set to first day of next month
 
   return expiryDate > now;
+};
+
+export const groupOrdersByDate = (orders = [], isRtl = false) => {
+  const grouped: Record<string, any[]> = {};
+
+  orders.forEach((order: any) => {
+    const rawDate = order?.createdAt;
+    if (!rawDate) return;
+
+    // ✅ Convert Firestore Timestamp to JS Date
+    const orderDate = moment(rawDate?.toDate ? rawDate.toDate() : rawDate);
+
+    if (!orderDate.isValid()) {
+      console.warn("Invalid date:", rawDate);
+      return;
+    }
+
+    let label = orderDate.format("DD-MMM-YYYY");
+
+    if (orderDate.isSame(moment(), "day")) {
+      label = isRtl ? "آج" : "Today";
+    } else if (orderDate.isSame(moment().subtract(1, "day"), "day")) {
+      label = isRtl ? "کل" : "Yesterday";
+    }
+
+    if (!grouped[label]) grouped[label] = [];
+    grouped[label].push(order);
+  });
+
+  const sortedSections = Object.entries(grouped)
+    .sort((a, b) => {
+      const dateA =
+        a[0] === "Today" || a[0] === "آج"
+          ? moment()
+          : a[0] === "Yesterday" || a[0] === "کل"
+          ? moment().subtract(1, "day")
+          : moment(a[0], "DD-MMM-YYYY");
+
+      const dateB =
+        b[0] === "Today" || b[0] === "آج"
+          ? moment()
+          : b[0] === "Yesterday" || b[0] === "کل"
+          ? moment().subtract(1, "day")
+          : moment(b[0], "DD-MMM-YYYY");
+
+      return dateB.valueOf() - dateA.valueOf(); // newest first
+    })
+    .map(([title, data]) => ({ title, data }));
+
+  return sortedSections;
 };

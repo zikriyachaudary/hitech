@@ -1,5 +1,12 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import {
   AppColors,
   AppFonts,
@@ -58,7 +65,10 @@ const CustomHeader = (props: any) => {
             style={[
               styles.forgetText,
               props?.titleStyle,
-              { textAlign: isRtl ? "right" : "left" },
+              {
+                textAlign: isRtl ? "right" : "left",
+                marginTop: Platform.OS == "ios" && isRtl ? normalized(-5) : 0,
+              },
             ]}
             numberOfLines={1}
           >
@@ -104,7 +114,7 @@ const CustomHeader = (props: any) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 10,
+    marginTop: Platform.OS == "ios" ? 0 : normalized(10),
     height: normalized(40),
     alignItems: "center",
     // justifyContent: "space-between",

@@ -34,12 +34,13 @@ import {
   updateCartDetail,
 } from "../../../../Redux/Reducers/AppReducers";
 import { placeOrderReq } from "../../../../Network/Services/ProductServices";
-import { AppStrings } from "../../../../Utils/AppStrings";
+import { AppStrings, ORDER_STATUS } from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import { fetchAddressReq } from "../../../../Network/Services/AddressServices";
 import { useIsFocused } from "@react-navigation/native";
 import PaymentMethodModal from "../Components/PaymentMethodModal";
+import firestore from "@react-native-firebase/firestore";
 
 const CartScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -58,7 +59,7 @@ const CartScreen = (props: ScreenProps) => {
     props?.route?.params?.address ? props?.route?.params?.address : null
   );
   const getUserAddress = () => {
-    dispatch(setIsLoader(true));
+    // dispatch(setIsLoader(true));
     fetchAddressReq(userData?.userId, (resp) => {
       if (resp?.status) {
         const defaultAddress =
@@ -94,13 +95,14 @@ const CartScreen = (props: ScreenProps) => {
       products: selector?.cartDetail,
       userDetail: selector?.userData,
       orderId: CommonDataManager.getSharedInstance().makeid(1),
-      createdAt: new Date(),
+      createdAt: firestore.FieldValue.serverTimestamp(),
+      orderStatus: ORDER_STATUS.Order_Placed,
     };
     props?.navigation?.navigate(
       selectedMethod?.id == 1 || selectedMethod?.id == 2
         ? Routes.Home.PaymentMethodScreen
         : Routes.Home.CardDetailFormPage,
-      { data: { ...obj, ...selectedMethod } }
+      { data: { ...obj, ...{ paymentMethod: selectedMethod } } }
     );
 
     return;
@@ -127,7 +129,6 @@ const CartScreen = (props: ScreenProps) => {
       }
     });
   };
-
   return (
     <View style={AppStyles.MainStyle}>
       <SafeAreaView />
@@ -219,7 +220,7 @@ const CartScreen = (props: ScreenProps) => {
                               <TouchableOpacity
                                 style={styles.removeProCont}
                                 onPress={() => {
-                                  removeProductFromCart(item?.productId);
+                                  removeProductFromCart(item?.id);
                                 }}
                               >
                                 <Image source={AppImages.Products.delete} />

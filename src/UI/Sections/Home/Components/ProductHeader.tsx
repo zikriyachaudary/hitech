@@ -40,7 +40,7 @@ const ProductHeader = (props: any) => {
       {props.title && <Text style={styles.titleTxt}>{props.title}</Text>}
       {props.rightIcon && (
         <TouchableOpacity onPress={props?.onRightIconPress} activeOpacity={0.8}>
-          {props?.cartDetail?.length > 0 && (
+          {props?.cartDetail?.length > 0 && !props?.isFromAdmin && (
             <View style={styles.countCont}>
               <Text style={styles.count}>{props?.cartDetail?.length}</Text>
             </View>
