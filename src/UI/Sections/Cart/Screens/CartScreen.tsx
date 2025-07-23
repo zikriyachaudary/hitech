@@ -34,7 +34,11 @@ import {
   updateCartDetail,
 } from "../../../../Redux/Reducers/AppReducers";
 import { placeOrderReq } from "../../../../Network/Services/ProductServices";
-import { AppStrings, ORDER_STATUS } from "../../../../Utils/AppStrings";
+import {
+  AppStrings,
+  NOTIFICATIONS_TYPES,
+  ORDER_STATUS,
+} from "../../../../Utils/AppStrings";
 import CommonDataManager from "../../../../Utils/CommonManager";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
 import { fetchAddressReq } from "../../../../Network/Services/AddressServices";
@@ -42,14 +46,19 @@ import { useIsFocused } from "@react-navigation/native";
 import PaymentMethodModal from "../Components/PaymentMethodModal";
 import firestore from "@react-native-firebase/firestore";
 import moment from "moment";
+import { fetchAdminDetailReq } from "../../../../Network/Services/GeneralServices";
+import NotificationManager from "../../../../Hooks/NotificationsManager";
 
 const CartScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
   );
   const userData = selector?.userData;
+  console.log("use data -->>>. ", userData);
+
   const isRtl = selector?.isRtl;
   const isFocused = useIsFocused();
+  const { updateNotificationFunc } = NotificationManager();
   const { updateProductList, removeProductFromCart, getProductsTotalPrice } =
     CartManager();
   const dispatch = useDispatch();
@@ -142,17 +151,45 @@ const CartScreen = (props: ScreenProps) => {
     };
 
     dispatch(setIsLoader(true));
-    await placeOrderReq(obj, (resp: any) => {
+    await placeOrderReq(obj, async (resp: any) => {
       if (resp?.status) {
-        dispatch(
-          setShowToast({
-            type: AppStrings.ToastType.success,
-            message: resp?.message,
-          })
-        );
-        props?.navigation?.pop(2);
-        dispatch(updateCartDetail([]));
-        dispatch(setIsLoader(false));
+        await fetchAdminDetailReq(async (adminObj: any) => {
+          if (!adminObj) {
+            dispatch(setIsLoader(false));
+            return;
+          }
+          const notificatinObj = {
+            title: "New Order Placed",
+            body: `Order Placed with Order ID ${obj?.orderId}`,
+            createdAt: new Date(),
+            notificationId: CommonDataManager.getSharedInstance().makeid(3),
+            type: NOTIFICATIONS_TYPES.payment_Received,
+            reciver: {
+              email: adminObj?.email,
+              name: adminObj?.fullName,
+              profile: adminObj?.profileImage,
+              userId: adminObj?.adminId,
+            },
+            sender: {
+              email: userData?.email ?? "",
+              name:
+                userData?.fullName ??
+                userData?.firstName + " " + userData?.lastName,
+              profile: userData?.profileImage || userData?.profile,
+              userId: userData?.userId,
+            },
+          };
+          await updateNotificationFunc(notificatinObj);
+          dispatch(
+            setShowToast({
+              type: AppStrings.ToastType.success,
+              message: resp?.message,
+            })
+          );
+          props?.navigation?.pop(2);
+          dispatch(updateCartDetail([]));
+          dispatch(setIsLoader(false));
+        });
       } else {
         dispatch(
           setShowToast({

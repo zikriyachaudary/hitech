@@ -56,8 +56,6 @@ const NotificationManager = () => {
       singleObj?.type === NOTIFICATIONS_TYPES.payment_Received ||
       singleObj?.type == NOTIFICATIONS_TYPES.Order_Placed
     ) {
-      console.log(" ------- here -------");
-
       const adminNotification = { ...singleObj };
       await updateNotificationList(
         singleObj?.reciver?.userId,
@@ -88,9 +86,12 @@ const NotificationManager = () => {
                   },
                 },
               };
+              console.log("pushNotificationBody ----  ", pushNotificationBody);
+
               const response: any = await sendPushNotificationReq(
                 pushNotificationBody
               );
+              console.log("push notifi ---->>>>. ", response);
             }
           }
         }
