@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StatusBar, View } from "react-native";
+import { PermissionsAndroid, Platform, StatusBar, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
@@ -22,6 +22,13 @@ import WelcomeScreen from "./src/UI/Sections/Welcome/Screens/WelcomeScreen";
 import LinearGradient from "react-native-linear-gradient";
 import { AppStyles } from "./src/Utils/AppStyles";
 import { ScreenSize } from "./src/Utils/AppConstants";
+
+import {
+  BluetoothManager,
+  BluetoothEscposPrinter,
+} from "react-native-bluetooth-escpos-printer";
+import PrintHelloScreen from "./src/HelloPrintScreen";
+
 const App = () => {
   const dispatch = useDispatch();
   const [fetching, setFetching] = useState(true);
@@ -73,6 +80,63 @@ const App = () => {
     dispatch(setIsNotchBar(notch));
   };
 
+  // ------------------------->>
+
+  // useEffect(() => {
+  // requestBluetoothPermissions();
+  // scanForDevices();
+  // setTimeout(() => {
+  //   connection();
+  // }, 10000);
+  // }, []);
+
+  const requestBluetoothPermissions = async () => {
+    if (Platform.OS === "android" && Platform.Version >= 31) {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
+        PermissionsAndroid.PERMISSIONS.BLUETOOTH_CONNECT,
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION, // for Android < 12
+      ]);
+
+      return Object.values(granted).every(
+        (status) => status === PermissionsAndroid.RESULTS.GRANTED
+      );
+    }
+
+    // For Android < 12 or iOS (if supported)
+    return true;
+  };
+
+  const scanForDevices = async () => {
+    const isGranted = await requestBluetoothPermissions();
+    console.log("isGranted ---->>>>>  ", isGranted);
+
+    if (!isGranted) return;
+
+    try {
+      const enabled = await BluetoothManager.enableBluetooth(); // prompt user
+      const result = await BluetoothManager.scanDevices();
+      const found = JSON.parse(result); // found is a list of devices
+      console.log("Devices:", found);
+    } catch (err) {
+      console.warn("Bluetooth Error:", err);
+    }
+  };
+
+  const connection = () => {
+    console.log("--- conection ---- -- ");
+
+    BluetoothManager.connect("7E:94:9B:76:4D:19") // the device address scanned.
+      .then(
+        (s: any) => {
+          console.log("Connected to device:", s);
+        },
+        (e: any) => {
+          console.log("Error connect --  ", e);
+        }
+      );
+  };
+
   return (
     <View
       style={{
@@ -88,6 +152,7 @@ const App = () => {
       <NavigationContainer>
         <AppContainer />
       </NavigationContainer>
+      {/* <PrintHelloScreen /> */}
     </View>
   );
 };

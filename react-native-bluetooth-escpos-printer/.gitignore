@@ -1,0 +1,62 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-error.log
+yarn-debug.log*
+
+# React Native
+ios/Pods/
+*.xcodeproj/
+*.xcworkspace/
+*.xcuserdata/
+*.xcuserstate
+*.lock
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+
+# Temporary files and folders
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Editor/IDE specific
+.vscode/
+.idea/
+*.iml
+
+# Logs
+logs
+*.log
+*.log.*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Test outputs
+/coverage/
+*.lcov
+jest-test-results.json
+
+# Bundler output
+/build/
+/dist/
+/index.android.bundle
+/index.ios.bundle
+*.bundle.map
+
+# Expo
+.expo/
+.expo-shared/
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
+
+# Environment files
+.env
+.env.*
