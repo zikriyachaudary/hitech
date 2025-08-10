@@ -18,7 +18,7 @@ const initialState: IReduxState = {
   showNoti: false,
   productsList: [],
   notificationsList: [],
-  pendingOrdersList: [],
+  pendingOrders: [],
   dispatchedOrdersList: [],
   ordersList: [],
   addressList: [],
@@ -80,8 +80,17 @@ export const Reducer = createSlice({
       state.notificationsList = action.payload;
     },
     setPendingOrders: (state, action) => {
-      state.pendingOrdersList = action.payload;
+      const { date, orders } = action.payload;
+      const existingIndex = state.pendingOrders.findIndex(
+        (item: any) => item.date === date
+      );
+      if (existingIndex !== -1) {
+        state.pendingOrders[existingIndex].orders = orders;
+      } else {
+        state.pendingOrders.push({ date, orders });
+      }
     },
+
     setDispatchedOrders: (state, action) => {
       state.dispatchedOrdersList = action.payload;
     },

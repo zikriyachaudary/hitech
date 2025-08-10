@@ -32,6 +32,8 @@ import RNFS from "react-native-fs";
 import { AppStrings } from "../../../../Utils/AppStrings";
 import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
 import FilledButton from "../../../Components/CustomButton/FilledButton";
+import { capitalizeFirstLetter } from "../../../../Utils/Helper";
+import CommonDataManager from "../../../../Utils/CommonManager";
 
 const RecieptScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -39,7 +41,6 @@ const RecieptScreen = (props: ScreenProps) => {
   );
   const dispatch = useDispatch();
   const data = props?.route?.params?.item;
-
   const receiptRef = useRef<any>();
 
   const requestPermission = async () => {
@@ -243,20 +244,26 @@ const RecieptScreen = (props: ScreenProps) => {
         <Text style={styles.infoTxt}>INFO</Text>
         <View style={styles.invoiceNoCont}>
           <Text style={styles.invoiceNo}>Invoice # 34435645</Text>
-          <TouchableOpacity activeOpacity={0.8} onPress={() => {}}>
+          {/* <TouchableOpacity activeOpacity={0.8} onPress={() => {}}>
             <Image source={AppImages.payments.copy} style={styles.copyImg} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
-      </View>
-
-      <View style={styles.infoCont}>
-        <Text style={styles.infoTxt}>TO</Text>
         <Text style={styles.invoiceNo}>High Tech SMC-PVT LTD.</Text>
         <Text style={styles.invoiceNo}>
           Macleor Road, new Lakshami Chowk Lahore.
         </Text>
         <Text style={styles.lightTxt}>info@hitech.com</Text>
         <Text style={styles.lightTxt}>{"(+92) 324456675"}</Text>
+      </View>
+
+      <View style={styles.infoCont}>
+        <Text style={styles.infoTxt}>CUSTOMER</Text>
+        <Text style={styles.invoiceNo}>
+          {CommonDataManager.getSharedInstance().capitalizeFirstLetter(
+            data?.userDetail?.fullName
+          )}
+        </Text>
+        <Text style={styles.invoiceNo}>{data?.userDetail?.phoneNumber}</Text>
       </View>
 
       <View style={styles.infoCont}>
@@ -285,6 +292,9 @@ const RecieptScreen = (props: ScreenProps) => {
                         style={styles.simpleTxt}
                       >{`${item?.price} /-`}</Text>
                     </View>
+                    <Text style={styles.simpleTxt}>
+                      {item?.category?.category}
+                    </Text>
 
                     <View style={[styles.row, { flex: 1 }]}>
                       <Text
@@ -332,9 +342,15 @@ const RecieptScreen = (props: ScreenProps) => {
       </View>
 
       <View style={styles.bottomCont}>
-        <Text style={styles.priceTxt}>Rs. 44000</Text>
+        <Text style={styles.priceTxt}>{`Rs. ${data?.products?.reduce(
+          (acc: any, item: any) => {
+            return acc + item.price * item.count;
+          },
+          0
+        )}`}</Text>
         <TouchableOpacity onPress={() => {}} style={styles.btnCont}>
-          <Text style={styles.btnTxt}>PAY NOW</Text>
+          <Text style={styles.btnTxt}>Print</Text>
+          <Image source={AppImages.Home.printer} style={styles.printerImg} />
         </TouchableOpacity>
       </View>
     </View>
@@ -354,7 +370,7 @@ const styles = StyleSheet.create({
     shadowColor: AppColors.black.black,
     shadowOffset: {
       width: 0,
-      height: 4,
+      height: Platform.OS == "ios" ? 0 : 4,
     },
     shadowOpacity: 0.4,
     elevation: 4,
@@ -487,12 +503,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: normalized(50),
     backgroundColor: AppColors.green.dark,
+    flexDirection: "row",
+    gap: normalized(5),
   },
   btnTxt: {
     fontSize: normalized(14),
     fontFamily: AppFonts.PoppinsBold,
     color: AppColors.white.white,
     marginTop: normalized(3),
+  },
+  printerImg: {
+    width: normalized(22),
+    height: normalized(22),
+    resizeMode: "contain",
+    tintColor: AppColors.white.white,
   },
 });
 

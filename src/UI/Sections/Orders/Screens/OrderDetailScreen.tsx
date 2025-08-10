@@ -35,6 +35,7 @@ import {
 } from "../../../../Redux/Reducers/AppReducers";
 import NotificationManager from "../../../../Hooks/NotificationsManager";
 import CommonDataManager from "../../../../Utils/CommonManager";
+import GreenBtn from "../../../Components/CustomButton/GreenBtn";
 
 const OrderDetailScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
@@ -320,6 +321,13 @@ const OrderDetailScreen = (props: ScreenProps) => {
             </Text>
           </TouchableOpacity>
         </View>
+
+        <GreenBtn
+          onPress={() => {
+            props?.navigation?.navigate(Routes.Home.RecieptScreen, { item });
+          }}
+          text={"Invoice"}
+        />
       </ScrollView>
     </View>
   );

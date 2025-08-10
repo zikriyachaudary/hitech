@@ -150,6 +150,7 @@ export const AppImages = {
     silverBadge: require("../UI/assets/Images/Home/silver.png"),
     goldBadge: require("../UI/assets/Images/Home/gold.png"),
     badge: require("../UI/assets/Images/Home/badge.png"),
+    printer: require("../UI/assets/Images/Home/printer.png"),
   },
   Products: {
     editIcon: require("../UI/assets/Images/products/editIcon.png"),

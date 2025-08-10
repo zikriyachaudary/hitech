@@ -24,6 +24,7 @@ import ChangePasswordScreen from "../UI/Sections/Profile/Screens/ChangePasswordS
 import PaymentMethodScreen from "../UI/Sections/Cart/Screens/PaymentMethodScreen";
 import RecieptScreen from "../UI/Sections/Reciept/Screens/RecieptScreen";
 import CardDetailsFormPage from "../UI/Sections/Cart/Screens/CardDetailFormPage";
+import DeliveryScreen from "../UI/Sections/Cart/Screens/DeliveryScreen";
 
 const MainStack = createStackNavigator();
 
@@ -107,6 +108,10 @@ const MainNavigation = () => {
       <MainStack.Screen
         name={Routes.Home.CardDetailFormPage}
         component={CardDetailsFormPage}
+      />
+      <MainStack.Screen
+        name={Routes.Home.DeliveryScreen}
+        component={DeliveryScreen}
       />
     </MainStack.Navigator>
   );

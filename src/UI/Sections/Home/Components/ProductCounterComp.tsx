@@ -50,14 +50,14 @@ const styles = StyleSheet.create({
     height: hv(35),
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: normalized(35 / 2),
-    borderWidth: 1,
-    borderColor: AppColors.primaryRed,
+    borderRadius: normalized(8),
+    borderWidth: 2,
+    borderColor: AppColors.red.dark,
   },
   innerTxt: {
     fontSize: normalized(22),
     fontWeight: "400",
-    color: AppColors.primaryRed,
+    color: AppColors.black.black,
   },
   countTxt: {
     fontSize: normalized(16),
@@ -65,12 +65,14 @@ const styles = StyleSheet.create({
     color: AppColors.black.black,
   },
   countTxtCont: {
-    backgroundColor: AppColors.grey.light,
-    borderRadius: normalized(10),
-    width: normalized(30),
-    height: hv(30),
+    backgroundColor: AppColors.grey.greyLevel0,
+    borderRadius: normalized(7),
+    width: normalized(35),
+    height: hv(35),
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: AppColors.grey.greyLevel2,
   },
 });
 export default ProductCounterComp;

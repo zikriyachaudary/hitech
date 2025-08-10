@@ -7,10 +7,16 @@ import {
 } from "../../../../Utils/AppConstants";
 import PendingOrdersScreen from "./PendingOrdersScreen";
 import DispatchedOrdersScreen from "./DispatchedOrdersScreen";
+import { useSelector } from "react-redux";
+import { AppRootStore } from "../../../../Redux/store/AppStore";
 
 const Tab = createMaterialTopTabNavigator();
 
 const OrdersTopTabNav = () => {
+  const selector: any = useSelector(
+    (state: AppRootStore) => state.SliceReducer
+  );
+  const isRtl = selector?.isRtl;
   return (
     <Tab.Navigator
       screenOptions={{

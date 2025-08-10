@@ -30,6 +30,7 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
         style={{
           ...styles.inputContainer,
           ...props.container,
+          height: props?.isMultiLine ? normalized(100) : normalized(45),
           borderWidth: props?.isBorderBottom ? 0 : 1,
           borderColor: props?.isSuccess
             ? AppColors.green.dark
@@ -129,7 +130,6 @@ const CustomInput = React.forwardRef((props: any, ref: any) => {
 
 const styles = StyleSheet.create({
   inputContainer: {
-    height: normalized(45),
     width: "100%",
     alignSelf: "center",
     borderColor: AppColors.grey.greyLevel3,

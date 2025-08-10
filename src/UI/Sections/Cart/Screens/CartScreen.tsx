@@ -54,7 +54,6 @@ const CartScreen = (props: ScreenProps) => {
     (state: AppRootStore) => state.SliceReducer
   );
   const userData = selector?.userData;
-  console.log("use data -->>>. ", userData);
 
   const isRtl = selector?.isRtl;
   const isFocused = useIsFocused();
@@ -92,15 +91,8 @@ const CartScreen = (props: ScreenProps) => {
 
   let productList = useSelector((state: any) => state.SliceReducer.cartDetail);
 
-  const onContinue = async (selectedMethod: any) => {
+  const onContinue = async () => {
     const obj = {
-      deliveryDetails: {
-        generalAddress: deliveryAdd?.address,
-        street: deliveryAdd?.street,
-        house: deliveryAdd?.house,
-        Area: deliveryAdd?.area,
-        City: deliveryAdd?.city,
-      },
       orderPrice: getProductsTotalPrice(true),
       products: selector?.cartDetail,
       userDetail: selector?.userData,
@@ -108,35 +100,8 @@ const CartScreen = (props: ScreenProps) => {
       createdAt: firestore.FieldValue.serverTimestamp(),
       orderStatus: ORDER_STATUS.Order_Placed,
     };
-    props?.navigation?.navigate(
-      selectedMethod?.id == 1 || selectedMethod?.id == 2
-        ? Routes.Home.PaymentMethodScreen
-        : Routes.Home.CardDetailFormPage,
-      { data: { ...obj, ...{ paymentMethod: selectedMethod } } }
-    );
-
-    return;
-    dispatch(setIsLoader(true));
-    await placeOrderReq(obj, (resp: any) => {
-      if (resp?.status) {
-        dispatch(
-          setShowToast({
-            type: AppStrings.ToastType.success,
-            message: resp?.message,
-          })
-        );
-        props?.navigation?.pop(2);
-        dispatch(updateCartDetail([]));
-        dispatch(setIsLoader(false));
-      } else {
-        dispatch(
-          setShowToast({
-            type: AppStrings.ToastType.error,
-            message: resp?.message,
-          })
-        );
-        dispatch(setIsLoader(false));
-      }
+    props?.navigation?.navigate(Routes.Home.DeliveryScreen, {
+      orderDetails: obj,
     });
   };
 
@@ -216,69 +181,7 @@ const CartScreen = (props: ScreenProps) => {
             keyExtractor={(item, index) => `${index}`}
             showsVerticalScrollIndicator={false}
             renderItem={({ item, index }) => {
-              return index == 1 ? (
-                <>
-                  {!userData?.isGuestUser && !userData?.isShopUser && (
-                    <View
-                      style={{
-                        ...styles.deliveryCont,
-                        backgroundColor: !locationError
-                          ? AppColors.grey.light
-                          : AppColors.red.pink,
-                      }}
-                    >
-                      <View
-                        style={{
-                          flex: 1,
-                        }}
-                      >
-                        <Text
-                          style={{
-                            ...styles.title,
-                            marginRight: isRtl ? normalized(10) : 0,
-                            textAlign: isRtl ? "right" : "left",
-                          }}
-                        >
-                          {isRtl ? "ڈلیوری کا پتہ" : "Delivery Address"}
-                        </Text>
-                        <Text numberOfLines={2} style={styles.addressTxt}>
-                          {deliveryAdd?.address
-                            ? deliveryAdd?.address
-                            : "Select Delivery Address"}
-                        </Text>
-                      </View>
-                      <TouchableOpacity
-                        style={styles.editIcon}
-                        activeOpacity={0.7}
-                        onPress={() => {
-                          props?.navigation?.navigate(
-                            Routes.Home.DeliveryAddress,
-                            {
-                              fromCartScreen: true,
-                              atBack: (address: any) => {
-                                setDeliveryAdd(address);
-                                setLocationError("");
-                              },
-                            }
-                          );
-                        }}
-                      >
-                        <Image source={AppImages.Products.editIcon} />
-                      </TouchableOpacity>
-                    </View>
-                  )}
-                  {locationError && (
-                    <Text
-                      style={{
-                        fontSize: normalized(14),
-                        color: AppColors.red.dark,
-                      }}
-                    >
-                      {locationError}
-                    </Text>
-                  )}
-                </>
-              ) : index === 2 ? (
+              return index == 1 ? null : index === 2 ? (
                 <>
                   <FlatList
                     data={selector?.cartDetail}
@@ -362,72 +265,6 @@ const CartScreen = (props: ScreenProps) => {
             }}
           />
           <View style={styles.bottomSheet}>
-            {/* {selectedCard ? (
-              <View
-                style={{
-                  ...styles.cardCont,
-                }}
-              >
-                <View
-                  style={{
-                    maxWidth: "85%",
-                  }}
-                >
-                  <Text
-                    numberOfLines={1}
-                    style={{
-                      ...styles.addressTxt,
-                      fontSize: normalized(18),
-                      fontWeight: "600",
-                    }}
-                  >
-                    {selectedCard["holderName"]}
-                  </Text>
-                  <Text
-                    numberOfLines={1}
-                    style={{
-                      ...styles.addressTxt,
-                      fontSize: normalized(16),
-                    }}
-                  >
-                    {maskCardNumber(selectedCard["cardNumber"])}
-                  </Text>
-                </View>
-                <Text
-                  style={styles.addPaymentBtn}
-                  onPress={() => {
-                    props?.navigation?.navigate(
-                      Routes.AddToCart.AddCardScreen,
-                      {
-                        atBack: (selectedCard: any) => {
-                          setSelectedCard(selectedCard);
-                        },
-                      }
-                    );
-                  }}
-                >
-                  Change
-                </Text>
-              </View>
-            ) : (
-              <Text
-                style={{
-                  ...styles.addPaymentBtn,
-                  textDecorationLine: cardError ? "underline" : "none",
-                  marginVertical: hv(5),
-                }}
-                onPress={() => {
-                  props?.navigation?.navigate(Routes.AddToCart.AddCardScreen, {
-                    location: location,
-                    atBack: (selectedCard: any) => {
-                      setSelectedCard(selectedCard);
-                    },
-                  });
-                }}
-              >
-                Add Payment Method
-              </Text>
-            )} */}
             {userData?.isGuestUser ? (
               <View style={styles.bottomCont}>
                 <Text
@@ -516,7 +353,7 @@ const CartScreen = (props: ScreenProps) => {
                     if (userData?.isShopUser) {
                       placeOrder();
                     } else {
-                      setIsShowPaymentModal(true);
+                      onContinue();
                     }
                   }}
                 />
@@ -608,18 +445,6 @@ const CartScreen = (props: ScreenProps) => {
           }}
         />
       )}
-      <PaymentMethodModal
-        isVisible={isShowPaymentModal}
-        onClose={() => {
-          setIsShowPaymentModal(false);
-        }}
-        onContinue={(val: any) => {
-          setIsShowPaymentModal(false);
-          setTimeout(() => {
-            onContinue(val);
-          }, 400);
-        }}
-      />
     </View>
   );
 };

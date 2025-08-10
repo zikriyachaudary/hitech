@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { PermissionsAndroid, Platform, StatusBar, View } from "react-native";
+import {
+  PermissionsAndroid,
+  Platform,
+  StatusBar,
+  Text,
+  View,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { NavigationContainer } from "@react-navigation/native";
 import NetInfo from "@react-native-community/netinfo";
@@ -141,6 +147,7 @@ const App = () => {
     <View
       style={{
         flex: 1,
+        backgroundColor: "red",
       }}
     >
       <StatusBar
@@ -152,7 +159,8 @@ const App = () => {
       <NavigationContainer>
         <AppContainer />
       </NavigationContainer>
-      {/* <PrintHelloScreen /> */}
+
+      {/* // <PrintHelloScreen /> */}
     </View>
   );
 };

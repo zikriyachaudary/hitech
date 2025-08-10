@@ -12,6 +12,7 @@ import {
   AppColors,
   AppFonts,
   normalized,
+  ScreenSize,
 } from "../../../../Utils/AppConstants";
 import OrderItem from "../Components/OrderItem";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
@@ -31,6 +32,8 @@ const PendingOrdersScreen = () => {
   const isRtl = selector?.isRtl;
   const [pendingOrdersList, setPendingOrdersList] = useState<any>([]);
   const isFocused = useIsFocused();
+
+  const [defautFormat, setDefaultFormat] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(
     moment(Date.now()).format("DD MMM YYYY")
   );
@@ -39,15 +42,20 @@ const PendingOrdersScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const orders = selector.pendingOrders.find(
+      (item: any) => item.date === selectedDate
+    );
+
+    setPendingOrdersList(orders?.orders || []);
     fetchPendingOrders();
   }, [selectedDate, isFocused]);
 
   const fetchPendingOrders = async () => {
-    setIsLoading(true);
+    pendingOrdersList?.length == 0 && setIsLoading(true);
     await getPendingOrdersList(selectedDate, (resp: any) => {
       if (resp.status) {
         setPendingOrdersList(resp.data);
-        dispatch(setPendingOrders(resp.data));
+        dispatch(setPendingOrders({ date: selectedDate, orders: resp.data }));
         setIsLoading(false);
       } else {
         setIsLoading(false);
@@ -88,17 +96,40 @@ const PendingOrdersScreen = () => {
               }
             />
           )}
+          ListEmptyComponent={() => (
+            <View
+              style={{
+                height: ScreenSize.height / 1.5,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Text
+                style={[
+                  styles.dateTxt,
+                  {
+                    alignSelf: "center",
+                  },
+                ]}
+              >
+                {isRtl
+                  ? "موجودہ تاریخ میں کوئی آرڈرز نہیں ملے۔"
+                  : "No Orders Found in Current Date."}
+              </Text>
+            </View>
+          )}
         />
       )}
       <DatePicker
         modal
         mode="date"
         open={isShowDateModal}
-        date={new Date()}
+        date={defautFormat}
         maximumDate={new Date(maxDate)}
         onConfirm={(date) => {
           setIsShowDateModal(false);
           setSelectedDate(moment(date).format("DD MMM YYYY"));
+          setDefaultFormat(date);
         }}
         onCancel={() => {
           setIsShowDateModal(false);

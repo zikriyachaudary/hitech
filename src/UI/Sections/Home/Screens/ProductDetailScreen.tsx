@@ -26,7 +26,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CartManager from "../../../../Hooks/CartManager";
 import { Routes } from "../../../../Utils/Routes";
 import { AppRootStore } from "../../../../Redux/store/AppStore";
-import { AppStrings, USER_TYPE } from "../../../../Utils/AppStrings";
+import { USER_TYPE } from "../../../../Utils/AppStrings";
 const ProductDetailScreen = (props: ScreenProps) => {
   const selector: any = useSelector(
     (state: AppRootStore) => state.SliceReducer
@@ -164,7 +164,6 @@ const ProductDetailScreen = (props: ScreenProps) => {
                 size: selectedSize,
               };
               updateProductList(updateItem);
-              console.log("Card -->>>  ", JSON.stringify(updateItem));
             }}
             mainContainer={{
               width: normalized(150),
